@@ -156,6 +156,8 @@ class FenetreNonCree(Exception):
 class FenetreDejaCree(Exception):
     pass
 
+# Vous êtes viré, c'est scandaleux
+
 
 #############################################################################
 # Initialisation, mise à jour et fermeture
