@@ -164,7 +164,7 @@ class FenetreDejaCree(Exception):
 #############################################################################
 
 
-def cree_fenetre(largeur, hauteur, frequence=100):
+def cree_fenetre(largeur, hauteur, frequence=60):
     """
     Crée une fenêtre de dimensions ``largeur`` x ``hauteur`` pixels.
     :rtype:
