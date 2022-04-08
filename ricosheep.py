@@ -29,5 +29,5 @@ def jeu(plateau: Plateau):
             exit()
 
 fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre)
-plateau = Plateau(10, 7)
+plateau = Plateau(8, 8)
 jeu(plateau)

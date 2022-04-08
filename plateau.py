@@ -9,6 +9,8 @@ class Case:
     ay: int
     bx: int
     by: int
+    x: int
+    y: int
 
 class Plateau:
     def __init__(self, nb_colonne: int, nb_ligne: int):
@@ -29,15 +31,17 @@ class Plateau:
     
         marge_largeur = cfg.largeur_fenetre*0.05
         marge_hauteur = cfg.hauteur_fenetre*0.05
+
+        taille_case = min(
+            (cfg.largeur_fenetre - marge_largeur)/self.nb_colonne,
+            (cfg.hauteur_fenetre - marge_hauteur)/self.nb_ligne
+        )
         
-        view_ax = marge_largeur
-        view_ay = marge_hauteur #- cfg.hauteur_fenetre/2
-        view_bx = cfg.largeur_fenetre - marge_largeur
-        view_by = cfg.hauteur_fenetre - marge_hauteur
+        view_ax = (cfg.largeur_fenetre - taille_case * self.nb_colonne)/2
+        view_ay = (cfg.hauteur_fenetre - taille_case * self.nb_ligne)/2
+        # view_bx = view_ax + self.nb_colonne*taille_case
+        # view_by = view_ay + self.nb_ligne*taille_case
         
-        taille_case = min((view_bx - view_ax)/self.nb_colonne,
-                          (view_by - view_ay)/self.nb_ligne)
-    
         for j in range(self.nb_ligne):
             ligne = []
             for i in range(self.nb_colonne):
@@ -46,7 +50,9 @@ class Plateau:
                         ax=view_ax  + i * taille_case,
                         ay=view_ay  + j * taille_case,
                         bx=(view_ax + i * taille_case) + taille_case,
-                        by=(view_ay + j * taille_case) + taille_case
+                        by=(view_ay + j * taille_case) + taille_case,
+                        x=i,
+                        y=j
                     )
                 )
     
