@@ -1,35 +1,30 @@
-from dataclasses import dataclass
 from typing import List, Tuple
-from plateau import Case
-
-import graphiques
 
 
 class Mouton:
-    x: int
-    y: int
-    img_neutre: object
-    img_herbe: object
 
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
-        self.img_neutre = "ntm"
-        self.img_herbe = "ntp"
-    
-    def deplace_mouton(self, direction: str, plateau: List[List[Case]]):
+        #self.ax_image 
+        #self.bx_image
+
+    def deplace(self, direction: str, plateau):
         if direction == "Up":
-            print("HAUT")
+            if plateau.isPositionValid(self.x, self.y-1):
+                self.y -= 1
 
-        if direction == "Left":
-            print("GAUCHE")
+        elif direction == "Down":
+            if plateau.isPositionValid(self.x, self.y+1):
+                self.y += 1
 
-        if direction == "Down":
-            print("BAS")
+        elif direction == "Left":
+            if plateau.isPositionValid(self.x-1, self.y):
+                self.x -= 1
 
-        if direction == "Right":
-            print("DROITE")
-    
-    def is_eating(self, plateau: List[List]):
-        return plateau[self.y][self.x] == "G"
+        elif direction == "Right":
+            if plateau.isPositionValid(self.x+1, self.y):
+                self.x += 1
 
+    def is_eating(case):
+        return case.contenu == "G"
