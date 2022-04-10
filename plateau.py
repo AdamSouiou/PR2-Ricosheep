@@ -136,17 +136,47 @@ class Plateau:
                                 self.img_mouton, ancrage='nw'
             )
 
+    def isPosMouton(self, x, y):
+        for mouton in self.troupeau:
+            if mouton.x == x and mouton.y == y:
+                return False
+        else:
+            return True
+
+            
     def isPositionValid(self, x: int, y: int):
         """
         Détermine si la position indiquée par ``x``
         et ``y`` n'est pas en dehors du plateau, et
         si la case est vide ou est une touffe d'herbe.
         """
+        moutonposValid = self.isPosMouton(x, y)
         return (0 <= y < self.nb_ligne and
                 (0 <= x < self.nb_colonne) and
                  self.cases[y][x].contenu != 'B' and
-                   self.troupeau)
+                   self.troupeau and moutonposValid)
 
     def deplace_moutons(self, direction: str):
+        self.troupeau = self.tri_moutons(direction)
         for mouton in self.troupeau:
             mouton.deplace(direction, self)
+
+    def tri_moutons(self, direction):
+        if direction == "Up" or direction == "Down":
+            self.troupeau.sort(key=self.tri_y)
+            if direction == "Down":
+                self.troupeau.reverse()    
+                            
+        elif direction == "Left" or direction == "Right":
+            self.troupeau.sort(key=self.tri_x)
+            if direction == "Right":
+                self.troupeau.reverse()
+                
+        return self.troupeau
+
+
+    def tri_y(self, troupeau):
+        return troupeau.y
+
+    def tri_x(self, troupeau):
+        return troupeau.x

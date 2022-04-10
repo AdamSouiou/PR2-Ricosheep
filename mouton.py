@@ -11,19 +11,19 @@ class Mouton:
 
     def deplace(self, direction: str, plateau):
         if direction == "Up":
-            if plateau.isPositionValid(self.x, self.y-1):
+            while plateau.isPositionValid(self.x, self.y-1):
                 self.y -= 1
 
         elif direction == "Down":
-            if plateau.isPositionValid(self.x, self.y+1):
+            while plateau.isPositionValid(self.x, self.y+1):
                 self.y += 1
 
         elif direction == "Left":
-            if plateau.isPositionValid(self.x-1, self.y):
+            while plateau.isPositionValid(self.x-1, self.y):
                 self.x -= 1
 
         elif direction == "Right":
-            if plateau.isPositionValid(self.x+1, self.y):
+            while plateau.isPositionValid(self.x+1, self.y):
                 self.x += 1
 
     def is_eating(case):
