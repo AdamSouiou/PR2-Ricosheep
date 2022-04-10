@@ -144,8 +144,7 @@ class Plateau:
         """
         return (0 <= y < self.nb_ligne and
                 (0 <= x < self.nb_colonne) and
-                 self.cases[y][x].contenu != 'B' and
-                   self.troupeau)
+                 self.cases[y][x].contenu != 'B')
 
     def deplace_moutons(self, direction: str):
         for mouton in self.troupeau:
