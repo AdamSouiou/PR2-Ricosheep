@@ -153,8 +153,8 @@ class Plateau:
         moutonposValid = self.isPosMouton(x, y)
         return (0 <= y < self.nb_ligne and
                 (0 <= x < self.nb_colonne) and
-                 self.cases[y][x].contenu != 'B' and
-                   self.troupeau and moutonposValid)
+                 self.cases[y][x].contenu != 'B'
+                 and moutonposValid)
 
     def deplace_moutons(self, direction: str):
         self.troupeau = self.tri_moutons(direction)
@@ -166,7 +166,7 @@ class Plateau:
             self.troupeau.sort(key=self.tri_y)
             if direction == "Down":
                 self.troupeau.reverse()    
-                            
+
         elif direction == "Left" or direction == "Right":
             self.troupeau.sort(key=self.tri_x)
             if direction == "Right":
