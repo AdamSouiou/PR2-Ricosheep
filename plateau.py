@@ -136,7 +136,7 @@ class Plateau:
                                 self.img_mouton, ancrage='nw'
             )
 
-    def isPosMouton(self, x, y):
+    def isNotPosMouton(self, x, y):
         for mouton in self.troupeau:
             if mouton.x == x and mouton.y == y:
                 return False
@@ -150,33 +150,43 @@ class Plateau:
         et ``y`` n'est pas en dehors du plateau, et
         si la case est vide ou est une touffe d'herbe.
         """
-        moutonposValid = self.isPosMouton(x, y)
+         
         return (0 <= y < self.nb_ligne and
                 (0 <= x < self.nb_colonne) and
                  self.cases[y][x].contenu != 'B'
-                 and moutonposValid)
+                 and self.isNotPosMouton(x, y))
 
     def deplace_moutons(self, direction: str):
-        self.troupeau = self.tri_moutons(direction)
+        self.tri_moutons(direction)
         for mouton in self.troupeau:
             mouton.deplace(direction, self)
 
     def tri_moutons(self, direction):
-        if direction == "Up" or direction == "Down":
+        """
+        Trie les moutons de sorte que le mouton le plus près
+        du mur de la direction demandée soit le premier à être déplacé.
+        """
+
+        if direction == 'Up':
             self.troupeau.sort(key=self.tri_y)
-            if direction == "Down":
-                self.troupeau.reverse()    
+        elif direction == 'Down':
+            self.troupeau.sort(key=self.tri_y,
+                               reverse=True)
 
-        elif direction == "Left" or direction == "Right":
+        elif direction == 'Left':
             self.troupeau.sort(key=self.tri_x)
-            if direction == "Right":
-                self.troupeau.reverse()
-                
-        return self.troupeau
+        elif direction == 'Right':
+            self.troupeau.sort(key=self.tri_x,
+                               reverse=True)
 
+    def tri_y(self, mouton):
+        return mouton.y
 
-    def tri_y(self, troupeau):
-        return troupeau.y
+    def tri_x(self, mouton):
+        return mouton.x
 
-    def tri_x(self, troupeau):
-        return troupeau.x
+    def isGagne(self):
+        for mouton in self.troupeau:
+            if not self.cases[mouton.y][mouton.x].contenu == 'G':
+                return False
+        return True
