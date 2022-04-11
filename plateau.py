@@ -4,40 +4,38 @@ from mouton import Mouton
 import fltk
 import cfg
 
+
+images = {}
+
 @dataclass
 class Case:
     ax: int
     ay: int
     bx: int
     by: int
-    ax_image: int
-    ay_image: int
+    centre_x: int
+    centre_y: int
     contenu: str # 'G' ou 'B' ou None PAS de moutons !
-    image = None
 
 class Plateau:
-    # - Mettre ailleurs les images que dans Cases
-    # car cela empêche l'utilisation de deepcopy()
-    # nécessaire pour le "Undo/Redo"
     # Utiliser __slots__ pour les gains de mémoire...
-    img_buisson = None
-    img_herbe   = None
-    img_mouton  = None
     
     def __init__(self,
                  raw_plateau: List[List],
                  raw_moutons: Tuple[Tuple[int, int]]):
         self.troupeau     = self.genererMoutons(raw_moutons)
 
-        self.nb_colonne  = len(raw_plateau[0])
-        self.nb_ligne    = len(raw_plateau)
+        self.nb_colonne   = len(raw_plateau[0])
+        self.nb_ligne     = len(raw_plateau)
         self.cases, self.box_image = self.genererCases(raw_plateau, 0.8)
-        
-        self.img_buisson = fltk.box_image('media/bush.png',  (self.box_image,))
-        self.img_herbe   = fltk.box_image('media/grass.png', (self.box_image,))
-        self.img_mouton  = fltk.box_image('media/sheep.png', (self.box_image,))
-        self.imagerCases()
-        
+
+        global images
+        images = {
+            "B" : fltk.box_image('media/bush.png',  (self.box_image,)),
+            "G" : fltk.box_image('media/grass.png', (self.box_image,)),
+            "M" : fltk.box_image('media/sheep.png', (self.box_image,))
+        }
+
     def genererCases(self, raw_plateau: List[List], proportion: int):
         """
         Initialise une liste d'objets ``Cases``, dont les coordonnées
@@ -59,7 +57,6 @@ class Plateau:
             (cfg.hauteur_fenetre - marge_hauteur)/self.nb_ligne
         )
         taille_image = taille_case * proportion
-        marge = (taille_case - taille_image) / 2
         
         view_ax = (cfg.largeur_fenetre - taille_case * self.nb_colonne)/2
         view_ay = (cfg.hauteur_fenetre - taille_case * self.nb_ligne)/2
@@ -69,14 +66,16 @@ class Plateau:
             for i in range(self.nb_colonne):
                 ax = view_ax + (i * taille_case)
                 ay = view_ay + (j * taille_case)
+                centre = taille_case/2
+                
                 ligne.append(
                     Case(
                         ax=ax,
                         ay=ay,
                         bx=ax + taille_case,
                         by=ay + taille_case,
-                        ax_image=ax + marge,
-                        ay_image=ay + marge,
+                        centre_x=ax + centre,
+                        centre_y=ay + centre,
                         contenu=raw_plateau[j][i]
                     )
                 )
@@ -95,18 +94,6 @@ class Plateau:
         """
         return [Mouton(mouton[0], mouton[1]) for mouton in moutons]
 
-    def imagerCases(self):
-        """
-        Ajoute les images fixes (buisson, herbes) dans les
-        cases de la liste ``cases`` de l'instance de la classe.
-        """
-        for ligne in self.cases:
-            for case in ligne:
-                if case.contenu == 'B':
-                    case.image = self.img_buisson
-                elif case.contenu == 'G':
-                    case.image = self.img_herbe
-
     def draw_grid(self):
         """
         Dessine les cases du plateau, et affiche le images
@@ -121,8 +108,8 @@ class Plateau:
                 )
                 if case.contenu is not None:
                     fltk.afficher_image(
-                        case.ax_image, case.ay_image,
-                        case.image, ancrage='nw'
+                        case.centre_x, case.centre_y,
+                        images[case.contenu], ancrage='center'
                     )
             
     def draw_moutons(self):
@@ -132,8 +119,8 @@ class Plateau:
         
         for mouton in self.troupeau:
             case = self.cases[mouton.y][mouton.x]
-            fltk.afficher_image(case.ax_image, case.ay_image,
-                                self.img_mouton, ancrage='nw'
+            fltk.afficher_image(case.centre_x, case.centre_y,
+                                images['M'], ancrage='center'
             )
 
     def isNotPosMouton(self, x, y):

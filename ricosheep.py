@@ -40,13 +40,11 @@ if __name__ == "__main__":
         raw_plateau=[
             ['G',  None, 'G' , None],
             [None, None, None, None],
-            [None,  None, 'B' , None],
-            ['G', None, None, None],
-            [None, 'B' , None,  None]
+            [None, None, 'B' , None],
+            ['G',  None, None, None],
+            [None, 'B' , None, None]
         ],
         raw_moutons=((0, 1), (3, 1))
     )
-    l = []
-    for i in range(10):
-        l.append(copy.copy(plateau))
+
     jeu(plateau)
