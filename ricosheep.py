@@ -4,6 +4,7 @@ import graphiques
 import cfg
 import fltk
 import copy
+import solveur
 
 
 def jeu(plateau: Plateau):
@@ -11,11 +12,16 @@ def jeu(plateau: Plateau):
         try:
             fltk.efface_tout()
             graphiques.background("#3f3e47")
-            plateau.draw_moutons()
+
             plateau.draw_grid()
-            
+            plateau.draw_moutons()    
+                    
             ev = fltk.donne_ev() # fltk.attend_ev()
             tev = fltk.type_ev(ev)
+
+            if plateau.isGagne():
+                graphiques.victory()
+                fltk.mise_a_jour()
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -24,11 +30,8 @@ def jeu(plateau: Plateau):
             elif tev == "Touche":
                 direction = fltk.touche(ev)
                 plateau.deplace_moutons(direction)
-                if plateau.isGagne():
-                    print("C'est gagné !")
 
             fltk.mise_a_jour()
-            
 
         except KeyboardInterrupt:
             exit()

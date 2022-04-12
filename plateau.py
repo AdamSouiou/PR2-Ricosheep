@@ -33,7 +33,8 @@ class Plateau:
         images = {
             "B" : fltk.box_image('media/bush.png',  (self.box_image,)),
             "G" : fltk.box_image('media/grass.png', (self.box_image,)),
-            "M" : fltk.box_image('media/sheep.png', (self.box_image,))
+            "M" : fltk.box_image('media/sheep.png', (self.box_image,)),
+            "E" : fltk.box_image('media/sheep_grass.png',  (self.box_image,))
         }
 
     def genererCases(self, raw_plateau: List[List], proportion: int):
@@ -119,9 +120,14 @@ class Plateau:
         
         for mouton in self.troupeau:
             case = self.cases[mouton.y][mouton.x]
-            fltk.afficher_image(case.centre_x, case.centre_y,
-                                images['M'], ancrage='center'
-            )
+            if case.contenu == "G":
+                fltk.afficher_image(case.centre_x, case.centre_y,
+                                    images['E'], ancrage='center'
+                )
+            else:
+                fltk.afficher_image(case.centre_x, case.centre_y,
+                                    images['M'], ancrage='center'
+                )            
 
     def isNotPosMouton(self, x, y):
         for mouton in self.troupeau:
@@ -153,24 +159,30 @@ class Plateau:
         Trie les moutons de sorte que le mouton le plus près
         du mur de la direction demandée soit le premier à être déplacé.
         """
+        self.troupeau.sort(key=self.tri)
 
-        if direction == 'Up':
-            self.troupeau.sort(key=self.tri_y)
-        elif direction == 'Down':
-            self.troupeau.sort(key=self.tri_y,
-                               reverse=True)
+    #     if direction == 'Up':
+    #         self.troupeau.sort(key=self.tri_y)
+        if direction == 'Down':
+            self.troupeau.reverse()
+    #         self.troupeau.sort(key=self.tri_y,
+    #                            reverse=True)
 
-        elif direction == 'Left':
-            self.troupeau.sort(key=self.tri_x)
+    #     elif direction == 'Left':
+    #         self.troupeau.sort(key=self.tri_x)
         elif direction == 'Right':
-            self.troupeau.sort(key=self.tri_x,
-                               reverse=True)
+            self.troupeau.reverse()
+    #         self.troupeau.sort(key=self.tri_x,
+    #                            reverse=True)
 
-    def tri_y(self, mouton):
-        return mouton.y
+    # def tri_y(self, mouton):
+    #     return mouton.y
 
-    def tri_x(self, mouton):
-        return mouton.x
+    # def tri_x(self, mouton):
+    #     return mouton.x
+
+    def tri(self, mouton):
+        return mouton.x, mouton.y
 
     def isGagne(self):
         for mouton in self.troupeau:
