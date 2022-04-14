@@ -159,27 +159,12 @@ class Plateau:
         Trie les moutons de sorte que le mouton le plus près
         du mur de la direction demandée soit le premier à être déplacé.
         """
-        self.troupeau.sort(key=self.tri)
 
-    #     if direction == 'Up':
-    #         self.troupeau.sort(key=self.tri_y)
-        if direction == 'Down':
-            self.troupeau.reverse()
-    #         self.troupeau.sort(key=self.tri_y,
-    #                            reverse=True)
-
-    #     elif direction == 'Left':
-    #         self.troupeau.sort(key=self.tri_x)
-        elif direction == 'Right':
-            self.troupeau.reverse()
-    #         self.troupeau.sort(key=self.tri_x,
-    #                            reverse=True)
-
-    # def tri_y(self, mouton):
-    #     return mouton.y
-
-    # def tri_x(self, mouton):
-    #     return mouton.x
+        if direction =="Down" or direction =="Right":
+            self.troupeau.sort(key=self.tri, reverse= True)
+        
+        else:
+            self.troupeau.sort(key=self.tri, reverse=False)
 
     def tri(self, mouton):
         return mouton.x, mouton.y

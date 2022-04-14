@@ -22,6 +22,8 @@ def jeu(plateau: Plateau):
             if plateau.isGagne():
                 graphiques.victory()
                 fltk.mise_a_jour()
+                fltk.attend_ev()
+                exit()
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
