@@ -13,7 +13,6 @@ def profondeur(plateau, direction = None, visite = set(), chemin = []):
     
     
     if beeeh in visite:
-        print("Retour en arrière")
         return [None], visite
     else:
         chemin.append(direction)
