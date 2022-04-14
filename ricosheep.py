@@ -5,7 +5,8 @@ import cfg
 import fltk
 import copy
 import solveur
-
+from sys import setrecursionlimit
+setrecursionlimit(10**6)
 
 def jeu(plateau: Plateau):
     reinitialisation = solveur.tri_copy(plateau.troupeau)
