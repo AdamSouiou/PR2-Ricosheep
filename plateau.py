@@ -20,14 +20,13 @@ class Case:
 class Plateau:
     # Utiliser __slots__ pour les gains de mémoire...
     
-    def __init__(self,
-                 raw_plateau: List[List],
-                 raw_moutons: Tuple[Tuple[int, int]]):
-        self.troupeau     = self.genererMoutons(raw_moutons)
+    def __init__(self, gridfile: str):
+        self.grid_parse(gridfile)
+        self.troupeau     = self.genererMoutons(self.raw_moutons)
 
-        self.nb_colonne   = len(raw_plateau[0])
-        self.nb_ligne     = len(raw_plateau)
-        self.cases, self.box_image = self.genererCases(raw_plateau, 0.8)
+        self.nb_colonne   = len(self.raw_plateau[0])
+        self.nb_ligne     = len(self.raw_plateau)
+        self.cases, self.box_image = self.genererCases(self.raw_plateau, 0.8)
 
         global images
         images = {
@@ -94,6 +93,22 @@ class Plateau:
         :return List: Liste d'objets Mouton
         """
         return [Mouton(mouton[0], mouton[1]) for mouton in moutons]
+
+    def grid_parse(self, file: str):
+        self.raw_plateau, self.raw_moutons = list(), list()
+        with open(file) as f:
+            lines = f.readlines()
+        for line in lines:
+            row = []
+            for char in line:
+                if char in ('B', 'G'):
+                    row.append(char)
+                elif char == 'S':
+                    self.raw_moutons.append((len(self.raw_plateau), len(row)))
+                if char in ('S', '_'):
+                    row.append(None)
+            self.raw_plateau.append(row)
+        print(self.raw_moutons)
 
     def draw_grid(self):
         """

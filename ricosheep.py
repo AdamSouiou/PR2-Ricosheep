@@ -44,15 +44,6 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre)
-    plateau = Plateau(
-        raw_plateau=[
-            ['G',  None, 'G' , None],
-            [None, None, None, None],
-            [None, None, 'B' , None],
-            ['G',  None, None, None],
-            [None, 'B' , None, None]
-        ],
-        raw_moutons=((0, 1), (3, 1))
-    )
+    plateau = Plateau('maps/big/big1.txt')
 
     jeu(plateau)
