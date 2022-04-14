@@ -4,54 +4,45 @@ import graphiques
 import cfg
 import fltk
 
+DIRECTIONS = ("Up", "Right", "Down", "Left")
+
 def profondeur(plateau, direction = None, visite = set(), chemin = []):
 
-    
-    if direction != None:
-        plateau.deplace_moutons(direction)
-
-
+    plateau.deplace_moutons(direction)
     beeeh = tri_copy(plateau.troupeau)
-
-
+    
+    
+    if beeeh in visite:
+        return [None], visite
+    else:
+        chemin.append(direction)
+        visite.add(beeeh)
+    
     if plateau.isGagne():
         print("C'est gagné")
         return chemin, visite
     
-    if beeeh in visite:
-        print("Retour en arrière")
-        return chemin, visite
-    else:
-        if direction is not None:
-            chemin.append(direction)
-        visite.add(beeeh)
-    
+    for dir in DIRECTIONS:
+        chemin_temp, visite = profondeur(plateau, dir, visite, chemin)
+        if chemin_temp != [None]:
+            return chemin_temp, visite
 
-    chemin_temp, visite = profondeur(plateau, "Up", visite, chemin)
-    if chemin_temp == [None]:
         backup(plateau.troupeau, beeeh)
-        return chemin_temp, visite
-    chemin = chemin_temp
 
-    chemin_temp, visite = profondeur(plateau, "Right", visite, chemin)
-    if chemin_temp == [None]:
+    return [None], visite
+
+
+def initProfond(plateau):
+    beeeh = tri_copy(plateau.troupeau)
+
+    for dir in DIRECTIONS:
+
+        chemin_temp, _ = profondeur(plateau, dir)
+        if chemin_temp != [None]:
+            return chemin_temp
         backup(plateau.troupeau, beeeh)
-        return chemin_temp, visite
-    chemin = chemin_temp
 
-    chemin_temp, visite = profondeur(plateau, "Down", visite, chemin)
-    if chemin_temp == [None]:
-        backup(plateau.troupeau, beeeh)
-        return chemin_temp, visite
-    chemin = chemin_temp
-
-    chemin_temp, visite = profondeur(plateau, "Left", visite, chemin)
-    if chemin_temp == [None]:
-        backup(plateau.troupeau, beeeh)
-        return chemin_temp, visite
-    chemin = chemin_temp
-
-    return chemin, visite
+    return None
 
 def tri_copy(troupeau):
     lst = []

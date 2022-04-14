@@ -15,8 +15,8 @@ def jeu(plateau: Plateau):
 
             plateau.draw_grid()
             plateau.draw_moutons()    
-                    
-            ev = fltk.donne_ev() # fltk.attend_ev()
+        
+            ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
 
             if plateau.isGagne():
@@ -34,7 +34,11 @@ def jeu(plateau: Plateau):
                 plateau.deplace_moutons(direction)
 
                 if direction == "s":
-                    print(solveur.profondeur(plateau))
+                    chemin = solveur.initProfond(plateau)
+                    if chemin == None:
+                        print("ptdr t'as perdu chacal")
+                    else:
+                        print(chemin)
 
             fltk.mise_a_jour()
 
