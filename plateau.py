@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pprint import pprint
 from typing import List, Tuple
 from mouton import Mouton
 import fltk
@@ -19,7 +20,16 @@ class Case:
 
 class Plateau:
     # Utiliser __slots__ pour les gains de mémoire...
-    
+    # Il faudrait que troupeau soit un set...
+    def __hash__(self):
+        return hash((self.troupeau))
+
+    def __eq__(self, other):
+        if not isinstance(self, type(other)):
+            raise TypeError("Une égalité entre un plateau et\
+                             un autre type d'objet à été tentée")
+        return sorted(self.troupeau) == sorted(other.troupeau)
+
     def __init__(self, gridfile: str):
         self.grid_parse(gridfile)
         self.troupeau     = self.genererMoutons(self.raw_moutons)
@@ -97,22 +107,23 @@ class Plateau:
     def grid_parse(self, file: str):
         self.raw_plateau, self.raw_moutons, self.touffes = list(), list(), list()
         with open(file) as f:
-            lines = f.readlines()
-        for line in lines:
-            row = []
-            for char in line:
-                if char in ('B', 'G'):
-                    row.append(char)
-                elif char == 'S':
-                    self.raw_moutons.append((len(self.raw_plateau), len(row)))
-                if char == 'B':
-                    self.touffes.append((len(self.raw_plateau), len(row)))
-                if char in ('S', '_'):
-                    row.append(None)
-            self.raw_plateau.append(row)
-        print(self.raw_moutons)
-
-
+            for line in f.readlines():
+                row = []
+                for char in line:
+                    if char in ('B', 'G'):
+                        row.append(char)
+                    elif char == 'S':
+                        self.raw_moutons.append(
+                            (len(self.raw_plateau), len(row))
+                        )
+                    if char == 'G':
+                        self.touffes.append(
+                            (len(self.raw_plateau), len(row)-1)
+                        )
+                    if char in ('S', '_'):
+                        row.append(None)
+                self.raw_plateau.append(row)
+        pprint(self.touffes)
 
     def draw_grid(self):
         """
@@ -139,14 +150,10 @@ class Plateau:
         
         for mouton in self.troupeau:
             case = self.cases[mouton.y][mouton.x]
-            if case.contenu == "G":
-                fltk.afficher_image(case.centre_x, case.centre_y,
-                                    images['E'], ancrage='center'
-                )
-            else:
-                fltk.afficher_image(case.centre_x, case.centre_y,
-                                    images['M'], ancrage='center'
-                )            
+            heureux = 'E' if case.contenu == "G" else 'M'
+            fltk.afficher_image(case.centre_x, case.centre_y,
+                                images[heureux], ancrage='center'
+            )          
 
     def isNotPosMouton(self, x, y):
         for mouton in self.troupeau:
@@ -181,7 +188,7 @@ class Plateau:
         """
 
         if direction =="Down" or direction =="Right":
-            self.troupeau.sort(key=self.tri, reverse= True)
+            self.troupeau.sort(key=self.tri, reverse=True)
         
         else:
             self.troupeau.sort(key=self.tri, reverse=False)

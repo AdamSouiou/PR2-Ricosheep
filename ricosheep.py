@@ -17,10 +17,8 @@ def jeu(plateau: Plateau):
             graphiques.background("#3f3e47")
 
             plateau.draw_grid()
-            plateau.draw_moutons()    
-        
-            ev = fltk.donne_ev()
-            tev = fltk.type_ev(ev)
+            plateau.draw_moutons()
+            
 
             if plateau.isGagne():
                 graphiques.victory()
@@ -28,6 +26,8 @@ def jeu(plateau: Plateau):
                 fltk.attend_ev()
                 exit()
 
+            ev = fltk.attend_ev()
+            tev = fltk.type_ev(ev)
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
@@ -47,6 +47,7 @@ def jeu(plateau: Plateau):
                     solveur.backup(plateau.troupeau, reinitialisation)
 
             fltk.mise_a_jour()
+            #fltk.attend_ev()
 
         except KeyboardInterrupt:
             exit()
@@ -54,6 +55,6 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre)
-    plateau = Plateau('maps/square/map1.txt')
+    plateau = Plateau('maps/big/big1.txt')
 
     jeu(plateau)
