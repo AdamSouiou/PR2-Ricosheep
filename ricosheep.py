@@ -31,6 +31,9 @@ def jeu(plateau: Plateau):
                 direction = fltk.touche(ev)
                 plateau.deplace_moutons(direction)
 
+                if direction == "s":
+                    print(solveur.profondeur(plateau))
+
             fltk.mise_a_jour()
 
         except KeyboardInterrupt:
