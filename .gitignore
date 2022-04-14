@@ -3,3 +3,7 @@ poetry.lock
 pyproject.toml
 replit.nix
 venv/
+configs/
+PR2.zip
+__pycache__/
+OLD/
