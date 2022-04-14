@@ -8,6 +8,8 @@ import solveur
 
 
 def jeu(plateau: Plateau):
+    reinitialisation = solveur.tri_copy(plateau.troupeau)
+
     while True:
         try:
             fltk.efface_tout()
@@ -40,6 +42,9 @@ def jeu(plateau: Plateau):
                     else:
                         print(chemin)
 
+                if direction == "r":
+                    solveur.backup(plateau.troupeau, reinitialisation)
+
             fltk.mise_a_jour()
 
         except KeyboardInterrupt:
@@ -48,6 +53,6 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre)
-    plateau = Plateau('maps/big/big1.txt')
+    plateau = Plateau('maps/square/map1.txt')
 
     jeu(plateau)

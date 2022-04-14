@@ -39,7 +39,8 @@ def initProfond(plateau):
 
         chemin_temp, _ = profondeur(plateau, dir)
         if chemin_temp != [None]:
-            return chemin_temp
+            return chemin_temp, len(chemin_temp)
+            
         backup(plateau.troupeau, beeeh)
 
     return None
