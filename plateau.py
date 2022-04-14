@@ -92,10 +92,10 @@ class Plateau:
         de coordonnes ``(y, x)``
         :return List: Liste d'objets Mouton
         """
-        return [Mouton(mouton[0], mouton[1]) for mouton in moutons]
+        return [Mouton(mouton[1], mouton[0]) for mouton in moutons]
 
     def grid_parse(self, file: str):
-        self.raw_plateau, self.raw_moutons = list(), list()
+        self.raw_plateau, self.raw_moutons, self.touffes = list(), list(), list()
         with open(file) as f:
             lines = f.readlines()
         for line in lines:
@@ -105,10 +105,14 @@ class Plateau:
                     row.append(char)
                 elif char == 'S':
                     self.raw_moutons.append((len(self.raw_plateau), len(row)))
+                if char == 'B':
+                    self.touffes.append((len(self.raw_plateau), len(row)))
                 if char in ('S', '_'):
                     row.append(None)
             self.raw_plateau.append(row)
         print(self.raw_moutons)
+
+
 
     def draw_grid(self):
         """
@@ -169,6 +173,7 @@ class Plateau:
         for mouton in self.troupeau:
             mouton.deplace(direction, self)
 
+
     def tri_moutons(self, direction):
         """
         Trie les moutons de sorte que le mouton le plus près
@@ -185,7 +190,9 @@ class Plateau:
         return mouton.x, mouton.y
 
     def isGagne(self):
-        for mouton in self.troupeau:
-            if not self.cases[mouton.y][mouton.x].contenu == 'G':
-                return False
-        return True
+        occupe = 0
+        for herbe in self.touffes:
+            for mouton in self.troupeau:
+                if mouton.x == herbe[1] and mouton.y == herbe[0]:
+                    occupe += 1
+        return occupe == len(self.touffes)

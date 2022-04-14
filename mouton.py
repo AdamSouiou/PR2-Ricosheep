@@ -25,6 +25,3 @@ class Mouton:
         elif direction == "Right":
             while plateau.isPositionValid(self.x+1, self.y):
                 self.x += 1
-
-    def is_eating(case):
-        return case.contenu == "G"

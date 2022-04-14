@@ -5,7 +5,8 @@ import cfg
 import fltk
 import copy
 import solveur
-
+from sys import setrecursionlimit
+setrecursionlimit(10**6)
 
 def jeu(plateau: Plateau):
     while True:
@@ -48,6 +49,6 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre)
-    plateau = Plateau('maps/big/big1.txt')
+    plateau = Plateau('maps/theme/onegrass.txt')
 
     jeu(plateau)
