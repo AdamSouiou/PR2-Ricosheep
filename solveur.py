@@ -1,62 +1,75 @@
-from typing import List, Tuple
+from typing import List, Tuple, Set
+from pprint import pprint
 from plateau import Plateau
-import graphiques
-import cfg
 import fltk
+from time import sleep
 
 DIRECTIONS = ("Up", "Right", "Down", "Left")
 
-def profondeur(plateau, direction = None, visite = set(), chemin = []):
+def profondeur(plateau,
+               direction = DIRECTIONS[0],
+               visite = None,
+               chemin = None) -> Tuple[List[str], Set]:
 
-    plateau.deplace_moutons(direction)
-    beeeh = tri_copy(plateau.troupeau)
+    if chemin is None and visite is None:
+        visite = set()
+        chemin = []
+
+    positions_initiales = tri_copy(plateau.troupeau)
+
+    if positions_initiales in visite:
+        return None, visite
     
-    
-    if beeeh in visite:
-        return [None], visite
-    else:
-        chemin.append(direction)
-        visite.add(beeeh)
-    
+    visite.add(positions_initiales)
+
     if plateau.isGagne():
-        print("C'est gagné")
-        return chemin, visite
+        return [], visite
     
-    for dir in DIRECTIONS:
-        chemin_temp, visite = profondeur(plateau, dir, visite, chemin)
-        if chemin_temp != [None]:
-            return chemin_temp, visite
+    for new_dir in DIRECTIONS:
+        plateau.deplace_moutons(new_dir)
+        chemin.append(new_dir)
+        chemin_temp, visite = profondeur(
+            plateau, new_dir, visite, chemin
+        )
+        if chemin_temp is not None:
+            return chemin, visite
+        chemin.pop()
+        restore(plateau.troupeau, positions_initiales)
 
-        backup(plateau.troupeau, beeeh)
+    return None, visite
 
-    return [None], visite
-
-
-def initProfond(plateau):
-    beeeh = tri_copy(plateau.troupeau)
-
-    for dir in DIRECTIONS:
-
-        chemin_temp, _ = profondeur(plateau, dir)
-        if chemin_temp != [None]:
-            return chemin_temp, len(chemin_temp)
-            
-        backup(plateau.troupeau, beeeh)
-
-    return None
 
 def tri_copy(troupeau):
-    lst = []
-    for mouton in troupeau:
-        lst.append((mouton.x,mouton.y))
-    copy = sorted(lst, key=tri)
-    return tuple(copy)
+    return tuple(sorted(
+        [(m.y, m.x) for m in troupeau],
+    ))
 
-def tri(mouton):
-    return mouton[0], mouton[1]
 
-def backup(troupeau, position):
+def restore(troupeau, positions_initiales):
     for i in range(len(troupeau)):
-        troupeau[i].x = position[i][0]
-        troupeau[i].y = position[i][1]
+        troupeau[i].x = positions_initiales[i][1]
+        troupeau[i].y = positions_initiales[i][0]
+
+""" 
+def tri_copy(troupeau):
+    return tuple(sorted(troupeau))
+
+def restore(troupeau, positions_initiales):
+    for i in range(len(troupeau)):
+        troupeau[i].x = positions_initiales[i].x
+        troupeau[i].y = positions_initiales[i].y
+"""
+
+def anim_brute(plateau: Plateau, pause: int):
         
+    fltk.efface_tout()
+    plateau.draw_moutons()
+    plateau.draw_grid()
+    fltk.mise_a_jour()
+    sleep(pause)
+
+def test(chemin: List[str], plateau: Plateau, anim=0):
+    for mouv in chemin:
+        plateau.deplace_moutons(mouv)
+        if anim : anim_brute(plateau, 0.2)
+    return plateau.isGagne()

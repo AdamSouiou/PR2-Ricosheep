@@ -22,7 +22,7 @@ class Plateau:
     # Utiliser __slots__ pour les gains de mémoire...
     # Il faudrait que troupeau soit un set...
     def __hash__(self):
-        return hash((self.troupeau))
+        return hash(tuple(sorted(self.troupeau)))
 
     def __eq__(self, other):
         if not isinstance(self, type(other)):
@@ -43,7 +43,7 @@ class Plateau:
             "B" : fltk.box_image('media/bush.png',  (self.box_image,)),
             "G" : fltk.box_image('media/grass.png', (self.box_image,)),
             "M" : fltk.box_image('media/sheep.png', (self.box_image,)),
-            "E" : fltk.box_image('media/sheep_grass.png',  (self.box_image,))
+            "E" : fltk.box_image('media/sheep_grass.png', (self.box_image,))
         }
 
     def genererCases(self, raw_plateau: List[List], proportion: int):
@@ -123,7 +123,6 @@ class Plateau:
                     if char in ('S', '_'):
                         row.append(None)
                 self.raw_plateau.append(row)
-        pprint(self.touffes)
 
     def draw_grid(self):
         """
@@ -159,8 +158,7 @@ class Plateau:
         for mouton in self.troupeau:
             if mouton.x == x and mouton.y == y:
                 return False
-        else:
-            return True
+        return True
 
             
     def isPositionValid(self, x: int, y: int):
@@ -180,21 +178,15 @@ class Plateau:
         for mouton in self.troupeau:
             mouton.deplace(direction, self)
 
-
     def tri_moutons(self, direction):
         """
         Trie les moutons de sorte que le mouton le plus près
         du mur de la direction demandée soit le premier à être déplacé.
         """
-
-        if direction =="Down" or direction =="Right":
-            self.troupeau.sort(key=self.tri, reverse=True)
-        
+        if direction in {"Down","Right"}:
+            self.troupeau.sort(reverse=True)
         else:
-            self.troupeau.sort(key=self.tri, reverse=False)
-
-    def tri(self, mouton):
-        return mouton.x, mouton.y
+            self.troupeau.sort(reverse=False)
 
     def isGagne(self):
         occupe = 0
