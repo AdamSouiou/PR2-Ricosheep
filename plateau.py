@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pprint import pprint
 from typing import List, Tuple
 from mouton import Mouton
+from grille import Grille
 import fltk
 import cfg
 
@@ -32,67 +33,19 @@ class Plateau:
 
     def __init__(self, gridfile: str):
         self.grid_parse(gridfile)
-        self.troupeau     = self.genererMoutons(self.raw_moutons)
+        self.env = {'B' : self.buissons, 'G': self.touffes}
+        self.troupeau = self.genererMoutons(self.raw_moutons)
 
-        self.nb_colonne   = len(self.raw_plateau[0])
-        self.nb_ligne     = len(self.raw_plateau)
-        self.cases, self.box_image = self.genererCases(self.raw_plateau, 0.8)
+        self.grille = Grille(self.nb_colonnes, self.nb_lignes)
+        self.taille_image = self.grille.taille_case * 0.8
 
         global images
         images = {
-            "B" : fltk.box_image('media/bush.png',  (self.box_image,)),
-            "G" : fltk.box_image('media/grass.png', (self.box_image,)),
-            "M" : fltk.box_image('media/sheep.png', (self.box_image,)),
-            "E" : fltk.box_image('media/sheep_grass.png', (self.box_image,))
+            "B" : fltk.box_image('media/bush.png',  (self.taille_image,)),
+            "G" : fltk.box_image('media/grass.png', (self.taille_image,)),
+            "M" : fltk.box_image('media/sheep.png', (self.taille_image,)),
+            "E" : fltk.box_image('media/sheep_grass.png', (self.taille_image,))
         }
-
-    def genererCases(self, raw_plateau: List[List], proportion: int):
-        """
-        Initialise une liste d'objets ``Cases``, dont les coordonnées
-        ont été adaptées à la taille de la fenêtre.
-
-        :param List raw_plateau: Liste de liste brute du fichier niveau
-        :param float proportion: Proportion des images par rapport aux cases
-        :return: Tuple composé d'une liste de ``Cases`` et la taille
-        (carré) en pixels des cases générées.
-        """
-    
-        cases = []
-    
-        marge_largeur = cfg.largeur_fenetre * 0.05
-        marge_hauteur = cfg.hauteur_fenetre * 0.05
-
-        taille_case = min(
-            (cfg.largeur_fenetre - marge_largeur)/self.nb_colonne,
-            (cfg.hauteur_fenetre - marge_hauteur)/self.nb_ligne
-        )
-        taille_image = taille_case * proportion
-        
-        view_ax = (cfg.largeur_fenetre - taille_case * self.nb_colonne)/2
-        view_ay = (cfg.hauteur_fenetre - taille_case * self.nb_ligne)/2
-        
-        for j in range(self.nb_ligne):
-            ligne = []
-            for i in range(self.nb_colonne):
-                ax = view_ax + (i * taille_case)
-                ay = view_ay + (j * taille_case)
-                centre = taille_case/2
-                
-                ligne.append(
-                    Case(
-                        ax=ax,
-                        ay=ay,
-                        bx=ax + taille_case,
-                        by=ay + taille_case,
-                        centre_x=ax + centre,
-                        centre_y=ay + centre,
-                        contenu=raw_plateau[j][i]
-                    )
-                )
-    
-            cases.append(ligne)
-    
-        return cases, taille_image
 
     def genererMoutons(self, moutons: List[Tuple[int, int]]):
         """
@@ -105,54 +58,38 @@ class Plateau:
         return [Mouton(mouton[1], mouton[0]) for mouton in moutons]
 
     def grid_parse(self, file: str):
-        self.raw_plateau, self.raw_moutons, self.touffes = list(), list(), list()
+        self.raw_moutons, self.touffes, self.buissons = [], set(), set()
+        self.nb_lignes = 0
         with open(file) as f:
             for line in f.readlines():
-                row = []
+                self.nb_colonnes = 0
                 for char in line:
-                    if char in ('B', 'G'):
-                        row.append(char)
+                    pos = (self.nb_lignes, self.nb_colonnes)
+                    if char in 'B':
+                        self.buissons.add(pos)
+                    elif char == 'G':
+                        self.touffes.add(pos)
                     elif char == 'S':
-                        self.raw_moutons.append(
-                            (len(self.raw_plateau), len(row))
-                        )
-                    if char == 'G':
-                        self.touffes.append(
-                            (len(self.raw_plateau), len(row)-1)
-                        )
-                    if char in ('S', '_'):
-                        row.append(None)
-                self.raw_plateau.append(row)
+                        self.raw_moutons.append(pos)
+                    self.nb_colonnes += 1
+                self.nb_lignes += 1
 
-    def draw_grid(self):
-        """
-        Dessine les cases du plateau, et affiche le images
-        buisson et herbe.
-        """
-        for ligne in self.cases:
-            for case in ligne:
-                fltk.rectangle(
-                    case.ax,case.ay,
-                    case.bx,case.by,
-                    'white'
-                )
-                if case.contenu is not None:
-                    fltk.afficher_image(
-                        case.centre_x, case.centre_y,
-                        images[case.contenu], ancrage='center'
-                    )
-            
-    def draw_moutons(self):
-        """
-        Dessine les moutons.
-        """
-        
-        for mouton in self.troupeau:
-            case = self.cases[mouton.y][mouton.x]
-            heureux = 'E' if case.contenu == "G" else 'M'
-            fltk.afficher_image(case.centre_x, case.centre_y,
-                                images[heureux], ancrage='center'
-            )          
+    affiche = lambda self, case, img: fltk.afficher_image(
+                case.centre_x,
+                case.centre_y,
+                img, ancrage='center'
+    )
+    
+    def draw(self):
+        self.grille.draw()
+        for name, elements in self.env.items():
+            for y,x in elements:
+                case = self.grille.cases[y][x]
+                self.affiche(case, images[name])
+        for m in self.troupeau:
+            heureux = 'E' if m in self.touffes else 'M'
+            case = self.grille.cases[m.y][m.x]
+            self.affiche(case, images[heureux])   
 
     def isNotPosMouton(self, x, y):
         for mouton in self.troupeau:
@@ -168,10 +105,10 @@ class Plateau:
         si la case est vide ou est une touffe d'herbe.
         """
          
-        return (0 <= y < self.nb_ligne and
-                (0 <= x < self.nb_colonne) and
-                 self.cases[y][x].contenu != 'B'
-                 and self.isNotPosMouton(x, y))
+        return (0 <= y < self.nb_lignes and
+                (0 <= x < self.nb_colonnes) and
+                 not (y, x) in self.buissons and
+                  self.isNotPosMouton(x, y))
 
     def deplace_moutons(self, direction: str):
         self.tri_moutons(direction)

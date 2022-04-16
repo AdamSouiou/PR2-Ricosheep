@@ -16,8 +16,7 @@ def jeu(plateau: Plateau):
             fltk.efface_tout()
             graphiques.background("#3f3e47")
 
-            plateau.draw_grid()
-            plateau.draw_moutons()
+            plateau.draw()
             
             if plateau.isGagne():
                 # graphiques.victory()

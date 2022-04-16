@@ -4,13 +4,21 @@ from typing import List, Tuple
 class Mouton:
     __slots__ = ['x', 'y']
     def __hash__(self):
-        return hash((self.x, self.y))
+        return hash((self.y, self.x))
     def __eq__(self, other):
-        return (self.x, self.y) == (other.x, other.y)
+        if type(other) == tuple:
+            return (self.y, self.x) == other
+        return (self.y, self.x) == (other.y, other.x)
     def __lt__(self, other):
-        return (self.x, self.y) < (other.x, other.y)
+        if type(other) == tuple:
+            return (self.y, self.x) < other
+        return (self.y, self.x) < (other.y, other.x)
     def __gt__(self, other):
-        return (self.x, self.y) > (other.x, other.y)
+        if type(other) == tuple:
+            return (self.y, self.x) > other
+        return (self.y, self.x) > (other.y, other.x)
+    def __iter__(self):
+        return iter((self.y, self.x))
 
     def __init__(self, x: int, y: int):
         self.x = x

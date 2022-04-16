@@ -41,7 +41,7 @@ def profondeur(plateau,
 
 def tri_copy(troupeau):
     return tuple(sorted(
-        [(m.y, m.x) for m in troupeau],
+        [(m.y, m.x) for m in troupeau]
     ))
 
 
@@ -63,13 +63,12 @@ def restore(troupeau, positions_initiales):
 def anim_brute(plateau: Plateau, pause: int):
         
     fltk.efface_tout()
-    plateau.draw_moutons()
-    plateau.draw_grid()
+    plateau.draw()
     fltk.mise_a_jour()
     sleep(pause)
 
 def test(chemin: List[str], plateau: Plateau, anim=0):
     for mouv in chemin:
         plateau.deplace_moutons(mouv)
-        if anim : anim_brute(plateau, 0.2)
+        if anim: anim_brute(plateau, anim)
     return plateau.isGagne()
