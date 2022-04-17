@@ -2,6 +2,7 @@ from sys import setrecursionlimit
 from time import time
 from pprint import pprint
 from plateau import Plateau
+from menu import menu
 import graphiques
 import cfg
 import fltk
@@ -31,10 +32,10 @@ def jeu(plateau: Plateau):
                 exit()
 
             elif tev == "Touche":
-                direction = fltk.touche(ev)
-                plateau.deplace_moutons(direction)
+                touche = fltk.touche(ev)
+                plateau.deplace_moutons(touche)
 
-                if direction == "s":
+                if touche == "s":
                     start = time()
                     chemin, _ = solveur.profondeur(plateau)
                     elapsed = time() - start
@@ -42,13 +43,15 @@ def jeu(plateau: Plateau):
                     if chemin == None:
                         print("Pas de solutions, chacal!")
                     else:
-                        solveur.test(chemin, plateau)
+                        solveur.test(chemin, plateau, 0.001)
                         print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)},",
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
-                if direction == "r":
+                elif touche == "r":
                     solveur.restore(plateau.troupeau, backup_pos)
+                elif touche == 'Escape':
+                    return
 
             fltk.mise_a_jour()
             #fltk.attend_ev()
@@ -59,6 +62,9 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre)
-    #plateau = Plateau('maps/big/big1.txt')
-    plateau = Plateau('maps/big/huge.txt')
-    jeu(plateau)
+
+    while True:
+        choix = menu()
+        if choix == 'Jouer':
+            plateau = Plateau('maps/big/huge.txt')
+            jeu(plateau)

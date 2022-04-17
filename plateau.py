@@ -7,18 +7,6 @@ import fltk
 import cfg
 
 
-images = {}
-
-@dataclass
-class Case:
-    ax: int
-    ay: int
-    bx: int
-    by: int
-    centre_x: int
-    centre_y: int
-    contenu: str # 'G' ou 'B' ou None PAS de moutons !
-
 class Plateau:
     # Utiliser __slots__ pour les gains de mémoire...
     # Il faudrait que troupeau soit un set...
@@ -37,7 +25,7 @@ class Plateau:
         self.troupeau = self.genererMoutons(self.raw_moutons)
 
         self.grille = Grille(self.nb_colonnes, self.nb_lignes)
-        self.taille_image = self.grille.taille_case * 0.8
+        self.taille_image = self.grille.largeur_case * 0.8
 
         global images
         images = {

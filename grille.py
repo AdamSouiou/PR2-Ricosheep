@@ -13,12 +13,16 @@ class Case:
     centre_y: int
 
 class Grille:
-    def __init__(self, nb_colonne: int, nb_ligne: int):
+    def __init__(self, nb_colonne: int, nb_ligne: int,
+                 marge_largeur=0.95, marge_hauteur=0.95, carre=True):
+        self.marge_largeur = marge_largeur
+        self.marge_hauteur = marge_hauteur
         self.nb_colonne = nb_colonne
         self.nb_ligne = nb_ligne
-        self.cases, self.taille_case = self.genererCases()
+        self.carre = carre
+        self.genererCases()
         
-    def genererCases(self, carre=False, marge_largeur=0.95, marge_hauteur=0.95):
+    def genererCases(self):
         """
         Initialise une liste d'objets ``Cases``, dont les coordonnées
         ont été adaptées à la taille de la fenêtre.
@@ -27,46 +31,52 @@ class Grille:
         (carré) en pixels des cases générées.
         """
         
-        cases = []
+        self.cases = []
 
-        taille_case = min(
-            (cfg.largeur_fenetre * marge_largeur)/self.nb_colonne,
-            (cfg.hauteur_fenetre * marge_hauteur)/self.nb_ligne
+        self.largeur_case, self.hauteur_case = (
+            (cfg.largeur_fenetre * self.marge_largeur)/self.nb_colonne,
+            (cfg.hauteur_fenetre * self.marge_hauteur)/self.nb_ligne
         )
+        
+        if self.carre:
+            m = min(self.largeur_case, self.hauteur_case)
+            self.largeur_case, self.hauteur_case = m, m
 
-        view_ax = (cfg.largeur_fenetre - taille_case * self.nb_colonne)//2
-        view_ay = (cfg.hauteur_fenetre - taille_case * self.nb_ligne)//2
+        self.view_ax = (cfg.largeur_fenetre - self.largeur_case * self.nb_colonne)//2
+        self.view_ay = (cfg.hauteur_fenetre - self.hauteur_case * self.nb_ligne)//2
+        self.view_bx = cfg.largeur_fenetre - self.view_ax
+        self.view_by = cfg.hauteur_fenetre - self.view_ay
         
         for j in range(self.nb_ligne):
             ligne = []
             for i in range(self.nb_colonne):
-                ax = view_ax + (i * taille_case)
-                ay = view_ay + (j * taille_case)
-                centre = taille_case/2
+                ax = self.view_ax + (i * self.largeur_case)
+                ay = self.view_ay + (j * self.hauteur_case)
                 
                 ligne.append(
                     Case(
                         ax=ax,
                         ay=ay,
-                        bx=ax + taille_case,
-                        by=ay + taille_case,
-                        centre_x=ax + centre,
-                        centre_y=ay + centre,
+                        bx=ax + self.largeur_case,
+                        by=ay + self.hauteur_case,
+                        centre_x=ax + self.largeur_case//2,
+                        centre_y=ay + self.hauteur_case//2,
                     )
                 )
     
-            cases.append(ligne)
-    
-        return cases, taille_case
+            self.cases.append(ligne)
 
-    def draw(self, affiche_case=None):
+    def draw(self, callback=None):
         """
         Dessine les cases
         """
-        for ligne in self.cases:
-            for case in ligne:
+        
+        for y, ligne in enumerate(self.cases):
+            for x, case in enumerate(ligne):
                 fltk.rectangle(
                     case.ax,case.ay,
                     case.bx,case.by,
                     'white'
                 )
+                if callback is not None:
+                    callback(case, x, y)
