@@ -19,10 +19,12 @@ class Plateau:
                              un autre type d'objet à été tentée")
         return sorted(self.troupeau) == sorted(other.troupeau)
 
-    def __init__(self, gridfile: str):
+    def __init__(self, gridfile: str, test_mode=False):
         self.grid_parse(gridfile)
-        self.env = {'B' : self.buissons, 'G': self.touffes}
         self.troupeau = self.genererMoutons(self.raw_moutons)
+        if test_mode: return
+
+        self.env = {'B' : self.buissons, 'G': self.touffes}
 
         self.grille = Grille(self.nb_colonnes, self.nb_lignes)
         self.taille_image = self.grille.largeur_case * 0.8
@@ -108,9 +110,9 @@ class Plateau:
         Trie les moutons de sorte que le mouton le plus près
         du mur de la direction demandée soit le premier à être déplacé.
         """
-        if direction in {"Down","Right"}:
+        if direction in {"Down", "Right"}:
             self.troupeau.sort(reverse=True)
-        else:
+        elif direction in {"Up", "Left"}:
             self.troupeau.sort(reverse=False)
 
     def isGagne(self):

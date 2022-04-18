@@ -1,5 +1,4 @@
 from typing import List, Tuple, Set
-from pprint import pprint
 from plateau import Plateau
 import fltk
 from time import sleep
@@ -7,16 +6,20 @@ from time import sleep
 DIRECTIONS = ("Up", "Right", "Down", "Left")
 
 def profondeur(plateau,
-               direction = DIRECTIONS[0],
+               direction = None,
                visite = None,
                chemin = None) -> Tuple[List[str], Set]:
 
-    if chemin is None and visite is None:
+    if visite is None and chemin is None:
         visite = set()
         chemin = []
+    if direction is not None:
+        # Au cas où l'on voudrait appeler la fonction
+        # avec une direction spécifique
+        plateau.deplace_moutons(direction)
 
     positions_initiales = tri_copy(plateau.troupeau)
-
+    
     if positions_initiales in visite:
         return None, visite
     
@@ -29,7 +32,7 @@ def profondeur(plateau,
         plateau.deplace_moutons(new_dir)
         chemin.append(new_dir)
         chemin_temp, visite = profondeur(
-            plateau, new_dir, visite, chemin
+            plateau, None, visite, chemin
         )
         if chemin_temp is not None:
             return chemin, visite
@@ -72,3 +75,6 @@ def test(chemin: List[str], plateau: Plateau, anim=0):
         plateau.deplace_moutons(mouv)
         if anim: anim_brute(plateau, anim)
     return plateau.isGagne()
+
+if __name__ == '__name__':
+    pass

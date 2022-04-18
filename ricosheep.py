@@ -43,8 +43,10 @@ def jeu(plateau: Plateau):
                     if chemin == None:
                         print("Pas de solutions, chacal!")
                     else:
-                        solveur.test(chemin, plateau, 0.001)
+                        #solveur.restore(plateau.troupeau, backup_pos)
                         print(chemin)
+                        print("Le solveur a bon? :", solveur.test(chemin, plateau, 0))
+                        # print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)},",
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
@@ -66,5 +68,5 @@ if __name__ == "__main__":
     while True:
         choix = menu()
         if choix == 'Jouer':
-            plateau = Plateau('maps/big/huge.txt')
+            plateau = Plateau('maps/wide/wide4.txt')
             jeu(plateau)

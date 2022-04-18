@@ -185,6 +185,14 @@ def cree_fenetre(largeur, hauteur, titre='tk', frequence=100):
     __canevas = CustomCanvas(largeur, hauteur, titre, frequence)
 
 
+def taille_fenetre():
+    """
+    Retourne la taille actuelle de la fenêtre
+    """
+    return (__canevas.root.winfo_width(),
+            __canevas.root.winfo_height())
+
+
 def ferme_fenetre():
     """
     Détruit la fenêtre.
