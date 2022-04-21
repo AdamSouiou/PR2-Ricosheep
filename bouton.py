@@ -30,7 +30,6 @@ class Bouton:
     ay: float
     bx: float
     by: float
-    identificateur: str
     invisible = False
     factice = False
 
@@ -54,6 +53,7 @@ class BoutonSimple(BoutonTexte):
 
 @dataclass
 class BoutonBooleen(BoutonTexte):
+    identificateur: str
     etat: bool
     texte_actif: str
     texte_desactive: str
@@ -61,6 +61,7 @@ class BoutonBooleen(BoutonTexte):
     couleur_hovered_actif = '#0b4f34'
     couleur_desactive = '#cf0e0e'
     couleur_hovered_desactive = '#941010'
+
 
 class Boutons:
     def __init__(self, format_grille):
@@ -82,12 +83,11 @@ class Boutons:
         self.unifier_taille_texte()
 
     def cree_bouton_texte(self, ax: float, ay: float, bx: float, by: float,
-                          identificateur: str, **kwargs) -> BoutonTexte:
+                          texte: str, **kwargs) -> BoutonTexte:
         """
         Crée un bouton factice (ne change pas de couleur lors de son survol)
         à partir des positions des cases de la grille, avec comme
-        identificateur : ``identificateur``. Le libéllé du bouton sera
-        celui de l'identificateur.
+        texte : ``texte``.
     
         :param float ax: Abscisse de la case ``a`` de la grille, entre 0
         et la taille en largeur de la grille non-inclue
@@ -97,7 +97,7 @@ class Boutons:
         et la taille en largeur de la grille
         :param float by: Ordonnée de la case ``b`` de la grille, entre 0
         et la taille en largeur de la grille
-        :param str identificateur: Nom du bouton
+        :param str texte: Texte du bouton
     
         :param bool hovered: Optionnel, détermine si le bouton change de couleur
         lors  de son survol. Par défaut: ``True``
@@ -120,13 +120,12 @@ class Boutons:
                     self.grille.cases[ay][ax].ay,
                     self.grille.cases[by][bx].bx,
                     self.grille.cases[by][bx].by,
-                    identificateur,
-                    identificateur
+                    texte,
                  )
         self.parse_optionnal_args(kwargs, bouton)
     
         bouton.taille_texte = self.taille_texte_bouton(bouton)
-        self.boutons[identificateur] = bouton
+        self.boutons[texte] = bouton
     
     
     def cree_bouton_invisible(self, ax: float, ay: float, bx: float, by: float,
@@ -151,7 +150,6 @@ class Boutons:
                     self.grille.cases[ay][ax].ay,
                     self.grille.cases[by][bx].bx,
                     self.grille.cases[by][bx].by,
-                    identificateur,
                  )
         bouton.invisible = True
         self.boutons[identificateur] = bouton
@@ -200,8 +198,8 @@ class Boutons:
                     self.grille.cases[ay][ax].ay,
                     self.grille.cases[by][bx].bx,
                     self.grille.cases[by][bx].by,
-                    identificateur,
                     '',
+                    identificateur,
                     etat,
                     texte_actif,
                     texte_desactive,
@@ -220,13 +218,10 @@ class Boutons:
     
     
     def cree_bouton_simple(self, ax: float, ay: float, bx: float, by: float,
-                           identificateur: str, **kwargs) -> BoutonSimple:
+                           texte: str, **kwargs) -> BoutonSimple:
         """
         Crée un bouton simple, c'est à dire survolable, à partir des
-        positions des cases de la grille, et ayant comme libellé
-        et identificateur: ``identificateur``.
-        Le paramètre ``hovered`` détermine si le bouton devra changer
-        de couleur à son survol.
+        positions des cases de la grille.
     
         :param float ax: Abscisse de la case ``a`` de la grille, entre 0
         et la taille en largeur de la grille non-inclue
@@ -236,7 +231,7 @@ class Boutons:
         et la taille en largeur de la grille
         :param float by: Ordonnée de la case ``b`` de la grille, entre 0
         et la taille en largeur de la grille
-        :param str identificateur: Nom et libéllé du bouton
+        :param str texte: Nom du bouton
     
         :param bool hovered: Optionnel, détermine si le bouton change
         de couleur lors de son survol. Par défaut: ``True``
@@ -259,14 +254,13 @@ class Boutons:
                     self.grille.cases[ay][ax].ay,
                     self.grille.cases[by][bx].bx,
                     self.grille.cases[by][bx].by,
-                    identificateur,
-                    identificateur
+                    texte,
                  )
         self.parse_optionnal_args(kwargs, bouton)
     
         bouton.taille_texte = self.taille_texte_bouton(bouton)
     
-        self.boutons[identificateur] = bouton
+        self.boutons[texte] = bouton
 
     
     def parse_optionnal_args(self, args: dict, bouton):
@@ -386,7 +380,7 @@ class Boutons:
         nom_bouton_survole = None
         deja_survole = False
     
-        for bouton in self.boutons.values():
+        for identificateur, bouton in self.boutons.items():
             survole = False
             # Evite de tester si un bouton est survolé, si
             # un bouton à déjà été survolé.
@@ -394,7 +388,7 @@ class Boutons:
                 survole = self.curseur_sur_bouton(bouton)
                 if survole:
                     deja_survole = True
-                    nom_bouton_survole = bouton.identificateur
+                    nom_bouton_survole = identificateur
             self.dessiner_bouton(bouton, survole, tev)
     
         return nom_bouton_survole
