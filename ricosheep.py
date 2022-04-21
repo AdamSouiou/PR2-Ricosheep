@@ -7,10 +7,11 @@ import graphiques
 import cfg
 import fltk
 import solveur
+
 setrecursionlimit(10**6)
 
 def jeu(plateau: Plateau):
-    backup_pos = solveur.tri_copy(plateau.troupeau)
+    pos_initiale = solveur.tri_copy(plateau.troupeau)
 
     while True:
         try:
@@ -37,13 +38,14 @@ def jeu(plateau: Plateau):
 
                 if touche == "s":
                     start = time()
+                    pos_tmp = solveur.tri_copy(plateau.troupeau)
                     chemin, _ = solveur.profondeur(plateau)
                     elapsed = time() - start
                     
                     if chemin == None:
                         print("Pas de solutions, chacal!")
                     else:
-                        #solveur.restore(plateau.troupeau, backup_pos)
+                        solveur.restore(plateau.troupeau, pos_tmp)
                         print(chemin)
                         print("Le solveur a bon? :", solveur.test(chemin, plateau, 0))
                         # print(chemin)
@@ -51,12 +53,11 @@ def jeu(plateau: Plateau):
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                 elif touche == "r":
-                    solveur.restore(plateau.troupeau, backup_pos)
+                    solveur.restore(plateau.troupeau, pos_initiale)
                 elif touche == 'Escape':
                     return
 
             fltk.mise_a_jour()
-            #fltk.attend_ev()
 
         except KeyboardInterrupt:
             exit()
@@ -68,5 +69,5 @@ if __name__ == "__main__":
     while True:
         choix = menu()
         if choix == 'Jouer':
-            plateau = Plateau('maps/wide/wide4.txt')
+            plateau = Plateau('maps/big/huge.txt')
             jeu(plateau)

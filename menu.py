@@ -7,8 +7,9 @@ import fltk
 def menu():
 
     boutons = Boutons((10,10))
-    boutons.cree_bouton_simple(1, 5, 8, 5, 'Jouer')
-    boutons.cree_bouton_simple(1, 7, 8, 7, 'Options')
+    boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer')
+    boutons.cree_bouton_simple(1, 6, 8, 6, 'Editeur')
+    boutons.cree_bouton_simple(1, 8, 8, 8, 'Options')
     boutons.cree_bouton_booleen(
         9, 9, 9, 9,
         'Son', True, 'Son!', 'Muet', unifier_texte=False
@@ -23,7 +24,6 @@ def menu():
             graphiques.background("#3f3e47")
             boutons.grille.draw()
             click = boutons.dessiner_boutons(tev)
-        
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -31,8 +31,7 @@ def menu():
 
             elif tev == "ClicGauche":
                 print(click)
-                print(f"Etat du son : {boutons.boutons['Son'].etat}")
-                if click not in {'Son'}:
+                if click not in {None, 'Son'}:
                     return click
 
             fltk.mise_a_jour()

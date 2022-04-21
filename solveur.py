@@ -13,10 +13,11 @@ def profondeur(plateau,
     if visite is None and chemin is None:
         visite = set()
         chemin = []
-    if direction is not None:
-        # Au cas où l'on voudrait appeler la fonction
-        # avec une direction spécifique
-        plateau.deplace_moutons(direction)
+        if direction is not None:
+            # Au cas où l'on voudrait appeler la fonction
+            # avec une direction spécifique
+            chemin.append(direction)
+            plateau.deplace_moutons(direction)
 
     positions_initiales = tri_copy(plateau.troupeau)
     

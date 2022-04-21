@@ -12,9 +12,15 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 # booléens qui peuvent enregistrer leur état et l'afficher
 # par leur couleur, et de boutons invisibles.
 
+# A faire:
+# - Boutons arrondis (peu performant car nécessite 4 appels à circle + 1 rectangle)
+# - Bouton ronds
+# - Bouton avec icône
+
 from dataclasses import dataclass
 from typing import Union
 from grille import Grille
+import cfg
 import fltk
 
 
@@ -62,7 +68,11 @@ class Boutons:
         Initialise la grille selon laquelle seront positionnés les boutons.
         """
         self.boutons = {}
-        self.grille = Grille(format_grille[0], format_grille[1], carre=True)
+        self.grille = Grille(format_grille[0], format_grille[1],
+                             marge_largeur=0.95, marge_hauteur=0.95,
+                             grille_base=None,
+                             grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
+                             carre=True)
 
     def init(self):
         """

@@ -19,6 +19,8 @@ class Mouton:
         return (self.y, self.x) > (other.y, other.x)
     def __iter__(self):
         return iter((self.y, self.x))
+    def __repr__(self):
+        return f'(y={self.y}, x={self.x})'
 
     def __init__(self, x: int, y: int):
         self.x = x

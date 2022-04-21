@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Tuple
 import cfg
 import fltk
+
 
 @dataclass
 class Case:
@@ -12,9 +12,41 @@ class Case:
     centre_x: int
     centre_y: int
 
+
 class Grille:
     def __init__(self, nb_colonne: int, nb_ligne: int,
-                 marge_largeur=0.95, marge_hauteur=0.95, carre=True):
+                 marge_largeur=0.95, marge_hauteur=0.95,
+                 grille_base=None,
+                 grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
+                 carre=True):
+
+        """
+        Objet Grille, permettant de dessiner... une grille.
+        :param float marge_largeur: Proportion en largeur de la grille
+        dans la box définie par ``grille_pos``
+        :param float marge_hauteur: Proportion en hauteur de la grille
+        dans la box définie par ``grille_pos``
+        :param Grille grille_base: Si une grille est reçue,
+        elle sera utilisée pour définir la position absolue de la nouvelle grille
+        par rapport à celle-ci et les coordonnées données par ``grille_pos``
+        :param tuple grille_pos: Position absolue (par rapport à la fenêtre) si
+        ``grille_base`` vaut ``None``, sinon position par rapport aux coordonnées
+        des cases de ``grille_base``.
+        :param bool carre: Si ``True`` adapte la taille de la grille,
+        de sorte que les cases restent carrées.
+        """
+
+        if grille_base is not None:
+            self.view_ax, self.view_ay = grille_base.getAbsoluteCoordsTL(
+                grille_pos[0], grille_pos[1]
+            )
+            self.view_bx, self.view_by = grille_base.getAbsoluteCoordsBR(
+                grille_pos[2], grille_pos[3]
+            )
+        else:
+            self.view_ax, self.view_ay = grille_pos[0], grille_pos[1]
+            self.view_bx, self.view_by = grille_pos[2], grille_pos[3]
+        
         self.marge_largeur = marge_largeur
         self.marge_hauteur = marge_hauteur
         self.nb_colonne = nb_colonne
@@ -30,22 +62,24 @@ class Grille:
         :return: Tuple composé d'une liste de ``Cases`` et la taille
         (carré) en pixels des cases générées.
         """
+        largeur_interieur = (self.view_bx - self.view_ax)*self.marge_largeur
+        hauteur_interieur = (self.view_by - self.view_ay)*self.marge_hauteur
         
         self.cases = []
 
         self.largeur_case, self.hauteur_case = (
-            (cfg.largeur_fenetre * self.marge_largeur)/self.nb_colonne,
-            (cfg.hauteur_fenetre * self.marge_hauteur)/self.nb_ligne
+            largeur_interieur/self.nb_colonne,
+            hauteur_interieur/self.nb_ligne
         )
         
         if self.carre:
             m = min(self.largeur_case, self.hauteur_case)
             self.largeur_case, self.hauteur_case = m, m
 
-        self.view_ax = (cfg.largeur_fenetre - self.largeur_case * self.nb_colonne)//2
-        self.view_ay = (cfg.hauteur_fenetre - self.hauteur_case * self.nb_ligne)//2
-        self.view_bx = cfg.largeur_fenetre - self.view_ax
-        self.view_by = cfg.hauteur_fenetre - self.view_ay
+        self.view_ax += ((self.view_bx - self.view_ax) - self.largeur_case*self.nb_colonne)//2
+        self.view_ay += ((self.view_by - self.view_ay) - self.hauteur_case*self.nb_ligne)//2
+
+        print(self.view_ax, self.view_ay)
         
         for j in range(self.nb_ligne):
             ligne = []
@@ -80,3 +114,11 @@ class Grille:
                 )
                 if callback is not None:
                     callback(case, x, y)
+    
+    def getAbsoluteCoordsTL(self, x_case: int, y_case: int):
+        return (self.cases[y_case][x_case].ax,
+                self.cases[y_case][x_case].ay)
+
+    def getAbsoluteCoordsBR(self, x_case: int, y_case: int):
+        return (self.cases[y_case][x_case].bx,
+                self.cases[y_case][x_case].by)

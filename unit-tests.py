@@ -11,11 +11,11 @@ maps_impossibles = {'maps/square/map1.txt',
 class TestSolveur(unittest.TestCase):
     
     def testSolveurCorrect(self):
-        nb_corrects = 0
+        nb_tests = 0
         for map_file in glob('maps/*/*.txt'):
             if '__' in map_file: continue
             with self.subTest():
-                print(map_file)
+                print(f"Test avec {map_file}...")
                 plateau = Plateau(map_file, test_mode=True)
                 back = solveur.tri_copy(plateau.troupeau)
                 
@@ -39,8 +39,8 @@ class TestSolveur(unittest.TestCase):
                 solveur.restore(plateau.troupeau, back)
                 self.assertTrue(solveur.test(chemin, plateau) is True,
                     f"Le chemin n'est pas correct, la map était {map_file}")
-            nb_corrects += 1
-        print(nb_corrects)
+            nb_tests += 1
+        print(f"{nb_tests} tests ont été réalisés")
                 
 
 if __name__ == '__main__':

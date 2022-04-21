@@ -1,1 +1,1 @@
-largeur_fenetre, hauteur_fenetre    =   400, 400
+largeur_fenetre, hauteur_fenetre    =   800, 640
