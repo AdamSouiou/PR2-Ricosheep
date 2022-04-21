@@ -1,4 +1,5 @@
 from bouton import Boutons
+from grille import Grille
 
 import graphiques
 import cfg
@@ -13,6 +14,10 @@ def menu():
     boutons.cree_bouton_booleen(
         9, 9, 9, 9,
         'Son', True, 'Son!', 'Muet', unifier_texte=False
+    )
+    boutons.cree_bouton_booleen(
+        0, 9, 0, 9,
+        'Precalcul', cfg.precalcul_perdant, 'Precalcul', 'Normal', unifier_texte=False
     )
     boutons.init()
 
@@ -30,8 +35,9 @@ def menu():
                 exit()
 
             elif tev == "ClicGauche":
+                cfg.precalcul_perdant = boutons.boutons['Precalcul'].etat
                 print(click)
-                if click not in {None, 'Son'}:
+                if click not in {None, 'Son', 'Precalcul'}:
                     return click
 
             fltk.mise_a_jour()

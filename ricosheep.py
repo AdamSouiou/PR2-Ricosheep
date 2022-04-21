@@ -7,11 +7,13 @@ import graphiques
 import cfg
 import fltk
 import solveur
+import experimental
 
 setrecursionlimit(10**6)
 
 def jeu(plateau: Plateau):
     pos_initiale = solveur.tri_copy(plateau.troupeau)
+    if cfg.precalcul_perdant: pos_perdantes, _ = experimental.precalcul_pos_perdant(plateau)
 
     while True:
         try:
@@ -35,6 +37,15 @@ def jeu(plateau: Plateau):
             elif tev == "Touche":
                 touche = fltk.touche(ev)
                 plateau.deplace_moutons(touche)
+                if cfg.precalcul_perdant:
+                    t = solveur.tri_copy(plateau.troupeau)
+                    print(f"{plateau.troupeau}")
+                    print(f"Valeur calculée par pos_perdant pour le troupeau :")
+                    if t in pos_perdantes:
+                        print(f"{pos_perdantes[t]}")
+                    else:
+                        print("Ce cas n'est pas présent dans les positions calculées")
+                    print()
 
                 if touche == "s":
                     start = time()
@@ -58,6 +69,7 @@ def jeu(plateau: Plateau):
                     return
 
             fltk.mise_a_jour()
+            #fltk.attend_ev()
 
         except KeyboardInterrupt:
             exit()
@@ -69,5 +81,6 @@ if __name__ == "__main__":
     while True:
         choix = menu()
         if choix == 'Jouer':
-            plateau = Plateau('maps/big/huge.txt')
+            plateau = Plateau('maps/tests/losable.txt')
             jeu(plateau)
+
