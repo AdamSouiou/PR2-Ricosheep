@@ -43,6 +43,7 @@ class BoutonTexte(Bouton):
     police = 'Biometric Joe'
     couleur_texte = 'black'
     couleur_fond = 'white'
+    arrondi = 0
 
 
 @dataclass
@@ -53,8 +54,8 @@ class BoutonSimple(BoutonTexte):
 
 @dataclass
 class BoutonBooleen(BoutonTexte):
-    identificateur: str
-    etat: bool
+    object_ref: object
+    attribute: str
     texte_actif: str
     texte_desactive: str
     couleur_actif = '#0a8029'
@@ -157,16 +158,15 @@ class Boutons:
 
     def cree_bouton_booleen(self,
             ax: float, ay: float, bx: float, by: float,
-            identificateur: str,
-            etat: bool,
+            attribut: str,
+            object: object,
             texte_actif: str, texte_desactive: str,
             invert_color=False, **kwargs) -> BoutonBooleen:
         """
         Crée un bouton booléen à partir des positions des cases de la grille,
-        et l'initialise à la valeur du booléen ``etat``.
+        et l'initialise à la valeur booléenne de l'attribut de l'objet.
         Le libellé du bouton sera ``texte_actif`` lorsque
-        l'attribut ``etat`` du bouton vaut ``True``, sinon
-        le libellé ``texte_desactive``.
+        ce booléen vaut ``True``, sinon le libellé ``texte_desactive``.
     
         :param float ax: Abscisse de la case ``a`` de la grille, entre 0
         et la taille en largeur de la grille non-inclue
@@ -176,7 +176,8 @@ class Boutons:
         et la taille en largeur de la grille
         :param float by: Ordonnée de la case ``b`` de la grille, entre 0
         et la taille en largeur de la grille
-        :param str identificateur: Nom du bouton
+        :param str attribut: attribut de l'objet
+        :param object: Objet contenant l'attribut booléen
         :param str texte_actif: Libellé du bouton à l'état actif
         :param str texte_desactive: Libellé du bouton à l'état désactivé
         :param bool invert_color: Inverse la couleur activé/désactivé
@@ -199,8 +200,8 @@ class Boutons:
                     self.grille.cases[by][bx].bx,
                     self.grille.cases[by][bx].by,
                     '',
-                    identificateur,
-                    etat,
+                    object,
+                    attribute,
                     texte_actif,
                     texte_desactive,
                  )
@@ -214,7 +215,7 @@ class Boutons:
     
         bouton.taille_texte = self.taille_texte_bouton(bouton)
     
-        self.boutons[identificateur] = bouton
+        self.boutons[attribute] = bouton
     
     
     def cree_bouton_simple(self, ax: float, ay: float, bx: float, by: float,
@@ -286,6 +287,8 @@ class Boutons:
                 bouton.invisible = value
             elif arg == 'factice':
                 bouton.factice = value
+            elif arg == 'arrondi':
+                bouton.arrondi = value
     
             else:
                 raise KeyError(f"L'argument {arg} n'existe pas, ou le bouton de \
@@ -329,18 +332,19 @@ class Boutons:
 
         if bouton.factice:
             survole = False
-    
+        if type(bouton) == BoutonBooleen:
+            etat = getattr(bouton.object_ref, bouton.attribute)
         if not bouton.invisible:
             if type(bouton) == BoutonBooleen:
                 if survole:
-                    if bouton.etat:
+                    if etat:
                         remplissage = bouton.couleur_hovered_actif
                     else:
                         remplissage = bouton.couleur_hovered_desactive
                     if tev == 'ClicGauche':
-                        bouton.etat ^= 1
+                        setattr(bouton.object_ref, bouton.attribute, etat ^ 1)
                 else:
-                    if bouton.etat:
+                    if etat:
                         remplissage = bouton.couleur_actif
                     else:
                         remplissage = bouton.couleur_desactive
@@ -351,7 +355,6 @@ class Boutons:
                     remplissage = bouton.couleur_hovered
                 else:
                     remplissage = bouton.couleur_fond
-    
             fltk.rectangle(
                 bouton.ax, bouton.ay,
                 bouton.bx, bouton.by,
@@ -360,7 +363,7 @@ class Boutons:
             )
             fltk.texte(
                 (bouton.ax + bouton.bx)/2, (bouton.ay + bouton.by)/2,
-                (bouton.texte_actif if bouton.etat else bouton.texte_desactive)
+                (bouton.texte_actif if etat else bouton.texte_desactive)
                 if type(bouton) == BoutonBooleen else bouton.texte,
                 bouton.couleur_texte, 'center',
                 bouton.police, bouton.taille_texte

@@ -12,7 +12,8 @@ def menu():
     boutons.cree_bouton_simple(1, 8, 8, 8, 'Options')
     boutons.cree_bouton_booleen(
         9, 9, 9, 9,
-        'Son', True, 'Son!', 'Muet', unifier_texte=False
+        'son', cfg,
+        'Son!', 'Muet', unifier_texte=False
     )
     boutons.init()
 
@@ -31,7 +32,8 @@ def menu():
 
             elif tev == "ClicGauche":
                 print(click)
-                if click not in {None, 'Son'}:
+                print(cfg.son)
+                if click not in {None, 'son'}:
                     return click
 
             fltk.mise_a_jour()
