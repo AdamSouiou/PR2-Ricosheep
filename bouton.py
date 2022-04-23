@@ -8,15 +8,16 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 """
 # Sobre bibliothèque pour créer, gérer, et afficher des boutons,
 # selon une grille
-# Permet la création de boutons cliquables simples, de boutons
+# Permet la création de boutons cliquables simples et de boutons
 # booléens qui peuvent enregistrer leur état et l'afficher
 # par leur couleur, et de boutons invisibles.
 
 # A faire:
-# - Boutons arrondis (peu performant car nécessite 4 appels à circle + 1 rectangle)
-# - Bouton ronds
+# - Mise en cache des boutons arrondis
 # - Bouton avec icône
 
+from math import pi as PI, sin, cos
+from numpy import linspace
 from dataclasses import dataclass
 from typing import Union
 from grille import Grille
@@ -30,6 +31,8 @@ class Bouton:
     ay: float
     bx: float
     by: float
+    polygone = None
+    rayon = 0
     invisible = False
     factice = False
 
@@ -43,7 +46,6 @@ class BoutonTexte(Bouton):
     police = 'Biometric Joe'
     couleur_texte = 'black'
     couleur_fond = 'white'
-    arrondi = 0
 
 
 @dataclass
@@ -201,7 +203,7 @@ class Boutons:
                     self.grille.cases[by][bx].by,
                     '',
                     object,
-                    attribute,
+                    attribut,
                     texte_actif,
                     texte_desactive,
                  )
@@ -215,7 +217,7 @@ class Boutons:
     
         bouton.taille_texte = self.taille_texte_bouton(bouton)
     
-        self.boutons[attribute] = bouton
+        self.boutons[attribut] = bouton
     
     
     def cree_bouton_simple(self, ax: float, ay: float, bx: float, by: float,
@@ -255,13 +257,44 @@ class Boutons:
                     self.grille.cases[ay][ax].ay,
                     self.grille.cases[by][bx].bx,
                     self.grille.cases[by][bx].by,
-                    texte,
+                    texte
                  )
         self.parse_optionnal_args(kwargs, bouton)
-    
         bouton.taille_texte = self.taille_texte_bouton(bouton)
     
         self.boutons[texte] = bouton
+
+    
+    def rectangle_arrondi(self, bouton, precision):
+        points = []
+        
+        largeur_bouton = (bouton.bx - bouton.ax)
+    
+        for i in linspace(PI, PI/2, precision): # Top Left
+            points.append((
+                    (bouton.ax + bouton.rayon) + cos(i) * bouton.rayon,
+                    (bouton.ay + bouton.rayon) - sin(i) * bouton.rayon
+                ))
+    
+        for i in linspace(PI/2, PI, precision): # Top Right
+            points.append((
+                    (bouton.ax - bouton.rayon + largeur_bouton) - cos(i) * bouton.rayon,
+                    (bouton.ay + bouton.rayon)                  - sin(i) * bouton.rayon
+                ))
+    
+        for i in linspace(0, PI/2, precision): # Bottom Right
+            points.append((
+                    (bouton.bx - bouton.rayon) + cos(i) * bouton.rayon,
+                    (bouton.by - bouton.rayon) + sin(i) * bouton.rayon
+                ))
+    
+        for i in linspace(PI/2, 0, precision): # Bottom Left
+            points.append((
+                    (bouton.bx + bouton.rayon - largeur_bouton) - cos(i) * bouton.rayon,
+                    (bouton.by - bouton.rayon)                  + sin(i) * bouton.rayon
+                ))
+        
+        return points
 
     
     def parse_optionnal_args(self, args: dict, bouton):
@@ -280,7 +313,6 @@ class Boutons:
                     break
             if arg == 'unifier_texte':
                 bouton.unifier_texte = value
-                break
             elif arg == 'police':
                 bouton.police = value
             elif arg == 'invisible':
@@ -288,7 +320,8 @@ class Boutons:
             elif arg == 'factice':
                 bouton.factice = value
             elif arg == 'arrondi':
-                bouton.arrondi = value
+                bouton.rayon = (bouton.by - bouton.ay)/2 * value
+                bouton.polygone = self.rectangle_arrondi(bouton, 20)
     
             else:
                 raise KeyError(f"L'argument {arg} n'existe pas, ou le bouton de \
@@ -329,6 +362,7 @@ class Boutons:
         :param str tev: Type de l'évènement fltk
         :return bool: Bouton survolé
         """
+        # Il faut réécrire cette fonction elle est terrible !!!
 
         if bouton.factice:
             survole = False
@@ -336,31 +370,34 @@ class Boutons:
             etat = getattr(bouton.object_ref, bouton.attribute)
         if not bouton.invisible:
             if type(bouton) == BoutonBooleen:
-                if survole:
-                    if etat:
-                        remplissage = bouton.couleur_hovered_actif
-                    else:
-                        remplissage = bouton.couleur_hovered_desactive
-                    if tev == 'ClicGauche':
-                        setattr(bouton.object_ref, bouton.attribute, etat ^ 1)
-                else:
-                    if etat:
-                        remplissage = bouton.couleur_actif
-                    else:
-                        remplissage = bouton.couleur_desactive
+                if tev == 'ClicGauche' and survole:
+                    setattr(bouton.object_ref, bouton.attribute, etat ^ 1)
+                remplissage_actif = (bouton.couleur_hovered_actif if etat
+                                     else bouton.couleur_hovered_desactive)
+                remplissage = (bouton.couleur_actif if etat
+                               else bouton.couleur_desactive)
             else:
                 if (survole
                    and (type(bouton) != BoutonTexte and bouton.enable_hovered)):
-    
                     remplissage = bouton.couleur_hovered
+                    remplissage_actif = remplissage
                 else:
                     remplissage = bouton.couleur_fond
-            fltk.rectangle(
-                bouton.ax, bouton.ay,
-                bouton.bx, bouton.by,
-                'black',
-                remplissage
-            )
+                    remplissage_actif = bouton.couleur_hovered
+            
+            if bouton.polygone is None:
+                fltk.rectangle(
+                    bouton.ax, bouton.ay,
+                    bouton.bx, bouton.by,
+                    'black', remplissage=remplissage
+                )
+            else:
+                fltk.polygone(
+                    bouton.polygone,
+                    'black',
+                    remplissage=remplissage,
+                    remplissage_actif=remplissage_actif
+                )
             fltk.texte(
                 (bouton.ax + bouton.bx)/2, (bouton.ay + bouton.by)/2,
                 (bouton.texte_actif if etat else bouton.texte_desactive)
@@ -391,7 +428,8 @@ class Boutons:
                 survole = self.curseur_sur_bouton(bouton)
                 if survole:
                     deja_survole = True
-                    nom_bouton_survole = identificateur
+                    if not bouton.factice:
+                        nom_bouton_survole = identificateur
             self.dessiner_bouton(bouton, survole, tev)
     
         return nom_bouton_survole

@@ -7,13 +7,13 @@ import fltk
 def menu():
 
     boutons = Boutons((10,10))
-    boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer')
+    boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer', arrondi=0.5)
     boutons.cree_bouton_simple(1, 6, 8, 6, 'Editeur')
     boutons.cree_bouton_simple(1, 8, 8, 8, 'Options')
     boutons.cree_bouton_booleen(
         9, 9, 9, 9,
         'son', cfg,
-        'Son!', 'Muet', unifier_texte=False
+        'Son!', 'Muet', unifier_texte=False, arrondi=1
     )
     boutons.init()
 

@@ -268,7 +268,8 @@ def fleche(ax, ay, bx, by, couleur='black', epaisseur=1, tag=''):
         tag=tag)
 
 
-def polygone(points, couleur='black', remplissage='', epaisseur=1, tag=''):
+def polygone(points, couleur='black', remplissage='',
+             remplissage_actif='', epaisseur=1, tag=''):
     """
     Trace un polygone dont la liste de points est fournie.
 
@@ -282,13 +283,15 @@ def polygone(points, couleur='black', remplissage='', epaisseur=1, tag=''):
     return __canevas.canvas.create_polygon(
         points,
         fill=remplissage,
+        activefill=remplissage_actif,
         outline=couleur,
         width=epaisseur,
         tag=tag)
 
 
 def rectangle(ax, ay, bx, by,
-              couleur='black', remplissage='', epaisseur=1, tag=''):
+              couleur='black', remplissage='', remplissage_actif='',
+              epaisseur=1, tag=''):
     """
     Trace un rectangle noir ayant les point ``(ax, ay)`` et ``(bx, by)``
     comme coins opposés.
@@ -299,6 +302,7 @@ def rectangle(ax, ay, bx, by,
     :param float by: ordonnée du second coin
     :param str couleur: couleur de trait (défaut 'black')
     :param str remplissage: couleur de fond (défaut transparent)
+    :param str remplissage_actif: couleur lors du survol (défaut transparent)
     :param float epaisseur: épaisseur de trait en pixels (défaut 1)
     :param str tag: étiquette d'objet (défaut : pas d'étiquette)
     :return: identificateur d'objet
@@ -307,6 +311,7 @@ def rectangle(ax, ay, bx, by,
         ax, ay, bx, by,
         outline=couleur,
         fill=remplissage,
+        activefill=remplissage_actif,
         width=epaisseur,
         tag=tag)
 
@@ -523,7 +528,7 @@ def texte(x, y, chaine, couleur='black', ancrage='nw',
     return __canevas.canvas.create_text(
         x, y,
         text=chaine, font=(police, taille), tag=tag,
-        fill=couleur, anchor=ancrage)
+        fill=couleur, anchor=ancrage, state='disabled')
 
 
 def taille_texte(chaine, police='Helvetica', taille='24'):
