@@ -43,9 +43,10 @@ class BoutonTexte(Bouton):
     taille_texte = None
     unifier_texte = True
     marge_texte = 0.9
-    police = 'Biometric Joe'
+    police = 'Courier'
     couleur_texte = 'black'
     couleur_fond = 'white'
+    couleur_hovered = "white"
 
 
 @dataclass
@@ -112,7 +113,7 @@ class Boutons:
         :param str couleur_hovered: Optionnel, couleur du fond du bouton
         lors de son survol par la souris. Par défaut: ``'#848484'``
         :param str police: Optionnel, nom de la typographie à utiliser pour
-        le texte du bouton. Par défaut, ``'Biometric Joe'``
+        le texte du bouton. Par défaut, ``'Courier'``
         :param bool unifier_texte: Optionnel, spécifie si la taille de texte
         de ce bouton sera pris en compte lors de l'utilisation de
         la fonction unifier_taille_texte()
@@ -190,7 +191,7 @@ class Boutons:
         :param bool invert_color: Inverse la couleur activé/désactivé
     
         :param str police: Optionnel, nom de la typographie à utiliser pour
-        le texte du bouton. Par défaut, ``'Biometric Joe'``
+        le texte du bouton. Par défaut, ``'Courier'``
         :param bool unifier_texte: Optionnel, spécifie si la
         taille de texte de ce bouton sera pris en compte lors de
         l'utilisation de la fonction unifier_taille_texte()
@@ -246,7 +247,7 @@ class Boutons:
         :param str couleur_hovered: Optionnel, couleur du fond du bouton
         lors de son survol par la souris. Par défaut: ``'#848484'``
         :param str police: Optionnel, nom de la typographie à utiliser
-        pour le texte du bouton. Par défaut, ``'Biometric Joe'``
+        pour le texte du bouton. Par défaut, ``'Courier'``
         :param bool unifier_texte: Optionnel, spécifie si la
         taille de texte de ce bouton sera pris en compte lors de l'utilisation
         de la fonction unifier_taille_texte()

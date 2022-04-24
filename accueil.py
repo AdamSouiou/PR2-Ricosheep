@@ -2,13 +2,14 @@ from bouton import Boutons
 import graphiques
 import cfg
 import fltk
+import selecteur
 
 
 def menu():
 
     boutons = Boutons((10,10))
     boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer', arrondi=0.5)
-    boutons.cree_bouton_simple(1, 6, 8, 6, 'Editeur')
+    boutons.cree_bouton_simple(1, 6, 8, 6, 'Niveaux')
     boutons.cree_bouton_simple(1, 8, 8, 8, 'Options')
     boutons.cree_bouton_booleen(
         9, 9, 9, 9,
@@ -31,10 +32,13 @@ def menu():
                 exit()
 
             elif tev == "ClicGauche":
-                print(click)
-                print(cfg.son)
                 if click not in {None, 'son'}:
-                    return click
+                    if click == "Jouer":
+                        return click
+                    elif click == "Niveaux":
+                        selecteur.menu()
+                        cfg.maj()
+
 
             fltk.mise_a_jour()
 
