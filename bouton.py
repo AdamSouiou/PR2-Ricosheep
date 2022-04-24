@@ -15,6 +15,7 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 # A faire:
 # - Mise en cache des boutons arrondis?
 # - Bouton avec icône: Utiliser une police avec symboles?
+# - Mettre en cache les tailles de texte?
 
 from math import pi as PI, sin, cos
 from numpy import linspace
@@ -272,33 +273,32 @@ class Boutons:
     
     def rectangle_arrondi(self, bouton, precision):
         points = []
-        
         largeur_bouton = (bouton.bx - bouton.ax)
     
-        for i in linspace(PI, PI/2, precision): # Top Left
+        for i in linspace(PI, PI/2, precision+1): # Top Left
             points.append((
                     (bouton.ax + bouton.rayon) + cos(i) * bouton.rayon,
                     (bouton.ay + bouton.rayon) - sin(i) * bouton.rayon
                 ))
     
-        for i in linspace(PI/2, PI, precision): # Top Right
+        for i in linspace(PI/2, PI, precision+1): # Top Right
             points.append((
                     (bouton.ax - bouton.rayon + largeur_bouton) - cos(i) * bouton.rayon,
                     (bouton.ay + bouton.rayon)                  - sin(i) * bouton.rayon
                 ))
     
-        for i in linspace(0, PI/2, precision): # Bottom Right
+        for i in linspace(0, PI/2, precision+1): # Bottom Right
             points.append((
                     (bouton.bx - bouton.rayon) + cos(i) * bouton.rayon,
                     (bouton.by - bouton.rayon) + sin(i) * bouton.rayon
                 ))
     
-        for i in linspace(PI/2, 0, precision): # Bottom Left
+        for i in linspace(PI/2, 0, precision+1): # Bottom Left
             points.append((
                     (bouton.bx + bouton.rayon - largeur_bouton) - cos(i) * bouton.rayon,
                     (bouton.by - bouton.rayon)                  + sin(i) * bouton.rayon
                 ))
-        
+        print(f'Nombre de points générés: {len(points)}')
         return points
 
     
@@ -326,7 +326,8 @@ class Boutons:
                 bouton.factice = value
             elif arg == 'arrondi':
                 bouton.rayon = (bouton.by - bouton.ay)/2 * value
-                bouton.polygone = self.rectangle_arrondi(bouton, 20)
+                precision = int(bouton.rayon/2)
+                bouton.polygone = self.rectangle_arrondi(bouton, precision)
     
             else:
                 raise KeyError(f"L'argument {arg} n'existe pas, ou le bouton de \
@@ -461,8 +462,8 @@ class Boutons:
         :return int: Taille du texte à utiliser
         """
     
-        hauteur_bouton = (bouton.by - bouton.ay)*bouton.marge_texte
-        largeur_bouton = (bouton.bx - bouton.ax)*bouton.marge_texte
+        hauteur_bouton = (bouton.by - bouton.ay) * bouton.marge_texte
+        largeur_bouton = (bouton.bx - bouton.ax) * bouton.marge_texte
         taille_texte = 1
     
         while True:
