@@ -1,3 +1,4 @@
+from typing import List
 from dataclasses import dataclass
 import cfg
 import fltk
@@ -14,12 +15,22 @@ class Case:
 
 
 class Grille:
+
+    view_ax: float       ; view_ay: float 
+    view_bx: float       ; view_by: float
+    marge_largeur: float ; marge_hauteur: float
+    nb_colonne: int      ; nb_ligne: int
+    largeur_case: float  ; hauteur_case: float
+    carre: bool
+    cases: List[List[Case]]
+
+    __slots__ = tuple(__annotations__)
+    
     def __init__(self, nb_colonne: int, nb_ligne: int,
                  marge_largeur=0.95, marge_hauteur=0.95,
                  grille_base=None,
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
                  carre=True):
-
         """
         Objet Grille, permettant de dessiner... une grille.
         :param float marge_largeur: Proportion en largeur de la grille
@@ -76,8 +87,8 @@ class Grille:
             m = min(self.largeur_case, self.hauteur_case)
             self.largeur_case, self.hauteur_case = m, m
 
-        self.view_ax += ((self.view_bx - self.view_ax) - self.largeur_case*self.nb_colonne)//2
-        self.view_ay += ((self.view_by - self.view_ay) - self.hauteur_case*self.nb_ligne)//2
+        self.view_ax += ((self.view_bx - self.view_ax) - self.largeur_case*self.nb_colonne) / 2
+        self.view_ay += ((self.view_by - self.view_ay) - self.hauteur_case*self.nb_ligne) / 2
 
         print(self.view_ax, self.view_ay)
         
@@ -93,8 +104,8 @@ class Grille:
                         ay=ay,
                         bx=ax + self.largeur_case,
                         by=ay + self.hauteur_case,
-                        centre_x=ax + self.largeur_case//2,
-                        centre_y=ay + self.hauteur_case//2,
+                        centre_x=ax + self.largeur_case / 2,
+                        centre_y=ay + self.hauteur_case / 2,
                     )
                 )
     

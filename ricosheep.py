@@ -1,4 +1,4 @@
-from sys import setrecursionlimit
+from sys import setrecursionlimit, getsizeof
 from time import time
 from pprint import pprint
 from plateau import Plateau
@@ -70,4 +70,6 @@ if __name__ == "__main__":
         choix = menu()
         if choix == 'Jouer':
             plateau = Plateau('maps/big/huge.txt')
+            print(getsizeof(plateau.__slots__))
+            #print(getsizeof(plateau.__dict__))
             jeu(plateau)

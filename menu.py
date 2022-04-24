@@ -1,8 +1,8 @@
 from bouton import Boutons
-
 import graphiques
 import cfg
 import fltk
+
 
 def menu():
 

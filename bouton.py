@@ -13,13 +13,13 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 # par leur couleur, et de boutons invisibles.
 
 # A faire:
-# - Mise en cache des boutons arrondis
-# - Bouton avec icône
+# - Mise en cache des boutons arrondis?
+# - Bouton avec icône: Utiliser une police avec symboles?
 
 from math import pi as PI, sin, cos
 from numpy import linspace
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, List
 from grille import Grille
 import cfg
 import fltk
@@ -67,6 +67,11 @@ class BoutonBooleen(BoutonTexte):
 
 
 class Boutons:
+    boutons: List[Bouton]
+    grille: Grille
+
+    __slots__ = tuple(__annotations__)
+    
     def __init__(self, format_grille):
         """
         Initialise la grille selon laquelle seront positionnés les boutons.
