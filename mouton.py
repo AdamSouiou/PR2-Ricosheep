@@ -6,11 +6,11 @@ class Mouton:
     def __hash__(self):
         return hash((self.y, self.x))
     def __eq__(self, other):
-        if type(other) == tuple:
+        if type(other) is tuple:
             return (self.y, self.x) == other
         return (self.y, self.x) == (other.y, other.x)
     def __lt__(self, other):
-        if type(other) == tuple:
+        if type(other) is tuple:
             return (self.y, self.x) < other
         return (self.y, self.x) < (other.y, other.x)
     def __repr__(self):
