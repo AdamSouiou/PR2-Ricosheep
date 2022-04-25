@@ -28,4 +28,8 @@ def victory():
       police="Courier", taille=30, couleur="green",
       ancrage='center')
 
-    
+affiche_env_element = lambda case, img: fltk.afficher_image(
+            case.centre_x,
+            case.centre_y,
+            img, ancrage='center'
+)

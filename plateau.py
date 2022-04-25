@@ -1,6 +1,7 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set
 from pprint import pprint
 from mouton import Mouton
+from graphiques import affiche_env_element
 from grille import Grille
 import fltk
 
@@ -13,7 +14,7 @@ class Plateau:
     nb_colonnes:  int
     nb_lignes:    int
     troupeau:     List[Mouton]
-    env:          Dict[str, set] # Contient les positions des buissons et des touffes
+    env:          Dict[str, Set[Tuple[int, int]]] # Contient les positions des buissons et des touffes
     images:       Dict[str, object]
     taille_image: float
     __slots__ = tuple(__annotations__)
@@ -68,11 +69,11 @@ class Plateau:
         for name, elements in self.env.items():
             for y,x in elements:
                 case = self.grille.cases[y][x]
-                self.affiche(case, images[name])
+                affiche_env_element(case, images[name])
         for m in self.troupeau:
             heureux = 'heureux' if m in self.env['touffes'] else 'mouton'
             case = self.grille.cases[m.y][m.x]
-            self.affiche(case, images[heureux])   
+            affiche_env_element(case, images[heureux])   
 
     def isNotPosMouton(self, x, y):
         for mouton in self.troupeau:
@@ -108,10 +109,12 @@ class Plateau:
         elif direction in {"Up", "Left"}:
             self.troupeau.sort(reverse=False)
 
+
     def isGagne(self):
         occupe = 0
-        for herbe in self.env['touffes']:
-            for mouton in self.troupeau:
-                if mouton.x == herbe[1] and mouton.y == herbe[0]:
-                    occupe += 1
-        return occupe == len(self.env['touffes'])
+        for mouton in self.troupeau:
+            if mouton in self.env['touffes']:
+                occupe += 1
+            if occupe == len(self.env['touffes']):
+                return True
+        return False

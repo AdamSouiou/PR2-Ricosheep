@@ -16,13 +16,13 @@ class Case:
 
 class Grille:
 
-    view_ax: float       ; view_ay: float 
-    view_bx: float       ; view_by: float
+    view_ax:       float ; view_ay: float 
+    view_bx:       float ; view_by: float
     marge_largeur: float ; marge_hauteur: float
-    nb_colonne: int      ; nb_ligne: int
-    largeur_case: float  ; hauteur_case: float
-    carre: bool
-    cases: List[List[Case]]
+    nb_colonne:    int   ; nb_ligne: int
+    largeur_case:  float ; hauteur_case: float
+    carre:         bool
+    cases:         List[List[Case]]
 
     __slots__ = tuple(__annotations__)
     
