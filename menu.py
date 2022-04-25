@@ -2,22 +2,19 @@ from bouton import Boutons
 import graphiques
 import cfg
 import fltk
-from time import time
 
 
 def menu():
-    start = time()
     boutons = Boutons((10,10))
-    boutons.cree_bouton_simple(1, 2, 8, 4, 'Jouer', arrondi=1)
-    boutons.cree_bouton_simple(1, 6, 8, 6, 'Editeur', arrondi=0.5)
-    boutons.cree_bouton_simple(1, 8, 8, 8, 'Options', arrondi=1)
+    boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer', arrondi=1)
+    boutons.cree_bouton_simple(1, 6, 8, 6, 'Editeur', arrondi=1)
+    boutons.cree_bouton_simple(1, 8, 4, 8, 'Options', arrondi=0.5)
     boutons.cree_bouton_booleen(
         9, 9, 9, 9,
         'son', cfg,
-        'Son!', 'Muet', unifier_texte=False, arrondi=1
+        'Son!', 'Muet', arrondi=1, marge_texte=0.8
     )
     boutons.init()
-    print(time()-start)
 
     while True:
         try:
@@ -25,7 +22,7 @@ def menu():
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
-            #boutons.grille.draw()
+            boutons.grille.draw()
             click = boutons.dessiner_boutons(tev)
 
             if tev == 'Quitte':
@@ -42,7 +39,3 @@ def menu():
 
         except KeyboardInterrupt:
             exit()
-
-if __name__ == '__main__':
-    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre, 'Here we go !')
-    menu()
