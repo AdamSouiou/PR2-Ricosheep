@@ -4,6 +4,7 @@ from mouton import Mouton
 from graphiques import affiche_env_element
 from grille import Grille
 import fltk
+import cfg
 
 
 class Plateau:
@@ -25,11 +26,16 @@ class Plateau:
     def __eq__(self, other):
         return sorted(self.troupeau) == sorted(other.troupeau)
 
-    def __init__(self, gridfile: str, test_mode=False):
+    def __init__(self, gridfile: str,
+                 grille_base=None,
+                 grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
+                 test_mode=False):
+        print('Jeu reçu par l instance Plateau', gridfile)
         self.grid_parse(gridfile)
         if test_mode: return
-
-        self.grille = Grille(self.nb_colonnes, self.nb_lignes)
+        self.grille = Grille(self.nb_colonnes, self.nb_lignes,
+                             grille_base=grille_base,
+                             grille_pos=grille_pos)    
         self.taille_image = self.grille.largeur_case * 0.8
 
         global images

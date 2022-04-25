@@ -11,6 +11,4 @@ def maj():
     son = file['son']
     carte = os.path.join("maps", file['carte'][0], file['carte'][1])
 
-    print(largeur_fenetre, hauteur_fenetre, son, carte)
-
 maj()
