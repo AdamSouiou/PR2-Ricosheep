@@ -90,16 +90,25 @@ class Boutons:
                              carre=True)
         self.formats_texte = {}
 
-    def init(self):
+    def init(self, unifier='format'):
         """
-        Unifie la taille des textes de tous les boutons de l'instance, à la
-        plus petite rencontrée, et précalcule les centres pour le texte.
+        Unifie la taille des textes des boutons, soit par rapport à leur
+        format (ex: 2 boutons 4x1 auront la même taille de texte de 10,
+        et 4 boutons de 8x2 auront la même taille de texte de 20),
+        soit par rapport à l'instance (ex: Pour 2 boutons 4x1
+        aura été calculé une taille de texte de 10, et pour 4 boutons de 8x2,
+        une taille de texte de 20, mais après appel il seront unifiés à 10)
+
+        Les boutons ayant la propriété ``unifier_texte`` désactivé sont
+        ignorés.
         """
         for bouton in self.boutons.values():
             bouton.centre_x = (bouton.bx + bouton.ax) // 2
             bouton.centre_y = (bouton.by + bouton.ay) // 2
         
-        self.unifier_taille_texte()
+        self.unifier_taille_texte_format()
+        if unifier == 'all':
+            self.unifier_texte_texte_minimum()
         print(f'Boutons chargés en {time()-self.time_start:.3f}s')
 
     format_bouton = staticmethod(lambda ax, ay, bx, by: (bx - ax + 1, by - ay + 1))
@@ -348,7 +357,7 @@ class Boutons:
         return (max(len(bouton.texte_actif), len(bouton.texte_desactive)) if
                 type(bouton) is BoutonBooleen else len(bouton.texte))
 
-    def unifier_taille_texte(self) -> None:
+    def unifier_taille_texte_format(self) -> None:
         """
         Calcule la taille des textes des boutons, de manière à limiter le nombre d'appels
         à la fonction ``taille_texte_bouton`` qui fait appel à ``fltk.taille_texte``.
@@ -386,6 +395,21 @@ class Boutons:
                 self.formats_texte[bouton.format]['taille_texte'] if bouton.unifier_texte
                 else self.taille_texte_bouton(bouton))
 
+    def unifier_texte_texte_minimum(self):
+        """
+        Minimise la taille du texte de tous les
+        boutons de formats différents à une taille minimale.
+        Si la propriété ``unifier_texte`` d'un bouton est désactivée,
+        il sera ignoré.
+        """
+        taille_min = min(
+            [format_bouton['taille_texte']\
+             for format_bouton in self.formats_texte.values()]
+        )
+        for bouton in self.boutons.values():
+            if bouton.unifier_texte:
+                bouton.taille_texte = taille_min
+    
     @staticmethod
     def taille_texte_bouton(bouton: Union[BoutonSimple, BoutonBooleen]) -> int:
         """

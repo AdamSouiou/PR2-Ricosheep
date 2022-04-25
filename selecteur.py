@@ -1,11 +1,9 @@
 import os
 import json
-from sympy import false
 from bouton import Boutons
 import graphiques
 import cfg
 import fltk
-
 
 
 def menu():
@@ -36,17 +34,14 @@ def menu():
                     elif click == "<=":
                         split -= 1
 
-
                     elif click == "\...":
                         directory = ""
 
                     elif click in racine:
                         directory = click
 
-
                     else:
                         choix = modif_json(directory, click)
-
 
                     boutons = init_boutons(split, directory, choix)
 
@@ -60,13 +55,12 @@ def menu():
 
 
 
-def init_boutons( split = 0, directory = "", choix = None):
+def init_boutons(split=0, directory="", choix=None):
     dossiers = os.listdir(os.path.join("maps", directory))
-    
     boutons = Boutons((10,10))
 
     if directory != "":
-        boutons.cree_bouton_simple(5, 1, 8, 1, "\...")
+        boutons.cree_bouton_simple(5, 1, 8, 1, "\...", unifier_texte=False)
 
     if choix:
         boutons.cree_bouton_texte(1, 9, 8, 9, choix, unifier_texte=False)
@@ -78,21 +72,19 @@ def init_boutons( split = 0, directory = "", choix = None):
     else:
         if split > 0:
             dos = dossiers[5*split:5*(split+1)]
-            boutons.cree_bouton_simple(1, 6, 2, 6, "<=")
+            boutons.cree_bouton_simple(1, 6, 2, 6, "<=", unifier_texte=False)
 
             if len(dossiers) > 5*(split+1):
-                boutons.cree_bouton_simple(3, 6, 4, 6, "=>")
-
+                boutons.cree_bouton_simple(3, 6, 4, 6, "=>", unifier_texte=False)
         else:
             dos = dossiers[:5]
-            boutons.cree_bouton_simple(3, 6, 4, 6, "=>")
+            boutons.cree_bouton_simple(3, 6, 4, 6, "=>", unifier_texte=False)
         for i in range(len(dos)):
             boutons.cree_bouton_simple(1, 1+i, 4, 1+i, dos[i])
 
+    boutons.cree_bouton_simple(1, 8, 4, 8, "Valider", unifier_texte=False)
 
-    boutons.cree_bouton_simple(1, 8, 4, 8, "Valider")
-
-    boutons.init()
+    boutons.init(unifier='all')
     return boutons
 
 def modif_json(directory, file):
@@ -110,10 +102,6 @@ def modif_json(directory, file):
 
 
     return str(directory + "\\" + file)
-
-
-
-
 
 
 if __name__ == '__main__':
