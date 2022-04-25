@@ -105,7 +105,7 @@ def modif_json(directory, file):
     data['carte'][1] = file
 
     jsonFile = open("config.json", "w+")
-    jsonFile.write(json.dumps(data))
+    jsonFile.write(json.dumps(data, indent=4))
     jsonFile.close()
 
 
