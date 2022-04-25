@@ -2,7 +2,7 @@ from sys import setrecursionlimit, getsizeof
 from time import time
 from pprint import pprint
 from plateau import Plateau
-from menu import menu
+from accueil import menu
 import graphiques
 import cfg
 import fltk
@@ -68,6 +68,7 @@ if __name__ == "__main__":
 
     while True:
         choix = menu()
+
         if choix == 'Jouer':
-            plateau = Plateau('maps/big/huge.txt')
+            plateau = Plateau(cfg.carte)
             jeu(plateau)
