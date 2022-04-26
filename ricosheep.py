@@ -9,6 +9,7 @@ import fltk
 import solveur
 
 setrecursionlimit(10**6)
+DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
 def jeu(plateau: Plateau):
     # créer la copie des moutons dans l'instance plateau
@@ -17,8 +18,8 @@ def jeu(plateau: Plateau):
         try:
             fltk.efface_tout()
             graphiques.background("#3f3e47")
-
             plateau.draw()
+
             
             if plateau.isGagne():
                 # graphiques.victory()
@@ -34,7 +35,8 @@ def jeu(plateau: Plateau):
 
             elif tev == "Touche":
                 touche = fltk.touche(ev)
-                plateau.deplace_moutons(touche)
+                if touche in DIRECTIONS:
+                    plateau.deplace_moutons(touche, historique=True)
 
                 if touche == "s":
                     start = time()
@@ -53,9 +55,15 @@ def jeu(plateau: Plateau):
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                 elif touche == "r":
-                    plateau.restore()
+                    plateau.reset()
+                elif touche == 'u':
+                    plateau.undo()
                 elif touche == 'Escape':
                     return
+                """print('Historique :')
+                pprint(plateau.historique)
+                print('Troupeau :', plateau.troupeau)
+                print()"""
 
             fltk.mise_a_jour()
 

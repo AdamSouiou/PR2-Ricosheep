@@ -19,7 +19,7 @@ class Plateau:
     env:                Dict[str, Set[Tuple[int, int]]] # Contient les positions des buissons et des touffes
     images:             Dict[str, object]
     taille_image:       float
-    positions_initales: List[Mouton]
+    historique:         List[Tuple[Mouton]]
     __slots__ = tuple(__annotations__)
     
     def __hash__(self):
@@ -65,7 +65,7 @@ class Plateau:
                         self.troupeau.append(Mouton(*pos))
                     self.nb_colonnes += 1
                 self.nb_lignes += 1
-        self.positions_initales = deepcopy(self.troupeau)
+        self.historique = [tuple(deepcopy(self.troupeau))]
 
     affiche = lambda self, case, img: fltk.afficher_image(
                 case.centre_x,
@@ -103,7 +103,9 @@ class Plateau:
                  not (y, x) in self.env['buissons'] and
                   self.isNotPosMouton(x, y))
 
-    def deplace_moutons(self, direction: str):
+    def deplace_moutons(self, direction: str, historique=False):
+        if historique:
+            self.historique.append(tuple(deepcopy(self.troupeau)))
         self.tri_moutons(direction)
         for mouton in self.troupeau:
             mouton.deplace(direction, self)
@@ -113,14 +115,29 @@ class Plateau:
         Trie les moutons de sorte que le mouton le plus près
         du mur de la direction demandée soit le premier à être déplacé.
         """
-        if direction in {"Down", "Right"}:
+        if direction in self.tri_moutons.DOWN_RIGHT:
             self.troupeau.sort(reverse=True)
-        elif direction in {"Up", "Left"}:
+        elif direction in self.tri_moutons.UP_LEFT:
             self.troupeau.sort(reverse=False)
-    
-    def restore(self):
-        self.troupeau = deepcopy(self.positions_initales) 
+    # Evite de recréer les sets à chaque appel
+    tri_moutons.DOWN_RIGHT = {"Down", "Right"}
+    tri_moutons.UP_LEFT = {"Up", "Left"}
 
+    def reset(self):
+        """
+        Réinitialise à l'état initial de la map,
+        et supprime l'historique
+        """
+        self.troupeau = list(deepcopy(self.historique[0]))
+        del self.historique[1:]
+
+    def undo(self):
+        """
+        Annule le dernier coup joué
+        """
+        if len(self.historique) >= 2:
+            self.troupeau = list(self.historique.pop())
+        
     def isGagne(self):
         occupe = 0
         for mouton in self.troupeau:
