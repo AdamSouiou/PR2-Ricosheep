@@ -4,6 +4,7 @@ from bouton import Boutons
 import graphiques
 import cfg
 import fltk
+from plateau import Plateau
 
 
 def menu():
@@ -11,6 +12,7 @@ def menu():
     directory = ""
     racine = os.listdir("maps")
     choix = None
+    plateau = None
     boutons = init_boutons(split, directory)
 
     while True:
@@ -19,8 +21,9 @@ def menu():
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
-            boutons.grille.draw()
+            #boutons.grille.draw()
             click = boutons.dessiner_boutons(tev)
+            if plateau is not None: plateau.draw()
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -30,29 +33,36 @@ def menu():
                 if click not in {None, "Valider", choix}:
                     if click == "=>":
                         split += 1
-
                     elif click == "<=":
                         split -= 1
 
                     elif click == "\...":
                         directory = ""
-
                     elif click in racine:
                         directory = click
 
                     else:
                         choix = modif_json(directory, click)
+                        plateau = open_plateau(choix, boutons)
 
                     boutons = init_boutons(split, directory, choix)
 
-                if click == "Valider" and choix != None:
-                    return choix
+                if click == "Valider":
+                    return
 
             fltk.mise_a_jour()
 
         except KeyboardInterrupt:
             exit()
 
+
+def open_plateau(choix, boutons: Boutons):
+    print(choix)
+    if choix is not None:
+        plateau = Plateau(os.path.join("maps", choix), boutons.grille, (6, 3, 8, 6))
+    else:
+        plateau = None
+    return plateau
 
 
 def init_boutons(split=0, directory="", choix=None):
@@ -73,7 +83,6 @@ def init_boutons(split=0, directory="", choix=None):
         if split > 0:
             dos = dossiers[5*split:5*(split+1)]
             boutons.cree_bouton_simple(1, 6, 2, 6, "<=", unifier_texte=False)
-
             if len(dossiers) > 5*(split+1):
                 boutons.cree_bouton_simple(3, 6, 4, 6, "=>", unifier_texte=False)
         else:
@@ -88,22 +97,13 @@ def init_boutons(split=0, directory="", choix=None):
     return boutons
 
 def modif_json(directory, file):
-    
-    jsonFile = open("config.json", "r")
-    data = json.load(jsonFile)
-    jsonFile.close()
+    with open("config.json", "r") as jsonFile:
+        data = json.load(jsonFile)
 
     data['carte'][0] = directory
     data['carte'][1] = file
 
-    jsonFile = open("config.json", "w+")
-    jsonFile.write(json.dumps(data, indent=4))
-    jsonFile.close()
+    with open("config.json", "w+") as jsonFile:
+        jsonFile.write(json.dumps(data, indent=4))
 
-
-    return str(directory + "\\" + file)
-
-
-if __name__ == '__main__':
-    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre, 'Here we go !')
-    menu()
+    return os.path.join(directory, file)

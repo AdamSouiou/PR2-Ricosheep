@@ -3,6 +3,7 @@ from pprint import pprint
 from mouton import Mouton
 from graphiques import affiche_env_element
 from grille import Grille
+from copy import deepcopy
 import fltk
 import cfg
 
@@ -11,13 +12,14 @@ class Plateau:
     # Utiliser __slots__ pour les gains de mémoire...
     # Il faudrait que troupeau soit un set...
 
-    grille:       Grille
-    nb_colonnes:  int
-    nb_lignes:    int
-    troupeau:     List[Mouton]
-    env:          Dict[str, Set[Tuple[int, int]]] # Contient les positions des buissons et des touffes
-    images:       Dict[str, object]
-    taille_image: float
+    grille:             Grille
+    nb_colonnes:        int
+    nb_lignes:          int
+    troupeau:           List[Mouton]
+    env:                Dict[str, Set[Tuple[int, int]]] # Contient les positions des buissons et des touffes
+    images:             Dict[str, object]
+    taille_image:       float
+    positions_initales: List[Mouton]
     __slots__ = tuple(__annotations__)
     
     def __hash__(self):
@@ -63,6 +65,7 @@ class Plateau:
                         self.troupeau.append(Mouton(*pos))
                     self.nb_colonnes += 1
                 self.nb_lignes += 1
+        self.positions_initales = deepcopy(self.troupeau)
 
     affiche = lambda self, case, img: fltk.afficher_image(
                 case.centre_x,
@@ -114,7 +117,9 @@ class Plateau:
             self.troupeau.sort(reverse=True)
         elif direction in {"Up", "Left"}:
             self.troupeau.sort(reverse=False)
-
+    
+    def restore(self):
+        self.troupeau = deepcopy(self.positions_initales) 
 
     def isGagne(self):
         occupe = 0

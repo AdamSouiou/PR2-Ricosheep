@@ -11,7 +11,7 @@ import solveur
 setrecursionlimit(10**6)
 
 def jeu(plateau: Plateau):
-    pos_initiale = solveur.tri_copy(plateau.troupeau)
+    # créer la copie des moutons dans l'instance plateau
 
     while True:
         try:
@@ -53,7 +53,7 @@ def jeu(plateau: Plateau):
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                 elif touche == "r":
-                    solveur.restore(plateau.troupeau, pos_initiale)
+                    plateau.restore()
                 elif touche == 'Escape':
                     return
 
