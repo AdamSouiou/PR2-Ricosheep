@@ -11,15 +11,13 @@ import solveur
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
-def jeu(plateau: Plateau):
-    # créer la copie des moutons dans l'instance plateau
 
+def jeu(plateau: Plateau):
     while True:
         try:
             fltk.efface_tout()
             graphiques.background("#3f3e47")
             plateau.draw()
-
             
             if plateau.isGagne():
                 # graphiques.victory()
@@ -27,7 +25,7 @@ def jeu(plateau: Plateau):
                 # fltk.mise_a_jour()
                 # fltk.attend_ev()
 
-            ev = fltk.attend_ev()
+            ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -36,20 +34,20 @@ def jeu(plateau: Plateau):
             elif tev == "Touche":
                 touche = fltk.touche(ev)
                 if touche in DIRECTIONS:
-                    plateau.deplace_moutons(touche, historique=True)
+                    plateau.deplace_moutons(touche)
 
                 if touche == "s":
                     start = time()
                     pos_tmp = solveur.tri_copy(plateau.troupeau)
                     chemin, _ = solveur.profondeur(plateau)
                     elapsed = time() - start
+                    solveur.restore(plateau.troupeau, pos_tmp)
                     
                     if chemin == None:
                         print("Pas de solutions, chacal!")
                     else:
-                        solveur.restore(plateau.troupeau, pos_tmp)
                         print(chemin)
-                        print("Le solveur a bon? :", solveur.test(chemin, plateau, 0))
+                        print("Le solveur a bon? :", solveur.test(chemin, plateau))
                         # print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)},",
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
@@ -60,10 +58,6 @@ def jeu(plateau: Plateau):
                     plateau.undo()
                 elif touche == 'Escape':
                     return
-                """print('Historique :')
-                pprint(plateau.historique)
-                print('Troupeau :', plateau.troupeau)
-                print()"""
 
             fltk.mise_a_jour()
 
@@ -78,5 +72,5 @@ if __name__ == "__main__":
         choix = menu()
 
         if choix == 'Jouer':
-            plateau = Plateau(cfg.carte)
+            plateau = Plateau(cfg.carte, anime=True)
             jeu(plateau)

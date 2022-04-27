@@ -59,7 +59,11 @@ def menu():
 def open_plateau(choix, boutons: Boutons):
     print(choix)
     if choix is not None:
-        plateau = Plateau(os.path.join("maps", choix), boutons.grille, (6, 3, 8, 6))
+        plateau = Plateau(
+            os.path.join("maps", choix),
+            grille_base=boutons.grille,
+            grille_pos=(6, 3, 8, 6)
+        )
     else:
         plateau = None
     return plateau

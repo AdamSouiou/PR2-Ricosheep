@@ -16,7 +16,7 @@ class TestSolveur(unittest.TestCase):
             if '__' in map_file: continue
             with self.subTest():
                 print(f"Test avec {map_file}...")
-                plateau = Plateau(map_file, test_mode=True)
+                plateau = Plateau(map_file, test_mode=True, anime=True)
                 back = solveur.tri_copy(plateau.troupeau)
                 
                 chemin, _ = solveur.profondeur(plateau)
