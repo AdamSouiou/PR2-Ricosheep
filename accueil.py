@@ -3,6 +3,7 @@ import graphiques
 import cfg
 import fltk
 import selecteur
+import sauvegarde
 
 
 def menu():
@@ -34,9 +35,13 @@ def menu():
             elif tev == "ClicGauche":
                 if click not in {None, 'son'}:
                     if click == "Jouer":
-                        return click
+                        return click, None
                     elif click == "Niveaux":
-                        selecteur.menu()
+                        if sauvegarde.compare() == True:
+                            choix = sauvegarde.menu()
+                            if choix is not None:
+                                return "Jouer", choix
+                        selecteur.menu()    
                         cfg.maj()
 
 

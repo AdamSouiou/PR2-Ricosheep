@@ -1,12 +1,15 @@
 from sys import setrecursionlimit, getsizeof
 from time import time
 from pprint import pprint
+
+from sqlalchemy import true
 from plateau import Plateau
 from accueil import menu
 import graphiques
 import cfg
 import fltk
 import solveur
+import sauvegarde
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -60,6 +63,9 @@ def jeu(plateau: Plateau):
                     plateau.undo()
                 elif touche == 'Escape':
                     return
+                elif touche == 'p':
+                    print(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                    sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
                 """print('Historique :')
                 pprint(plateau.historique)
                 print('Troupeau :', plateau.troupeau)
@@ -73,10 +79,18 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre, 'Ricosheep')
+    sauvegarde.check_in()
 
     while True:
-        choix = menu()
+        choix, plateau = menu()
+        if plateau is not None:
+            jeu(plateau)
+        elif choix == 'Jouer':
+            if sauvegarde.compare() == True:
+                plateau = sauvegarde.menu()
+                if plateau is None:
+                    plateau = Plateau(cfg.carte)
+            else:
+                plateau = Plateau(cfg.carte)
 
-        if choix == 'Jouer':
-            plateau = Plateau(cfg.carte)
             jeu(plateau)

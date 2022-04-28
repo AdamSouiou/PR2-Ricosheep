@@ -146,3 +146,18 @@ class Plateau:
             if occupe == len(self.env['touffes']):
                 return True
         return False
+
+    def troupeau_savewrite(self, position_save):
+        for mouton in self.troupeau:
+            pos = position_save.pop()
+            mouton.y = pos[0]
+            mouton.x = pos[1]
+
+    def historique_savewrite(self, historique_save):
+        for temps in historique_save:
+            for i in range(len(self.troupeau)):
+                self.troupeau[i].x = temps[i][1]
+                self.troupeau[i].y = temps[i][0]
+
+            self.historique.append(tuple(deepcopy(self.troupeau)))
+        self.undo()

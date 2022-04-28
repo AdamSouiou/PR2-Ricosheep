@@ -5,7 +5,7 @@
     },
     "son": true,
     "carte": [
-        "theme",
-        "one_sheep2.txt"
+        "tests",
+        "test_move.txt"
     ]
 }
