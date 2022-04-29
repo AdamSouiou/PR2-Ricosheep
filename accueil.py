@@ -1,4 +1,5 @@
 from bouton import Boutons
+from plateau import Plateau
 import graphiques
 import cfg
 import fltk
@@ -33,17 +34,16 @@ def menu():
                 exit()
 
             elif tev == "ClicGauche":
-                if click not in {None, 'son'}:
+                if click in {'Jouer', 'Niveaux'}:
+                    plateau = None
+                    if sauvegarde.est_valide():
+                        plateau = sauvegarde.menu()
+                    
                     if click == "Jouer":
-                        return click, None
+                        return plateau or Plateau(cfg.carte)
                     elif click == "Niveaux":
-                        if sauvegarde.compare():
-                            choix = sauvegarde.menu()
-                            if choix is not None:
-                                return "Jouer", choix
                         selecteur.menu()    
                         cfg.maj()
-
 
             fltk.mise_a_jour()
 

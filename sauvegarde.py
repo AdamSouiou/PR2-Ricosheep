@@ -1,72 +1,64 @@
 import json
-
-from sqlalchemy import false
+from json.decoder import JSONDecodeError
 import selecteur
 import cfg
 import fltk
 import graphiques
 from bouton import Boutons
 from plateau import Plateau
+from mouton import Mouton
+
+save = {}
+
+class SaveEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Mouton):
+            return [obj.y, obj.x]
+        return json.JSONEncoder.default(self, obj)
 
 
 def check_in():
-    global carte_save, historique_save, position_save
-    file = json.load(open('savefile.json'))
-
-    carte_save = file['carte']
-    historique_save = file['historique']
-    position_save = file['position']
-
-def save_write(carte, historique, troupeau):
-    with open("savefile.json", "r") as jsonFile:
-        data = json.load(jsonFile)
-
-    data['carte'] = carte
-    data['historique'] = historique_savewrite(historique)
-    data['position'] = troupeau_savewrite(troupeau)
-
-    with open("savefile.json", "w+") as jsonFile:
-        jsonFile.write(json.dumps(data))
-
-def troupeau_savewrite(troupeau):
-    liste = []
-    for mouton in troupeau:
-        liste.append([mouton.y, mouton.x])
-    return liste
-
-def historique_savewrite(historique):
-    liste = []
-    for temps in historique:
-        temp = []
-        for mouton in temps:
-            temp.append([mouton.y, mouton.x])
-        liste.append(temp)
-
-    return liste
-
-
-def save_read():
-    check_in()
-    selecteur.modif_json(carte_save[0], carte_save[1])
-    cfg.maj()
-    plateau = Plateau(cfg.carte)
-    plateau.historique_savewrite(historique_save)
-    plateau.troupeau_savewrite(position_save)
-     
-    return plateau
+    global save
+    try:
+        with open('savefile.json') as file:
+            try:
+                save = json.load(file)
+            except JSONDecodeError:
+                print("Le fichier lu est incorrect, réinitialisation du fichier")
+                clear_save()
+    except FileNotFoundError:
+        print("Le fichier n'existe pas !, réinitialisation du fichier")
+        clear_save()
 
 
 def clear_save():
     save_write([], [], [])
 
 
-def compare():
-    print(carte_save, historique_save, position_save)
-    print(carte_save != cfg.carte, historique_save!=[], position_save !=[])
-    print(cfg.carte != carte_save and historique_save != [] and position_save != [])
-    if carte_save != []:
-        return cfg.carte != carte_save and historique_save != [] and position_save != []
-    return False
+def save_write(carte, historique, troupeau):
+    global save
+    with open("savefile.json", "w+") as jsonFile:
+        save['carte'] = carte
+        save['historique'] = historique
+        save['position'] = troupeau
+        jsonFile.write(json.dumps(save, indent=2, cls=SaveEncoder))
+
+
+def save_read():
+    check_in()
+    selecteur.modif_json(save['carte'][0], save['carte'][1])
+    cfg.maj()
+    plateau = Plateau(cfg.carte)
+    plateau.historique_savewrite(save['historique'])
+    plateau.troupeau_savewrite(save['position'])
+     
+    return plateau
+
+
+def est_valide():
+    check_in()
+    return bool(save['carte'] and save['historique'] and save['position'])
+
 
 def menu():
     boutons = Boutons((10,10))
@@ -91,7 +83,7 @@ def menu():
                 exit()
 
             elif tev == "ClicGauche":
-                if click not in {None}:
+                if click is not None:
                     if click == "Continuer la partie":
                         return save_read()
 
@@ -100,13 +92,7 @@ def menu():
                         check_in()
                         return None
 
-
-
             fltk.mise_a_jour()
 
         except KeyboardInterrupt:
             exit()
-
-
-
-check_in()
