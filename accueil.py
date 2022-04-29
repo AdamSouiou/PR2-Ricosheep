@@ -37,7 +37,7 @@ def menu():
                     if click == "Jouer":
                         return click, None
                     elif click == "Niveaux":
-                        if sauvegarde.compare() == True:
+                        if sauvegarde.compare():
                             choix = sauvegarde.menu()
                             if choix is not None:
                                 return "Jouer", choix

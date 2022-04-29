@@ -86,7 +86,7 @@ if __name__ == "__main__":
         if plateau is not None:
             jeu(plateau)
         elif choix == 'Jouer':
-            if sauvegarde.compare() == True:
+            if sauvegarde.compare():
                 plateau = sauvegarde.menu()
                 if plateau is None:
                     plateau = Plateau(cfg.carte)

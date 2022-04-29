@@ -66,7 +66,7 @@ def compare():
     print(cfg.carte != carte_save and historique_save != [] and position_save != [])
     if carte_save != []:
         return cfg.carte != carte_save and historique_save != [] and position_save != []
-    return false
+    return False
 
 def menu():
     boutons = Boutons((10,10))
