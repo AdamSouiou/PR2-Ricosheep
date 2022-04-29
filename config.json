@@ -3,9 +3,9 @@
         "largeur_fenetre": 500,
         "hauteur_fenetre": 500
     },
-    "son": true,
+    "son": false,
     "carte": [
-        "custom",
-        "tropdifficile lol.txt"
+        "square",
+        "map2.txt"
     ]
 }

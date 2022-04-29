@@ -1,8 +1,6 @@
-from sys import setrecursionlimit, getsizeof
+from sys import setrecursionlimit
 from time import time
-from pprint import pprint
 
-from sqlalchemy import true
 from plateau import Plateau
 from accueil import menu
 import graphiques
@@ -10,6 +8,7 @@ import cfg
 import fltk
 import solveur
 import sauvegarde
+import son
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -39,6 +38,7 @@ def jeu(plateau: Plateau):
             elif tev == "Touche":
                 touche = fltk.touche(ev)
                 if touche in DIRECTIONS:
+                    son.sound('Sheep')
                     plateau.deplace_moutons(touche, historique=True)
 
                 if touche == "s":
@@ -80,6 +80,11 @@ def jeu(plateau: Plateau):
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
                       'Ricosheep')
+    son.initialisation()
+    
+
     while True:
+        son.song("Wait")
         plateau = menu()
+        son.song("Otherside")
         jeu(plateau)

@@ -6,6 +6,7 @@ import fltk
 import selecteur
 import sauvegarde
 import editeur
+import son
 
 
 def menu():
@@ -45,14 +46,19 @@ def menu():
                         plateau = sauvegarde.menu()
                     
                     if click == "Jouer":
+                        son.sound('MenuOk')
                         return plateau or Plateau(cfg.carte)
                     elif click == "Niveaux":
+                        son.sound('Menubeep')
                         selecteur.menu()    
                         cfg.maj()
                     elif click == "Editeur de Niveaux":
+                        son.sound('Menubeep')
                         print("bonjour")
                         editeur.debut()
                         print(plateau)
+                elif click != {None}:
+                    son.toggle_sound()
 
             fltk.mise_a_jour()
 

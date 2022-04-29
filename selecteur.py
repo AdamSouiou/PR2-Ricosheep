@@ -2,9 +2,9 @@ import os
 import json
 from bouton import Boutons
 import graphiques
-import cfg
 import fltk
 from plateau import Plateau
+import son
 
 
 def menu():
@@ -31,6 +31,7 @@ def menu():
 
             elif tev == "ClicGauche":
                 if click not in {None, "Valider", choix}:
+                    son.sound('Menubeep')
                     if click == "=>":
                         split += 1
                     elif click == "<=":
@@ -48,6 +49,7 @@ def menu():
                     boutons = init_boutons(split, directory, choix)
 
                 if click == "Valider":
+                    son.sound('MenuOk')
                     return
 
             fltk.mise_a_jour()

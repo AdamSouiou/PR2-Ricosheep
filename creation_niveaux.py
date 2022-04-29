@@ -1,9 +1,9 @@
-from turtle import width
 import fltk
 import graphiques
 import editeur
 import cfg
 import os
+import son
 from bouton import Boutons
 
 
@@ -30,21 +30,25 @@ def menu(plateau):
         if tev == "ClicGauche":
             if click not in {None}:
                 if click == "Enregistrer":
+                    son.sound('MenuOk')
                     demande_nom(plateau)
                     return
                     
 
                 elif click == "Annuler":
-                        boutons = Boutons((10,10))
-                        boutons.cree_bouton_texte(1, 2, 8, 2, "Revenir au menu", arrondi = 0.75)
-                        boutons.cree_bouton_texte(1, 3, 8, 3, "principal ?", arrondi = 0.75)
+                    son.sound('Menubeep')
+                    boutons = Boutons((10,10))
+                    boutons.cree_bouton_texte(1, 2, 8, 2, "Revenir au menu", arrondi = 0.75)
+                    boutons.cree_bouton_texte(1, 3, 8, 3, "principal ?", arrondi = 0.75)
 
-                        boutons.cree_bouton_simple(1, 6, 4, 6, 'Menu', arrondi=0.75)
-                        boutons.cree_bouton_simple(5, 6, 8, 6, 'Editeur', arrondi=0.75)
-                        boutons.init()
+                    boutons.cree_bouton_simple(1, 6, 4, 6, 'Menu', arrondi=0.75)
+                    boutons.cree_bouton_simple(5, 6, 8, 6, 'Editeur', arrondi=0.75)
+                    boutons.init()
                 elif click == "Menu":
+                    son.sound('MenuOk')
                     return
                 elif click == "Editeur":
+                    son.sound('Menubeep')
                     editeur.debut()
 
         fltk.mise_a_jour()
@@ -69,6 +73,7 @@ def demande_nom(plateau):
 
         if tev == "ClicGauche":
             if click not in {None}:
+                son.sound('MenuOk')
                 fichier = texte.get()
                 fichier = fichier.strip()
 

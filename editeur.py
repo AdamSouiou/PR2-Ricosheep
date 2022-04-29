@@ -1,4 +1,3 @@
-from regex import E
 from bouton import Boutons
 from plateau import Plateau
 
@@ -7,6 +6,7 @@ import cfg
 import fltk
 import solveur
 import creation_niveaux
+import son
 
 
 ETAT = [None, "B", "G", "S"]
@@ -106,6 +106,7 @@ def debut():
 
         if tev == "ClicGauche":
             if click not in {None}:
+                son.sound('MenuOk')
                 nb_lignes = lignes.get()
                 nb_colonnes = colonnes.get()
 
@@ -149,11 +150,14 @@ def main(lignes, colonnes):
             print(touche)
 
             if touche == "t":
+                son.sound('MenuOk')
+        
                 if test(plateau):
                     return creation_niveaux.menu(plateau)
 
         if tev == "ClicGauche":
             if click not in {None}:
+                son.sound('Sheep')
                 coord = click.split()
                 coord[0], coord[1] = int(coord[0]), int(coord[1])
                 change_case(plateau, coord)
