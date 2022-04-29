@@ -79,19 +79,8 @@ def jeu(plateau: Plateau):
 
 
 if __name__ == "__main__":
-    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre, 'Ricosheep')
-    sauvegarde.check_in()
-
+    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
+                      'Ricosheep')
     while True:
-        choix, plateau = menu()
-        if plateau is not None:
-            jeu(plateau)
-        elif choix == 'Jouer':
-            if sauvegarde.compare():
-                plateau = sauvegarde.menu()
-                if plateau is None:
-                    plateau = Plateau(cfg.carte)
-            else:
-                plateau = Plateau(cfg.carte)
-
-            jeu(plateau)
+        plateau = menu()
+        jeu(plateau)
