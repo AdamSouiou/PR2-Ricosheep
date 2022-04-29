@@ -21,7 +21,7 @@ def menu():
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
-            boutons.grille.draw()
+            #boutons.grille.draw()
             click = boutons.dessiner_boutons(tev)
             if plateau is not None: plateau.draw()
 

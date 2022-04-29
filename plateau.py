@@ -31,9 +31,16 @@ class Plateau:
     def __init__(self, gridfile: str,
                  grille_base=None,
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
-                 test_mode=False):
-        print('Jeu reçu par l instance Plateau', gridfile)
-        self.grid_parse(gridfile)
+                 test_mode=False, editeur=False):
+
+        if not editeur:
+            #print('Jeu reçu par l instance Plateau', gridfile)
+            self.grid_parse(gridfile)
+
+        else:
+            self.grid_parselst(editeur)
+
+        #print(self.env)
         if test_mode: return
         self.grille = Grille(self.nb_colonnes, self.nb_lignes,
                              grille_base=grille_base,
@@ -67,11 +74,31 @@ class Plateau:
                 self.nb_lignes += 1
         self.historique = [tuple(deepcopy(self.troupeau))]
 
+    def grid_parselst(self, editeur):
+        self.troupeau = []
+        self.env = {'buissons': set(), 'touffes': set()}
+        self.nb_lignes = 0
+        for lignes in editeur:
+            self.nb_colonnes = 0
+            for elem in lignes:
+                pos = (self.nb_lignes, self.nb_colonnes)
+                if elem == "B":
+                    self.env['buissons'].add(pos)
+                elif elem == 'G':
+                    self.env['touffes'].add(pos)
+                elif elem == "S":
+                    self.troupeau.append(Mouton(*pos))
+                self.nb_colonnes += 1
+            self.nb_lignes += 1
+        self.historique = [tuple(deepcopy(self.troupeau))]
+
+
     affiche = lambda self, case, img: fltk.afficher_image(
                 case.centre_x,
                 case.centre_y,
                 img, ancrage='center'
     )
+
     
     def draw(self):
         self.grille.draw()

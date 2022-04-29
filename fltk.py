@@ -609,13 +609,16 @@ def boite_prompt(Name, Text):
 
 def boite_texte(x, y,font="Courier 10", width="20", justify = "left"):
     entry = Entry(__canevas.canvas,justify= justify, width= width, font=font)
-    entry.focus_set()
+    #entry.focus_set()
     entry.place(x=x, y=y)
     return entry
 
 def delete_boitetexte(boite):
-    boite.delete()
-    #boite.destroy()
+    boite.destroy()
+    __canevas.canvas.focus_set()
+
+def resetfocus():
+    __canevas.canvas.focus_set()
 
 
 #############################################################################

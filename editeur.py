@@ -1,11 +1,15 @@
-import fltk
+from regex import E
 from bouton import Boutons
+from plateau import Plateau
+
 import graphiques
 import cfg
+import fltk
+import solveur
+import creation_niveaux
 
-from tkinter import Entry
 
-ETAT = [None, "Buisson", "Touffe", "Mouton"]
+ETAT = [None, "B", "G", "S"]
 
 
 def init_boutons(Echec = False):
@@ -26,17 +30,55 @@ def init_boutons_grille(nb_lignes, nb_colonnes):
     for colonne in range(nb_colonnes):
         temp = []
         for ligne in range(nb_lignes):
-            temp.append([None, 0])
+            temp.append(None)
             boutons.cree_bouton_invisible(ligne, colonne, ligne, colonne, f"{colonne} {ligne}")
         Liste.append(temp)
     return boutons, Liste
 
 def change_case(plateau, coord):
-    print( plateau[coord[0]][coord[1]])
-    num = (plateau[coord[0]][coord[1]][1] + 1 ) % 4
-    plateau[coord[0]][coord[1]] = [ETAT[num], num]
-    print (plateau[coord[0]][coord[1]])
+    num = (ETAT.index(plateau[coord[0]][coord[1]]) + 1 ) % 4
+    plateau[coord[0]][coord[1]] = ETAT[num]
 
+def initplateau(grille):
+    global images
+    taille_image = grille.largeur_case * 0.8
+    images = {
+            "B" : fltk.box_image('media/bush.png',  (taille_image,)),
+            "G"  : fltk.box_image('media/grass.png', (taille_image,)),
+            "S"   : fltk.box_image('media/sheep.png', (taille_image,)),
+        }
+
+
+affiche_env_element = lambda case, img: fltk.afficher_image(
+        case.centre_x,
+        case.centre_y,
+        img, ancrage= "center")
+
+def draw(plateau, grille):
+    grille.draw()
+
+    for ligne in range(len(plateau)):
+        case = grille.cases[ligne]
+        for elem in range(len(plateau[0])):
+
+            if plateau[ligne][elem] != None:
+                affiche_env_element(case[elem], images[plateau[ligne][elem]])
+
+def test(carte):
+    plateau = Plateau(carte, editeur = carte)
+    pos_tmp = solveur.tri_copy(plateau.troupeau)
+    chemin, _ = solveur.profondeur(plateau)
+
+    if chemin == None:
+        print("Pas de solutions, chacal!, recommence ton niveau")
+        return False
+    else:
+        solveur.restore(plateau.troupeau, pos_tmp)
+        print(chemin)
+        print("Le solveur a bon? :", solveur.test(chemin, plateau, 0))
+        # print(chemin)
+        print(f"La longueur du chemin est de {len(chemin)}")
+        return True
 
 
 def debut():
@@ -58,10 +100,6 @@ def debut():
         graphiques.background("#3f3e47")
         click = boutons.dessiner_boutons(tev)
 
-
-        # inp = fltk.get_texte(boite)
-        # print(inp)
-
         if tev == 'Quitte':
             fltk.ferme_fenetre()
             exit()
@@ -71,16 +109,16 @@ def debut():
                 nb_lignes = lignes.get()
                 nb_colonnes = colonnes.get()
 
-                if type(nb_lignes) != int or type(nb_colonnes)!= int:
+                if nb_lignes.isdigit() and nb_colonnes.isdigit():
                     nb_lignes = int(nb_lignes)
                     nb_colonnes = int(nb_colonnes)
-                    if nb_lignes * nb_colonnes <= 0:
-                        init_boutons(True)
+                    if nb_lignes * nb_colonnes == 0:
+                        boutons = init_boutons(True)
                     else:
                         lignes.destroy()
                         colonnes.destroy()
-                        fltk.ferme_fenetre()
-                        fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre, "Ricosheep")
+                        fltk.resetfocus()
+
                         return main(nb_lignes, nb_colonnes)
                     
                 else:
@@ -90,12 +128,13 @@ def debut():
 
 def main(lignes, colonnes):
     boutons, plateau = init_boutons_grille(colonnes, lignes)
+    initplateau(boutons.grille)
 
     while True:
         fltk.efface_tout()
 
         graphiques.background("#3f3e47")
-        boutons.grille.draw()
+        draw(plateau, boutons.grille)
     
         ev = fltk.attend_ev()
         tev = fltk.type_ev(ev)
@@ -110,7 +149,8 @@ def main(lignes, colonnes):
             print(touche)
 
             if touche == "t":
-                return plateau
+                if test(plateau):
+                    return creation_niveaux.menu(plateau)
 
         if tev == "ClicGauche":
             if click not in {None}:
@@ -118,19 +158,10 @@ def main(lignes, colonnes):
                 coord[0], coord[1] = int(coord[0]), int(coord[1])
                 change_case(plateau, coord)
 
-        if tev == "ClicDroit":
-            print(plateau)
-            return plateau
-
-
-
         fltk.mise_a_jour()
 
 
 
 if __name__ == "__main__":
     fltk.cree_fenetre(500, 500)
-    ligne, colonne = debut()
-    fltk.ferme_fenetre()
-    fltk.cree_fenetre(500, 500)
-    print(main(ligne, colonne))
+    debut()

@@ -28,15 +28,18 @@ def menu():
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
-            boutons.grille.draw()
+            #boutons.grille.draw()
             click = boutons.dessiner_boutons(tev)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
 
+            elif tev == "Touche":
+                print(fltk.touche(ev))
+
             elif tev == "ClicGauche":
-                if click in {'Jouer', 'Niveaux'}:
+                if click in {'Jouer', 'Niveaux', 'Editeur de Niveaux'}:
                     plateau = None
                     if sauvegarde.est_valide():
                         plateau = sauvegarde.menu()
@@ -47,10 +50,15 @@ def menu():
                         selecteur.menu()    
                         cfg.maj()
                     elif click == "Editeur de Niveaux":
-                        plateau = editeur.debut()
+                        print("bonjour")
+                        editeur.debut()
                         print(plateau)
 
             fltk.mise_a_jour()
 
         except KeyboardInterrupt:
             exit()
+
+if __name__ == "__main__":
+    fltk.cree_fenetre(500, 500)
+    menu()
