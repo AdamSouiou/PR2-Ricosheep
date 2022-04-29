@@ -5,7 +5,7 @@
     },
     "son": true,
     "carte": [
-        "tests",
-        "test_move.txt"
+        "big",
+        "big2.txt"
     ]
 }

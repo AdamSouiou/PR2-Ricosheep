@@ -1,6 +1,8 @@
 import subprocess
 import sys
 import tkinter as tk
+import tkinter.simpledialog 
+from tkinter import Entry
 from collections import deque
 from os import system
 from time import time, sleep
@@ -601,6 +603,19 @@ def touche_pressee(keysym):
     :return: `True` si ``keysym`` est actuellement pressée, `False` sinon.
     """
     return keysym in __canevas.pressed_keys
+
+def boite_prompt(Name, Text):
+    return tkinter.simpledialog.askstring(Name, Text)
+
+def boite_texte(x, y,font="Courier 10", width="20", justify = "left"):
+    entry = Entry(__canevas.canvas,justify= justify, width= width, font=font)
+    entry.focus_set()
+    entry.place(x=x, y=y)
+    return entry
+
+def delete_boitetexte(boite):
+    boite.delete()
+    #boite.destroy()
 
 
 #############################################################################

@@ -38,6 +38,7 @@ def jeu(plateau: Plateau):
 
             elif tev == "Touche":
                 touche = fltk.touche(ev)
+                print(touche)
                 if touche in DIRECTIONS:
                     plateau.deplace_moutons(touche, historique=True)
 
