@@ -3,9 +3,9 @@
         "largeur_fenetre": 500,
         "hauteur_fenetre": 500
     },
-    "son": true,
+    "son": false,
     "carte": [
-        "theme",
-        "one_sheep2.txt"
+        "wide",
+        "wide3.txt"
     ]
 }

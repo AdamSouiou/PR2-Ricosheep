@@ -89,8 +89,6 @@ class Grille:
 
         self.view_ax += ((self.view_bx - self.view_ax) - self.largeur_case*self.nb_colonne) / 2
         self.view_ay += ((self.view_by - self.view_ay) - self.hauteur_case*self.nb_ligne) / 2
-
-        #print(self.view_ax, self.view_ay)
         
         for j in range(self.nb_ligne):
             ligne = []

@@ -1,4 +1,4 @@
-from sys import setrecursionlimit, getsizeof
+from sys import setrecursionlimit
 from time import time
 from copy import deepcopy
 from pprint import pprint
@@ -8,6 +8,8 @@ import graphiques
 import cfg
 import fltk
 import solveur
+import sauvegarde
+import son
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -40,6 +42,7 @@ def jeu(plateau: Plateau):
                 if touche in DIRECTIONS:
                     start_deplacement = time()
                     plateau.deplace_moutons(touche, dt=dt)
+                    son.sound('Sheep')
 
                 if touche == "s":
                     plateau.clear_historique()
@@ -62,6 +65,13 @@ def jeu(plateau: Plateau):
                     plateau.undo()
                 elif touche == 'Escape':
                     return
+                elif touche == 'p':
+                    print(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                    sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                """print('Historique :')
+                pprint(plateau.historique)
+                print('Troupeau :', plateau.troupeau)
+                print()"""
 
             fltk.mise_a_jour()
             dt = time() - dt_start
@@ -71,11 +81,13 @@ def jeu(plateau: Plateau):
 
 
 if __name__ == "__main__":
-    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre, 'Ricosheep')
+    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
+                      'Ricosheep')
+    son.initialisation()
+    
 
     while True:
-        choix = menu()
-
-        if choix == 'Jouer':
-            plateau = Plateau(cfg.carte, duree_anime=0.25)
-            jeu(plateau)
+        son.song("Wait")
+        plateau = menu()
+        son.song("Otherside")
+        jeu(plateau)

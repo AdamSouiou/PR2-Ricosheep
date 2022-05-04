@@ -470,7 +470,7 @@ class Boutons:
             etat = getattr(bouton.object_ref, bouton.attribute)
         if type(bouton) is BoutonBooleen:
             if tev == 'ClicGauche' and survole:
-                setattr(bouton.object_ref, bouton.attribute, etat ^ 1)
+                setattr(bouton.object_ref, bouton.attribute, (not etat))
             remplissage_actif = (bouton.couleur_hovered_actif if etat
                                  else bouton.couleur_hovered_desactive)
             remplissage = (bouton.couleur_actif if etat

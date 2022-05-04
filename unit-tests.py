@@ -5,8 +5,8 @@ from glob import glob
 import solveur
 from plateau import Plateau
 
-maps_impossibles = {'maps/square/map1.txt',
-                    'maps/custom/1.txt'}
+maps_impossibles = {'maps\\square\\map1.txt',
+                    'maps\\custom\\1.txt'}
 
 class TestSolveur(unittest.TestCase):
     
