@@ -23,7 +23,7 @@ def menu():
             graphiques.background("#3f3e47")
             #boutons.grille.draw()
             click = boutons.dessiner_boutons(tev)
-            if plateau is not None: plateau.draw()
+            if plateau is not None: plateau.draw(0)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -62,7 +62,8 @@ def open_plateau(choix, boutons: Boutons):
         plateau = Plateau(
             os.path.join("maps", choix),
             grille_base=boutons.grille,
-            grille_pos=(6, 3, 8, 6)
+            grille_pos=(6, 3, 8, 6),
+            duree_anime=0
         )
     else:
         plateau = None

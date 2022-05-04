@@ -1,4 +1,5 @@
 from typing import List, Tuple, Dict, Set
+from time import time
 from pprint import pprint
 from mouton import Mouton
 from graphiques import affiche_case
@@ -22,7 +23,7 @@ class Plateau:
     last_direction:     str
     nb_places:          int
     anime:              bool
-    vitesse:            float
+    duree_anime:        float
     __slots__ = tuple(__annotations__)
     
     def __hash__(self):
@@ -31,18 +32,18 @@ class Plateau:
     def __eq__(self, other):
         return sorted(self.troupeau) == sorted(other.troupeau)
 
-    def __init__(self, gridfile: str, anime=False,
+    def __init__(self, gridfile: str, duree_anime=0.15,
                  grille_base=None,
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
                  test_mode=False):
         print("Jeu reçu par l'instance Plateau", gridfile)
         self.grid_parse(gridfile)
-        self.anime = anime
-        self.vitesse = 10
+        self.anime = bool(duree_anime)
+        self.duree_anime = duree_anime
         self.grille = Grille(self.nb_colonnes, self.nb_lignes,
                              grille_base=grille_base,
                              grille_pos=grille_pos)
-        if anime: self.init_pos_mouton()
+        self.init_pos_mouton()
         self.taille_image = self.grille.largeur_case * 0.8
         self.last_direction = None
         self.nb_places = 0
@@ -76,13 +77,13 @@ class Plateau:
                 self.nb_lignes += 1
         self.historique = [tuple(deepcopy(self.troupeau))]
     
-    def draw(self):
+    def draw(self, start_time):
         self.grille.draw()
         for name, elements in self.env.items():
             for y,x in elements:
                 affiche_case(x, y, self.grille, images[name])
         if self.anime:
-            self.draw_moutons_anime()
+            self.draw_moutons_anime(start_time)
         else:
             self.draw_moutons_simple()
     
@@ -97,11 +98,13 @@ class Plateau:
                 self.affiche_mouton(m)
     
     def init_pos_mouton(self):
-        for mouton in self.troupeau:
-            mouton.centre_x = self.grille.cases[mouton.y][mouton.x].centre_x
-            mouton.centre_y = self.grille.cases[mouton.y][mouton.x].centre_y
+        if self.anime:
+            for mouton in self.troupeau:
+                mouton.centre_x = self.grille.cases[mouton.y][mouton.x].centre_x
+                mouton.centre_y = self.grille.cases[mouton.y][mouton.x].centre_y
+                mouton.en_deplacement = False
 
-    def draw_moutons_anime(self):
+    def draw_moutons_anime(self, start_time):
         fini = 0
         for mouton in self.troupeau:
             if not mouton.en_deplacement:
@@ -109,7 +112,7 @@ class Plateau:
                 fini += 1
                 continue
             if self.last_direction is not None:
-                if not mouton.isPlace(self.last_direction, self.grille.cases):
+                if not mouton.outOfBound(self.last_direction, self.grille.cases):
                     mouton.centre_x += mouton.vitesse.x
                     mouton.centre_y += mouton.vitesse.y
                 else:
@@ -126,6 +129,7 @@ class Plateau:
         if fini == len(self.troupeau) and self.last_direction is not None:
             self.last_direction = None
             self.init_pos_mouton()
+            print(f'{(time() - start_time - 1/60):.3f}s')
 
     def isNotPosMouton(self, x, y):
         for mouton in self.troupeau:
@@ -144,19 +148,17 @@ class Plateau:
                  not (y, x) in self.env['buissons'] and
                   self.isNotPosMouton(x, y))
 
-    def deplace_moutons(self, direction: str, solveur=False):
-        # Evite le cas où le joueur appuie pendant le déplacement
-        vitesse = 0
+    def deplace_moutons(self, direction: str, solveur=False, dt=0):
         if not solveur:
+            # Evite le cas où le joueur appuie pendant le déplacement
             if self.last_direction is not None: return
             if self.anime:
                 self.last_direction = direction
-                vitesse = self.vitesse
             self.historique.append(tuple(deepcopy(self.troupeau)))
 
         self.tri_moutons(direction)
         for mouton in self.troupeau:
-            mouton.deplace(direction, self, vitesse)
+            mouton.deplace(direction, self, dt)
         
     def tri_moutons(self, direction):
         """
@@ -171,14 +173,16 @@ class Plateau:
     tri_moutons.DOWN_RIGHT = {"Down", "Right"}
     tri_moutons.UP_LEFT = {"Up", "Left"}
 
+    def clear_historique(self): del self.historique[1:]
+
     def reset(self):
         """
         Réinitialise à l'état initial de la map,
         et supprime l'historique
         """
         self.troupeau = list(deepcopy(self.historique[0]))
-        del self.historique[1:]
-        if self.anime: self.init_pos_mouton()
+        self.clear_historique()
+        self.init_pos_mouton()
 
     def undo(self):
         """
@@ -186,6 +190,7 @@ class Plateau:
         """
         if len(self.historique) >= 2:
             self.troupeau = list(self.historique.pop())
+        self.init_pos_mouton()
         
     def isGagne(self):
         occupe = 0

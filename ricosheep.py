@@ -1,5 +1,6 @@
 from sys import setrecursionlimit, getsizeof
 from time import time
+from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
 from accueil import menu
@@ -13,15 +14,18 @@ DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
 
 def jeu(plateau: Plateau):
+    start_deplacement = 0
+    dt = 0
     while True:
         try:
+            dt_start = time()
             fltk.efface_tout()
             graphiques.background("#3f3e47")
-            plateau.draw()
+            plateau.draw(start_deplacement)
             
-            if plateau.isGagne():
+            # if plateau.isGagne():
                 # graphiques.victory()
-                print("C'est gagné !")
+                # print("C'est gagné !")
                 # fltk.mise_a_jour()
                 # fltk.attend_ev()
 
@@ -34,14 +38,14 @@ def jeu(plateau: Plateau):
             elif tev == "Touche":
                 touche = fltk.touche(ev)
                 if touche in DIRECTIONS:
-                    plateau.deplace_moutons(touche)
+                    start_deplacement = time()
+                    plateau.deplace_moutons(touche, dt=dt)
 
                 if touche == "s":
+                    plateau.clear_historique()
                     start = time()
-                    pos_tmp = solveur.tri_copy(plateau.troupeau)
-                    chemin, _ = solveur.profondeur(plateau)
+                    chemin, _ = solveur.profondeur(deepcopy(plateau))
                     elapsed = time() - start
-                    solveur.restore(plateau.troupeau, pos_tmp)
                     
                     if chemin == None:
                         print("Pas de solutions, chacal!")
@@ -60,6 +64,7 @@ def jeu(plateau: Plateau):
                     return
 
             fltk.mise_a_jour()
+            dt = time() - dt_start
 
         except KeyboardInterrupt:
             exit()
@@ -72,5 +77,5 @@ if __name__ == "__main__":
         choix = menu()
 
         if choix == 'Jouer':
-            plateau = Plateau(cfg.carte, anime=True)
+            plateau = Plateau(cfg.carte, duree_anime=0.25)
             jeu(plateau)

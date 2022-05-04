@@ -1,5 +1,6 @@
 import operator
 from typing import List
+from copy import copy
 from dataclasses import dataclass
 
 
@@ -30,6 +31,10 @@ class Mouton:
         if type(other) is tuple:
             return (self.y, self.x) == other
         return (self.y, self.x) == (other.y, other.x)
+    def __ne__(self, other):
+        if type(other) is tuple:
+            return (self.y, self.x) != other
+        return (self.y, self.x) != (other.y, other.x)
     def __lt__(self, other):
         if type(other) is tuple:
             return (self.y, self.x) < other
@@ -44,9 +49,9 @@ class Mouton:
         self.en_deplacement = False
 
 
-    def deplace(self, direction: str, plateau, vitesse=0):
+    def deplace(self, direction: str, plateau, dt=0):
         if direction is None: return
-        hash_mouton_initial = hash(self)
+        if plateau.duree_anime: mouton_initial = copy(self)
         if direction == "Up":
             while plateau.isPositionValid(self.x, self.y-1):
                 self.y -= 1
@@ -63,23 +68,29 @@ class Mouton:
             while plateau.isPositionValid(self.x+1, self.y):
                 self.x += 1
 
-        if vitesse:
-            if hash(self) != hash_mouton_initial:
+        if plateau.anime:
+            if self != mouton_initial:
                 self.en_deplacement = True
-            if self.en_deplacement:
-                setattr(self.vitesse, axes[direction], coeff_axe[direction] * vitesse)
-            print(self.vitesse)
+                distance_case = abs(
+                    getattr(self, axes[direction])\
+                    - getattr(mouton_initial, axes[direction])
+                )
+                distance = distance_case * plateau.grille.largeur_case
+                setattr(self.vitesse, axes[direction],
+                    coeff_axe[direction] *\
+                    dt * (distance / plateau.duree_anime)
+                )
 
-    def isPlace(self, direction, cases):
-        if direction in self.isPlace.LEFT_UP:
+    def outOfBound(self, direction, cases):
+        if direction in self.outOfBound.LEFT_UP:
             comparateur = operator.le
-        elif direction in self.isPlace.RIGHT_DOWN:
+        elif direction in self.outOfBound.RIGHT_DOWN:
             comparateur = operator.ge
             
-        result = comparateur(
+        return comparateur(
             getattr(self, axes_cases[direction]) + getattr(self.vitesse, axes[direction]),
             getattr(cases[self.y][self.x], axes_cases[direction])
         )
-        return result
-    isPlace.LEFT_UP = {'Left', 'Up'}
-    isPlace.RIGHT_DOWN = {'Right', 'Down'}
+        
+    outOfBound.LEFT_UP = {'Left', 'Up'}
+    outOfBound.RIGHT_DOWN = {'Right', 'Down'}

@@ -74,7 +74,9 @@ def anim_brute(plateau: Plateau, pause: int):
 def test(chemin: List[str], plateau: Plateau):
     for mouv in chemin:
         plateau.deplace_moutons(mouv, solveur=True)
+
     plateau.init_pos_mouton()
+    print(f'Plateau: {plateau.troupeau}')
     return plateau.isGagne()
 
 if __name__ == '__name__':
