@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict, Set
 from time import time
 from pprint import pprint
 from mouton import Mouton
-from graphiques import affiche_case
+from graphiques import affiche_case, box_image
 from grille import Grille
 from copy import deepcopy
 import fltk
@@ -58,10 +58,10 @@ class Plateau:
         if test_mode: return
         global images
         images = {
-            "buissons" : fltk.box_image('media/bush.png',  (self.taille_image,)),
-            "touffes"  : fltk.box_image('media/grass.png', (self.taille_image,)),
-            "mouton"   : fltk.box_image('media/sheep.png', (self.taille_image,)),
-            "heureux"  : fltk.box_image('media/sheep_grass.png', (self.taille_image,))
+            "buissons" : box_image('media/bush.png',  (self.taille_image,)),
+            "touffes"  : box_image('media/grass.png', (self.taille_image,)),
+            "mouton"   : box_image('media/sheep.png', (self.taille_image,)),
+            "heureux"  : box_image('media/sheep_grass.png', (self.taille_image,))
         }
 
 

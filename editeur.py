@@ -1,5 +1,6 @@
 from bouton import Boutons
 from plateau import Plateau
+from graphiques import box_image
 
 import graphiques
 import cfg
@@ -43,9 +44,9 @@ def initplateau(grille):
     global images
     taille_image = grille.largeur_case * 0.8
     images = {
-            "B" : fltk.box_image('media/bush.png',  (taille_image,)),
-            "G"  : fltk.box_image('media/grass.png', (taille_image,)),
-            "S"   : fltk.box_image('media/sheep.png', (taille_image,)),
+            "B" : box_image('media/bush.png',  (taille_image,)),
+            "G" : box_image('media/grass.png', (taille_image,)),
+            "S" : box_image('media/sheep.png', (taille_image,)),
         }
 
 
@@ -60,7 +61,6 @@ def draw(plateau, grille):
     for ligne in range(len(plateau)):
         case = grille.cases[ligne]
         for elem in range(len(plateau[0])):
-
             if plateau[ligne][elem] != None:
                 affiche_env_element(case[elem], images[plateau[ligne][elem]])
 
