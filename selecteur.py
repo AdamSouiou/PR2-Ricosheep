@@ -22,7 +22,7 @@ def menu():
             #boutons.grille.draw()
             boutons.dessiner_boutons()
             
-            if plateau is not None: plateau.draw(0)
+            if plateau is not None: plateau.draw()
             
             ev = fltk.attend_ev()
             tev = fltk.type_ev(ev)

@@ -24,7 +24,7 @@ def jeu(plateau: Plateau):
             dt_start = time()
             fltk.efface_tout()
             graphiques.background("#3f3e47")
-            plateau.draw(start_deplacement)
+            plateau.draw(start_deplacement, dt)
             
             # if plateau.isGagne():
                 # graphiques.victory()

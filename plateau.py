@@ -106,13 +106,13 @@ class Plateau:
     affiche = lambda self, case, img: fltk.afficher_image(
         case.centre_x, case.centre_y, img, ancrage='center')
 
-    def draw(self, start_time):
+    def draw(self, start_time=0, dt=0):
         self.grille.draw()
         for name, elements in self.env.items():
             for y, x in elements:
                 affiche_case(x, y, self.grille, images[name])
         if self.anime:
-            self.draw_moutons_anime(start_time)
+            self.draw_moutons_anime(start_time, dt)
         else:
             self.draw_moutons_simple()
 
@@ -132,7 +132,7 @@ class Plateau:
         for m in self.troupeau:
             self.affiche_mouton(m)
 
-    def draw_moutons_anime(self, start_time):
+    def draw_moutons_anime(self, start_time=0, dt=0):
         fini = 0
         for mouton in self.troupeau:
             if not mouton.en_deplacement:
@@ -140,9 +140,9 @@ class Plateau:
                 fini += 1
                 continue
             if self.last_direction is not None:
-                if not mouton.outOfBound(self.last_direction, self.grille.cases):
-                    mouton.centre_x += mouton.vitesse.x
-                    mouton.centre_y += mouton.vitesse.y
+                if not mouton.outOfBound(self.last_direction, self.grille.cases, dt):
+                    mouton.centre_x += mouton.vitesse.x * dt
+                    mouton.centre_y += mouton.vitesse.y * dt
                 else:
                     print("Salut, je m'arrête!")
                     mouton.en_deplacement = False
@@ -155,7 +155,7 @@ class Plateau:
         if fini == len(self.troupeau) and self.last_direction is not None:
             self.last_direction = None
             self.reposition_moutons()
-            print(f'{(time() - start_time - 1/60):.3f}s')
+            print(f'{(time() - start_time):.3f}s')
 
 
     def isNotPosMouton(self, x, y):
@@ -185,7 +185,7 @@ class Plateau:
 
         self.tri_moutons(direction)
         for mouton in self.troupeau:
-            mouton.deplace(direction, self, dt)
+            mouton.deplace(direction, self)
 
     def tri_moutons(self, direction):
         """

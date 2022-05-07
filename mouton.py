@@ -56,7 +56,7 @@ class Mouton:
             self.vitesse.y = 0
             self.en_deplacement = False
 
-    def deplace(self, direction: str, plateau, dt=0):
+    def deplace(self, direction: str, plateau):
         if direction is None: return
         if plateau.duree_anime: mouton_initial = copy(self)
         if direction == "Up":
@@ -78,24 +78,23 @@ class Mouton:
         if plateau.anime:
             if self != mouton_initial:
                 self.en_deplacement = True
-                distance_case = abs(
+                distance = abs(
                     getattr(self, axes[direction])\
                     - getattr(mouton_initial, axes[direction])
-                )
-                distance = distance_case * plateau.grille.largeur_case
+                ) * plateau.grille.largeur_case
                 setattr(self.vitesse, axes[direction],
                     coeff_axe[direction] *\
-                    dt * (distance / plateau.duree_anime)
+                    (distance / plateau.duree_anime)
                 )
 
-    def outOfBound(self, direction, cases):
+    def outOfBound(self, direction, cases, dt):
         if direction in self.outOfBound.LEFT_UP:
             comparateur = operator.le
         elif direction in self.outOfBound.RIGHT_DOWN:
             comparateur = operator.ge
             
         return comparateur(
-            getattr(self, axes_cases[direction]) + getattr(self.vitesse, axes[direction]),
+            getattr(self, axes_cases[direction]) + getattr(self.vitesse, axes[direction]) * dt,
             getattr(cases[self.y][self.x], axes_cases[direction])
         )
         
