@@ -11,6 +11,7 @@ import solveur
 import sauvegarde
 import son
 
+
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
@@ -50,7 +51,7 @@ def jeu(plateau: Plateau):
                     chemin, _ = solveur.profondeur(deepcopy(plateau))
                     elapsed = time() - start
                     
-                    if chemin == None:
+                    if chemin is None:
                         print("Pas de solutions, chacal!")
                     else:
                         print(chemin)
@@ -84,7 +85,6 @@ if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
                       'Ricosheep')
     son.initialisation()
-    
 
     while True:
         son.song("Wait")

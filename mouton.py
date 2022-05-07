@@ -48,6 +48,13 @@ class Mouton:
         self.vitesse = Vitesse(0, 0)
         self.en_deplacement = False
 
+    def repositionnement(self, cases):
+            case = cases[self.y][self.x]
+            self.centre_x = case.centre_x
+            self.centre_y = case.centre_y
+            self.vitesse.x = 0
+            self.vitesse.y = 0
+            self.en_deplacement = False
 
     def deplace(self, direction: str, plateau, dt=0):
         if direction is None: return

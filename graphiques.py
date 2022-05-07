@@ -75,10 +75,11 @@ def box_image(fichier, box, marge=0):
     if len(box) == 1:
         box = (box[0], box[0])
 
-    return fltk.redimensionner_image(fichier,
-                         calcul_taille_image(
-                             fltk.taille_image(fichier),
-                             box,
-                             marge
-                         )
-           )
+    return fltk.redimensionner_image(
+        fichier,
+        calcul_taille_image(
+            fltk.taille_image(fichier),
+            box,
+            marge
+        )
+    )

@@ -22,16 +22,21 @@ def menu():
         'Son!', 'Muet', arrondi=1, marge_texte=0.8
     )
     boutons.init()
+    
+    # fltk.efface_tout()
+    ev = None
 
     while True:
         try:
             fltk.efface_tout()
-            ev = fltk.donne_ev()
-            tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
             #boutons.grille.draw()
-            click = boutons.dessiner_boutons(tev)
-
+            boutons.dessiner_boutons(ev)
+            
+            ev = fltk.attend_ev()
+            tev = fltk.type_ev(ev)
+            click = boutons.nom_clic(ev)
+            
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
@@ -47,20 +52,19 @@ def menu():
                     
                     if click == "Jouer":
                         son.sound('MenuOk')
-                        return plateau or Plateau(cfg.carte, duree_anime=0.25)
+                        return plateau or Plateau(cfg.carte, duree_anime=0.15)
                     elif click == "Niveaux":
                         son.sound('Menubeep')
                         selecteur.menu()    
                         cfg.maj()
                     elif click == "Editeur de Niveaux":
                         son.sound('Menubeep')
-                        print("bonjour")
                         editeur.debut()
-                        print(plateau)
-                elif click != {None}:
+                elif click == 'son':
                     son.toggle_sound()
-
+                    
             fltk.mise_a_jour()
+            
 
         except KeyboardInterrupt:
             exit()

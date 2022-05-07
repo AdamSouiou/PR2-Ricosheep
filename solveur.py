@@ -75,8 +75,7 @@ def test(chemin: List[str], plateau: Plateau):
     for mouv in chemin:
         plateau.deplace_moutons(mouv, solveur=True)
 
-    plateau.init_pos_mouton()
-    print(f'Plateau: {plateau.troupeau}')
+    plateau.reposition_moutons()
     return plateau.isGagne()
 
 if __name__ == '__name__':

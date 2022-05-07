@@ -15,13 +15,16 @@ def menu(plateau):
     boutons.cree_bouton_simple(1, 6, 4, 6, 'Enregistrer', arrondi=0.75)
     boutons.cree_bouton_simple(5, 6, 8, 6, 'Annuler', arrondi=0.75)
     boutons.init()
-
+    ev = None
+    
     while True:
         fltk.efface_tout()
-        ev = fltk.donne_ev()
-        tev = fltk.type_ev(ev)
         graphiques.background("#3f3e47")
-        click = boutons.dessiner_boutons(tev)
+        boutons.dessiner_boutons(ev)
+        
+        ev = fltk.attend_ev()
+        tev = fltk.type_ev(ev)
+        click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
             fltk.ferme_fenetre()
@@ -60,12 +63,16 @@ def demande_nom(plateau):
 
     boutons.init()
     texte = fltk.boite_texte( cfg.largeur_fenetre/6, cfg.hauteur_fenetre/2, "Courier 20", width = 20 )
+    ev = None
+    
     while True:
         fltk.efface_tout()
-        ev = fltk.donne_ev()
-        tev = fltk.type_ev(ev)
         graphiques.background("#3f3e47")
-        click = boutons.dessiner_boutons(tev)
+        boutons.dessiner_boutons(ev)
+        
+        ev = fltk.attend_ev()
+        tev = fltk.type_ev(ev)
+        click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
             fltk.ferme_fenetre()

@@ -75,7 +75,7 @@ def test(carte):
     else:
         solveur.restore(plateau.troupeau, pos_tmp)
         print(chemin)
-        print("Le solveur a bon? :", solveur.test(chemin, plateau, 0))
+        print("Le solveur a bon? :", solveur.test(chemin, plateau))
         # print(chemin)
         print(f"La longueur du chemin est de {len(chemin)}")
         return True
@@ -92,13 +92,15 @@ def debut():
 
     #A mieux positionner
     
-
+    ev = None
     while True:
         fltk.efface_tout()
-        ev = fltk.donne_ev()
-        tev = fltk.type_ev(ev)
         graphiques.background("#3f3e47")
-        click = boutons.dessiner_boutons(tev)
+        boutons.dessiner_boutons(ev)
+        
+        ev = fltk.attend_ev()
+        tev = fltk.type_ev(ev)
+        click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
             fltk.ferme_fenetre()
@@ -130,17 +132,19 @@ def debut():
 def main(lignes, colonnes):
     boutons, plateau = init_boutons_grille(colonnes, lignes)
     initplateau(boutons.grille)
-
-    while True:
-        fltk.efface_tout()
-
-        graphiques.background("#3f3e47")
-        draw(plateau, boutons.grille)
+    ev = None
     
+    while True:
+
+        fltk.efface_tout()
+        graphiques.background("#3f3e47")
+        boutons.dessiner_boutons(ev)
+        draw(plateau, boutons.grille)
+        
         ev = fltk.attend_ev()
         tev = fltk.type_ev(ev)
-        
-        click = boutons.dessiner_boutons(tev) 
+        click = boutons.nom_clic(ev)
+
         if tev == "Quitte":
             fltk.ferme_fenetre()
             exit()
