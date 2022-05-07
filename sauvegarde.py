@@ -51,6 +51,7 @@ def save_read():
     plateau = Plateau(cfg.carte)
     plateau.historique_savewrite(save['historique'])
     plateau.troupeau_savewrite(save['position'])
+    plateau.reposition_moutons()
      
     return plateau
 
@@ -68,15 +69,18 @@ def menu():
     boutons.cree_bouton_simple(1, 6, 8, 6, 'Ecraser la sauvegarde', arrondi=0.75)
     
     boutons.init()
+    ev = None
 
     while True:
-        try:
+        try:        
             fltk.efface_tout()
-            ev = fltk.donne_ev()
-            tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
             boutons.grille.draw()
-            click = boutons.dessiner_boutons(tev)
+            boutons.dessiner_boutons(ev)
+            
+            ev = fltk.attend_ev()
+            tev = fltk.type_ev(ev)
+            click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
