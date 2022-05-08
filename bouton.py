@@ -15,13 +15,14 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 # A faire:
 # - Mise en cache des boutons arrondis?
 # - Bouton avec icône: Utiliser une police avec symboles?
+# - Utiliser la propriété texte héritée par BoutonBooleen pour éviter les recalculs de max
 
 from time import time
 from pprint import pprint
 from math import pi as PI, sin, cos
 from numpy import linspace
 from dataclasses import dataclass
-from typing import Union, List, Dict
+from typing import Union, Dict
 from grille import Grille
 import cfg
 import fltk
@@ -39,7 +40,7 @@ class Bouton:
     factice = False
 
 
-@dataclass
+@dataclass(eq=False)
 class BoutonTexte(Bouton):
     texte: str
     taille_texte = None
@@ -50,15 +51,17 @@ class BoutonTexte(Bouton):
     couleur_fond = 'white'
     centre_x = 0
     centre_y = 0
+    def __hash__(self):
+        return hash((self.format, self.texte))
 
 
-@dataclass
+@dataclass(eq=False)
 class BoutonSimple(BoutonTexte):
     enable_hovered = True
     couleur_hovered = '#848484'
 
 
-@dataclass
+@dataclass(eq=False)
 class BoutonBooleen(BoutonTexte):
     object_ref: object
     attribute: str
@@ -68,6 +71,9 @@ class BoutonBooleen(BoutonTexte):
     couleur_hovered_actif = '#0b4f34'
     couleur_desactive = '#cf0e0e'
     couleur_hovered_desactive = '#941010'
+    def __hash__(self):
+        return hash((self.format, self.texte_actif, self.texte_desactive))
+    
 
 
 class Boutons:
@@ -407,7 +413,7 @@ class Boutons:
         for bouton in self.boutons.values():
             if bouton.unifier_texte:
                 bouton.taille_texte = taille_min
-    
+
     @staticmethod
     def taille_texte_bouton(bouton: Union[BoutonSimple, BoutonBooleen]) -> int:
         """
@@ -416,6 +422,8 @@ class Boutons:
         :param Bouton bouton: Objet Bouton
         :return int: Taille du texte à utiliser
         """
+        if bouton in Boutons.cache_taille_texte:
+            return Boutons.cache_taille_texte[bouton]
     
         hauteur_bouton = (bouton.by - bouton.ay) * bouton.marge_texte
         largeur_bouton = (bouton.bx - bouton.ax) * bouton.marge_texte
@@ -441,7 +449,8 @@ class Boutons:
                 break
             taille_texte += 2
 
-        # print(f'Appel de taille_texte_bouton pour : {type(bouton)} et de format {bouton.format}')
+        print(f'Appel de taille_texte_bouton pour : le bouton {bouton.texte if not type(bouton) == BoutonBooleen else bouton.texte_actif} de type {type(bouton)} et de format {bouton.format}')
+        Boutons.cache_taille_texte[bouton] = taille_texte-1
         
         return taille_texte-1
 
@@ -549,3 +558,5 @@ class Boutons:
             = bouton2.ax, bouton2.bx, bouton1.ax, bouton1.bx
     
         return None
+
+Boutons.cache_taille_texte = {}
