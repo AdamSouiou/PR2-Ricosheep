@@ -3,9 +3,9 @@
         "largeur_fenetre": 500,
         "hauteur_fenetre": 500
     },
-    "son": false,
+    "son": true,
     "carte": [
-        "square",
-        "map2.txt"
+        "wide",
+        "wide4.txt"
     ]
 }

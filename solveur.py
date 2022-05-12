@@ -17,7 +17,7 @@ def profondeur(plateau,
             # Au cas où l'on voudrait appeler la fonction
             # avec une direction spécifique
             chemin.append(direction)
-            plateau.deplace_moutons(direction)
+            plateau.deplace_moutons(direction, solveur=True)
 
     positions_initiales = tri_copy(plateau.troupeau)
     
@@ -30,7 +30,7 @@ def profondeur(plateau,
         return [], visite
     
     for new_dir in DIRECTIONS:
-        plateau.deplace_moutons(new_dir)
+        plateau.deplace_moutons(new_dir, solveur=True)
         chemin.append(new_dir)
         chemin_temp, visite = profondeur(
             plateau, None, visite, chemin
@@ -71,10 +71,11 @@ def anim_brute(plateau: Plateau, pause: int):
     fltk.mise_a_jour()
     sleep(pause)
 
-def test(chemin: List[str], plateau: Plateau, anim=0):
+def test(chemin: List[str], plateau: Plateau):
     for mouv in chemin:
-        plateau.deplace_moutons(mouv)
-        if anim: anim_brute(plateau, anim)
+        plateau.deplace_moutons(mouv, solveur=True)
+
+    plateau.reposition_moutons()
     return plateau.isGagne()
 
 if __name__ == '__name__':

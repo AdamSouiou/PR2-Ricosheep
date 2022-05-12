@@ -18,12 +18,15 @@ def menu():
     while True:
         try:
             fltk.efface_tout()
-            ev = fltk.donne_ev()
-            tev = fltk.type_ev(ev)
             graphiques.background("#3f3e47")
             #boutons.grille.draw()
-            click = boutons.dessiner_boutons(tev)
+            boutons.dessiner_boutons()
+            
             if plateau is not None: plateau.draw()
+            
+            ev = fltk.attend_ev()
+            tev = fltk.type_ev(ev)
+            click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -39,8 +42,10 @@ def menu():
 
                     elif click == "\...":
                         directory = ""
+                        split = 0
                     elif click in racine:
                         directory = click
+                        split = 0
 
                     else:
                         choix = modif_json(directory, click)
@@ -59,9 +64,13 @@ def menu():
 
 
 def open_plateau(choix, boutons: Boutons):
-    print(choix)
     if choix is not None:
-        plateau = Plateau(os.path.join("maps", choix), boutons.grille, (6, 3, 8, 6))
+        plateau = Plateau(
+            os.path.join("maps", choix),
+            grille_base=boutons.grille,
+            grille_pos=(6, 3, 8, 6),
+            duree_anime=0
+        )
     else:
         plateau = None
     return plateau
@@ -75,7 +84,7 @@ def init_boutons(split=0, directory="", choix=None):
         boutons.cree_bouton_simple(5, 1, 8, 1, "\...", unifier_texte=False)
 
     if choix:
-        boutons.cree_bouton_texte(1, 9, 8, 9, choix, unifier_texte=False)
+        boutons.cree_bouton_texte(1, 9, 8, 9, choix)
 
     if len(dossiers) <= 6:
         for i in range(len(dossiers)):
@@ -84,18 +93,18 @@ def init_boutons(split=0, directory="", choix=None):
     else:
         if split > 0:
             dos = dossiers[5*split:5*(split+1)]
-            boutons.cree_bouton_simple(1, 6, 2, 6, "<=", unifier_texte=False)
+            boutons.cree_bouton_simple(1, 6, 2, 6, "<=")
             if len(dossiers) > 5*(split+1):
-                boutons.cree_bouton_simple(3, 6, 4, 6, "=>", unifier_texte=False)
+                boutons.cree_bouton_simple(3, 6, 4, 6, "=>")
         else:
             dos = dossiers[:5]
-            boutons.cree_bouton_simple(3, 6, 4, 6, "=>", unifier_texte=False)
+            boutons.cree_bouton_simple(3, 6, 4, 6, "=>")
         for i in range(len(dos)):
             boutons.cree_bouton_simple(1, 1+i, 4, 1+i, dos[i])
 
-    boutons.cree_bouton_simple(1, 8, 4, 8, "Valider", arrondi = 0.75, unifier_texte=False)
+    boutons.cree_bouton_simple(1, 8, 4, 8, "Valider", arrondi=0.75, unifier_texte=False)
 
-    boutons.init(unifier='all')
+    boutons.init()
     return boutons
 
 def modif_json(directory, file):

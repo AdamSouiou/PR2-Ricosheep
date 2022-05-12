@@ -15,12 +15,14 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 # A faire:
 # - Mise en cache des boutons arrondis?
 # - Bouton avec icône: Utiliser une police avec symboles?
+# - Utiliser la propriété texte héritée par BoutonBooleen pour éviter les recalculs de max
 
 from time import time
+from pprint import pprint
 from math import pi as PI, sin, cos
 from numpy import linspace
 from dataclasses import dataclass
-from typing import Union, List
+from typing import Union, Dict
 from grille import Grille
 import cfg
 import fltk
@@ -38,7 +40,7 @@ class Bouton:
     factice = False
 
 
-@dataclass
+@dataclass(eq=False)
 class BoutonTexte(Bouton):
     texte: str
     taille_texte = None
@@ -49,15 +51,17 @@ class BoutonTexte(Bouton):
     couleur_fond = 'white'
     centre_x = 0
     centre_y = 0
+    def __hash__(self):
+        return hash((self.format, self.texte))
 
 
-@dataclass
+@dataclass(eq=False)
 class BoutonSimple(BoutonTexte):
     enable_hovered = True
     couleur_hovered = '#848484'
 
 
-@dataclass
+@dataclass(eq=False)
 class BoutonBooleen(BoutonTexte):
     object_ref: object
     attribute: str
@@ -67,27 +71,36 @@ class BoutonBooleen(BoutonTexte):
     couleur_hovered_actif = '#0b4f34'
     couleur_desactive = '#cf0e0e'
     couleur_hovered_desactive = '#941010'
+    def __hash__(self):
+        return hash((self.format, self.texte_actif, self.texte_desactive))
+    
 
 
 class Boutons:
-    boutons:       List[Bouton]
+    boutons:       Dict[str, Bouton]
     grille:        Grille
-    formats_texte: dict
+    formats_texte: Dict
     time_start:    float
 
     __slots__ = tuple(__annotations__)
     
-    def __init__(self, format_grille):
+    def __init__(self, format_grille,
+                 grille_base=None,
+                 carre=True):
         """
         Initialise la grille selon laquelle seront positionnés les boutons.
         """
         self.time_start = time()
         self.boutons = {}
-        self.grille = Grille(format_grille[0], format_grille[1],
-                             marge_largeur=0.95, marge_hauteur=0.95,
-                             grille_base=None,
-                             grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
-                             carre=True)
+        if grille_base is None:
+            self.grille = Grille(format_grille[0], format_grille[1],
+                                 marge_largeur=0.95, marge_hauteur=0.95,
+                                 grille_base=None,
+                                 grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
+                                 carre=carre)
+        else:
+            self.grille = grille_base
+                     
         self.formats_texte = {}
 
     def init(self, unifier='format'):
@@ -345,7 +358,7 @@ class Boutons:
                 bouton.factice = value
             elif arg == 'arrondi':
                 bouton.rayon = (bouton.by - bouton.ay)/2 * value
-                precision = int(bouton.rayon/2)
+                precision = int(bouton.rayon / 2)
                 self.rectangle_arrondi(bouton, precision)
     
             else:
@@ -371,17 +384,14 @@ class Boutons:
         """
 
         for nom, bouton in self.boutons.items():
-            if type(bouton) is Bouton or not bouton.unifier_texte: continue
+            if type(bouton) is Bouton: continue
             len_texte = self.get_len_texte(bouton)
 
             if bouton.format in self.formats_texte:
                 if len_texte > self.formats_texte[bouton.format]['len_texte']:
-                    self.formats_texte[bouton.format]['nom'] = nom
-                    self.formats_texte[bouton.format]['len_texte'] = len_texte
+                    self.formats_texte[bouton.format] = {'nom': nom, 'len_texte': len_texte}
             else:
-                self.formats_texte[bouton.format] = {}
-                self.formats_texte[bouton.format]['nom'] = nom
-                self.formats_texte[bouton.format]['len_texte'] = len_texte
+                self.formats_texte[bouton.format] = {'nom': nom, 'len_texte': len_texte}
 
         for max_text in self.formats_texte.values():
             bouton = self.boutons[max_text['nom']]
@@ -409,7 +419,7 @@ class Boutons:
         for bouton in self.boutons.values():
             if bouton.unifier_texte:
                 bouton.taille_texte = taille_min
-    
+
     @staticmethod
     def taille_texte_bouton(bouton: Union[BoutonSimple, BoutonBooleen]) -> int:
         """
@@ -418,6 +428,8 @@ class Boutons:
         :param Bouton bouton: Objet Bouton
         :return int: Taille du texte à utiliser
         """
+        if bouton in Boutons.cache_taille_texte:
+            return Boutons.cache_taille_texte[bouton]
     
         hauteur_bouton = (bouton.by - bouton.ay) * bouton.marge_texte
         largeur_bouton = (bouton.bx - bouton.ax) * bouton.marge_texte
@@ -443,12 +455,13 @@ class Boutons:
                 break
             taille_texte += 2
 
-        # print(f'Appel de taille_texte_bouton pour : {type(bouton)} et de format {bouton.format}')
+        print(f'Appel de taille_texte_bouton pour : le bouton {bouton.texte if not type(bouton) == BoutonBooleen else bouton.texte_actif} de type {type(bouton)} et de format {bouton.format}')
+        Boutons.cache_taille_texte[bouton] = taille_texte-1
         
         return taille_texte-1
 
     @staticmethod
-    def dessiner_bouton(bouton: Bouton, survole: bool, tev: str) -> bool:
+    def dessiner_bouton(bouton: Bouton, survole: bool) -> bool:
         """
         Dessine un bouton et change sa couleur lors de son survol
         par la souris, si il n'est pas invisible. Et dans le cas d'un
@@ -460,17 +473,10 @@ class Boutons:
         :param str tev: Type de l'évènement fltk
         :return bool: Bouton survolé
         """
-        # Il faut réécrire cette fonction elle est terrible !!!
-
         if bouton.invisible:
             return
-        if bouton.factice:
-            survole = False
         if type(bouton) is BoutonBooleen:
             etat = getattr(bouton.object_ref, bouton.attribute)
-        if type(bouton) is BoutonBooleen:
-            if tev == 'ClicGauche' and survole:
-                setattr(bouton.object_ref, bouton.attribute, (not etat))
             remplissage_actif = (bouton.couleur_hovered_actif if etat
                                  else bouton.couleur_hovered_desactive)
             remplissage = (bouton.couleur_actif if etat
@@ -498,7 +504,7 @@ class Boutons:
             bouton.police, bouton.taille_texte
         )
     
-    def dessiner_boutons(self, tev, design_mode=False) -> str:
+    def dessiner_boutons(self, ev=None) -> str:
         """
         Dessine tous les boutons de l'instance, et renvoie également l'identificateur
         d'un bouton si celui-ci est survolé, et ``None`` si aucun ne l'a été.
@@ -508,23 +514,31 @@ class Boutons:
     
         nom_bouton_survole = None
         deja_survole = False
-    
         for identificateur, bouton in self.boutons.items():
             survole = False
             # Evite de tester si un bouton est survolé, si
             # un bouton à déjà été survolé.
             if not deja_survole:
-                survole = self.curseur_sur_bouton(bouton)
+                survole = self.curseur_sur_bouton(bouton, ev)
                 if survole and type(bouton) is not BoutonTexte:
                     deja_survole = True
                     if not bouton.factice:
                         nom_bouton_survole = identificateur
-            self.dessiner_bouton(bouton, survole, tev)
+            self.dessiner_bouton(bouton, survole)
     
         return nom_bouton_survole
 
+    def nom_clic(self, ev):
+        for identificateur, bouton in self.boutons.items():
+            if self.curseur_sur_bouton(bouton, ev):
+                if isinstance(bouton, BoutonBooleen) and fltk.type_ev(ev) == 'ClicGauche':
+                    etat = getattr(bouton.object_ref, bouton.attribute)
+                    setattr(bouton.object_ref, bouton.attribute, not etat)
+                return identificateur
+        return None
+
     @staticmethod
-    def curseur_sur_bouton(bouton: Bouton) -> bool:
+    def curseur_sur_bouton(bouton: Bouton, ev: tuple) -> bool:
         """
         Détecte si le curseur est situé sur le rectangle formé par
         ses composantes ax, ay, bx et by, définies dans l'objet Bouton
@@ -533,8 +547,9 @@ class Boutons:
         :param Bouton: Objet ``Bouton``
         :return bool:
         """
-        return ((bouton.ax <= fltk.abscisse_souris() <= bouton.bx)
-                and (bouton.ay <= fltk.ordonnee_souris() <= bouton.by))
+        if ev is None: return False
+        return ((bouton.ax <= fltk.abscisse(ev) <= bouton.bx)
+                and (bouton.ay <= fltk.ordonnee(ev) <= bouton.by))
     
     def intervertir_pos_boutons(self, bouton1_id: str, bouton2_id: str):
         """
@@ -548,3 +563,5 @@ class Boutons:
             = bouton2.ax, bouton2.bx, bouton1.ax, bouton1.bx
     
         return None
+
+Boutons.cache_taille_texte = {}

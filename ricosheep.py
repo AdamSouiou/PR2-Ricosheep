@@ -1,6 +1,7 @@
 from sys import setrecursionlimit
 from time import time
-
+from copy import deepcopy
+from pprint import pprint
 from plateau import Plateau
 from accueil import menu
 import graphiques
@@ -10,26 +11,28 @@ import solveur
 import sauvegarde
 import son
 
+
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
-def jeu(plateau: Plateau):
-    # créer la copie des moutons dans l'instance plateau
 
+def jeu(plateau: Plateau):
+    start_deplacement = 0
+    dt = 0
     while True:
         try:
+            dt_start = time()
             fltk.efface_tout()
             graphiques.background("#3f3e47")
-            plateau.draw()
-
+            plateau.draw(start_deplacement, dt)
             
-            if plateau.isGagne():
+            # if plateau.isGagne():
                 # graphiques.victory()
-                print("C'est gagné !")
+                # print("C'est gagné !")
                 # fltk.mise_a_jour()
                 # fltk.attend_ev()
 
-            ev = fltk.attend_ev()
+            ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
@@ -37,22 +40,25 @@ def jeu(plateau: Plateau):
 
             elif tev == "Touche":
                 touche = fltk.touche(ev)
-                if touche in DIRECTIONS:
+                if (touche in DIRECTIONS
+                    # Vérifie si un déplacement n'est pas déjà en cours :
+                    and plateau.last_direction is None):
+                    start_deplacement = time()
+                    plateau.deplace_moutons(touche)
                     son.sound('Sheep')
-                    plateau.deplace_moutons(touche, historique=True)
+                    # Vérifier ici à ce moment la défaite (attendre la fin du déplacement pour l'annoncer?)
 
                 if touche == "s":
+                    plateau.clear_historique()
                     start = time()
-                    pos_tmp = solveur.tri_copy(plateau.troupeau)
-                    chemin, _ = solveur.profondeur(plateau)
+                    chemin, _ = solveur.profondeur(deepcopy(plateau))
                     elapsed = time() - start
                     
-                    if chemin == None:
+                    if chemin is None:
                         print("Pas de solutions, chacal!")
                     else:
-                        solveur.restore(plateau.troupeau, pos_tmp)
                         print(chemin)
-                        print("Le solveur a bon? :", solveur.test(chemin, plateau, 0))
+                        print("Le solveur a bon? :", solveur.test(chemin, plateau))
                         # print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)},",
                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
@@ -72,6 +78,7 @@ def jeu(plateau: Plateau):
                 print()"""
 
             fltk.mise_a_jour()
+            dt = time() - dt_start
 
         except KeyboardInterrupt:
             exit()
@@ -81,7 +88,6 @@ if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
                       'Ricosheep')
     son.initialisation()
-    
 
     while True:
         son.song("Wait")
