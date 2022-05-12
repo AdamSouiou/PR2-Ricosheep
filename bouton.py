@@ -84,17 +84,23 @@ class Boutons:
 
     __slots__ = tuple(__annotations__)
     
-    def __init__(self, format_grille):
+    def __init__(self, format_grille,
+                 grille_base=None,
+                 carre=True):
         """
         Initialise la grille selon laquelle seront positionnés les boutons.
         """
         self.time_start = time()
         self.boutons = {}
-        self.grille = Grille(format_grille[0], format_grille[1],
-                             marge_largeur=0.95, marge_hauteur=0.95,
-                             grille_base=None,
-                             grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
-                             carre=True)
+        if grille_base is None:
+            self.grille = Grille(format_grille[0], format_grille[1],
+                                 marge_largeur=0.95, marge_hauteur=0.95,
+                                 grille_base=None,
+                                 grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
+                                 carre=carre)
+        else:
+            self.grille = grille_base
+                     
         self.formats_texte = {}
 
     def init(self, unifier='format'):

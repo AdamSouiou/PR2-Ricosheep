@@ -55,7 +55,7 @@ def menu():
                         return plateau or Plateau(cfg.carte, duree_anime=0.15)
                     elif click == "Niveaux":
                         son.sound('Menubeep')
-                        selecteur.menu()    
+                        selecteur.menu()
                         cfg.maj()
                     elif click == "Editeur de Niveaux":
                         son.sound('Menubeep')
@@ -68,7 +68,3 @@ def menu():
 
         except KeyboardInterrupt:
             exit()
-
-if __name__ == "__main__":
-    fltk.cree_fenetre(500, 500)
-    menu()

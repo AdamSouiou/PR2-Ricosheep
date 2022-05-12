@@ -71,7 +71,7 @@ class Plateau:
         self.env = {'buissons': set(), 'touffes': set()}
         self.nb_lignes = 0
         with open(file) as f:
-            for line in f.readlines():
+            for line in f.readlines(): # enumerate ?
                 self.nb_colonnes = 0
                 for char in line:
                     pos = (self.nb_lignes, self.nb_colonnes)
@@ -144,7 +144,6 @@ class Plateau:
                     mouton.centre_x += mouton.vitesse.x * dt
                     mouton.centre_y += mouton.vitesse.y * dt
                 else:
-                    print("Salut, je m'arrête!")
                     mouton.en_deplacement = False
                     fini += 1
                 
@@ -155,7 +154,7 @@ class Plateau:
         if fini == len(self.troupeau) and self.last_direction is not None:
             self.last_direction = None
             self.reposition_moutons()
-            print(f'{(time() - start_time):.3f}s')
+            print(f'{(time() - start_time - dt):.3f}s')
 
 
     def isNotPosMouton(self, x, y):

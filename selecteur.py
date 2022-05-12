@@ -42,9 +42,10 @@ def menu():
 
                     elif click == "\...":
                         directory = ""
+                        split = 0
                     elif click in racine:
                         directory = click
-                        #split = 0
+                        split = 0
 
                     else:
                         choix = modif_json(directory, click)
@@ -63,7 +64,6 @@ def menu():
 
 
 def open_plateau(choix, boutons: Boutons):
-    print(choix)
     if choix is not None:
         plateau = Plateau(
             os.path.join("maps", choix),
@@ -79,7 +79,6 @@ def open_plateau(choix, boutons: Boutons):
 def init_boutons(split=0, directory="", choix=None):
     dossiers = os.listdir(os.path.join("maps", directory))
     boutons = Boutons((10,10))
-    print(choix, dossiers, split)
 
     if directory != "":
         boutons.cree_bouton_simple(5, 1, 8, 1, "\...", unifier_texte=False)

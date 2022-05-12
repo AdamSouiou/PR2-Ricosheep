@@ -75,7 +75,7 @@ class Mouton:
             while plateau.isPositionValid(self.x+1, self.y):
                 self.x += 1
 
-        if plateau.anime:
+        if plateau.anime: # Séparer cette partie dans une fonction
             if self != mouton_initial:
                 self.en_deplacement = True
                 distance = abs(
