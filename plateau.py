@@ -4,7 +4,7 @@ from pprint import pprint
 from mouton import Mouton
 from graphiques import affiche_case, box_image
 from grille import Grille
-from copy import deepcopy
+from copy import copy, deepcopy
 import fltk
 import cfg
 
@@ -124,9 +124,8 @@ class Plateau:
     )
 
     def reposition_moutons(self):
-        if self.anime:
-            for mouton in self.troupeau:
-                mouton.repositionnement(self.grille.cases)
+        for mouton in self.troupeau:
+            mouton.repositionnement(self.grille.cases)
 
     def draw_moutons_simple(self):
         for m in self.troupeau:
@@ -154,7 +153,7 @@ class Plateau:
         if fini == len(self.troupeau) and self.last_direction is not None:
             self.last_direction = None
             self.reposition_moutons()
-            print(f'{(time() - start_time - dt):.3f}s')
+            print(f'Temps du déplacement: {(time() - start_time - dt):.3f}s')
 
 
     def isNotPosMouton(self, x, y):
@@ -174,7 +173,7 @@ class Plateau:
                 and not (y, x) in self.env['buissons']
                 and self.isNotPosMouton(x, y))
 
-    def deplace_moutons(self, direction: str, solveur=False, dt=0):
+    def deplace_moutons(self, direction: str, solveur=False):
         if not solveur:
             # Evite le cas où le joueur appuie pendant le déplacement
             if self.last_direction is not None: return
@@ -184,7 +183,12 @@ class Plateau:
 
         self.tri_moutons(direction)
         for mouton in self.troupeau:
+            if self.anime:
+                mouton_initial = copy(mouton)
             mouton.deplace(direction, self)
+            if self.anime:
+                mouton.deplace_vitesse(mouton_initial, self, direction)
+                
 
     def tri_moutons(self, direction):
         """

@@ -57,8 +57,6 @@ class Mouton:
             self.en_deplacement = False
 
     def deplace(self, direction: str, plateau):
-        if direction is None: return
-        if plateau.duree_anime: mouton_initial = copy(self)
         if direction == "Up":
             while plateau.isPositionValid(self.x, self.y-1):
                 self.y -= 1
@@ -75,17 +73,23 @@ class Mouton:
             while plateau.isPositionValid(self.x+1, self.y):
                 self.x += 1
 
-        if plateau.anime: # Séparer cette partie dans une fonction
-            if self != mouton_initial:
-                self.en_deplacement = True
-                distance = abs(
-                    getattr(self, axes[direction])\
-                    - getattr(mouton_initial, axes[direction])
-                ) * plateau.grille.largeur_case
-                setattr(self.vitesse, axes[direction],
-                    coeff_axe[direction] *\
-                    (distance / plateau.duree_anime)
-                )
+    def deplace_vitesse(self, mouton_initial, plateau, direction):
+        """
+        Détermine la vitesse du mouton lors du déplacement animé
+        pour satisfaire la contrainte de durée imposée par le
+        plateau
+        """
+        if self != mouton_initial:
+            self.en_deplacement = True
+            distance = abs(
+                getattr(self, axes[direction])\
+                - getattr(mouton_initial, axes[direction])
+            ) * plateau.grille.largeur_case
+            
+            setattr(self.vitesse, axes[direction],
+                coeff_axe[direction] *\
+                (distance / plateau.duree_anime)
+            )
 
     def outOfBound(self, direction, cases, dt):
         if direction in self.outOfBound.LEFT_UP:

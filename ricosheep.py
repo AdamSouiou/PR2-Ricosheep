@@ -40,10 +40,13 @@ def jeu(plateau: Plateau):
 
             elif tev == "Touche":
                 touche = fltk.touche(ev)
-                if touche in DIRECTIONS:
+                if (touche in DIRECTIONS
+                    # Vérifie si un déplacement n'est pas déjà en cours :
+                    and plateau.last_direction is None):
                     start_deplacement = time()
-                    plateau.deplace_moutons(touche, dt=dt)
+                    plateau.deplace_moutons(touche)
                     son.sound('Sheep')
+                    # Vérifier ici à ce moment la défaite (attendre la fin du déplacement pour l'annoncer?)
 
                 if touche == "s":
                     plateau.clear_historique()
