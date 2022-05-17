@@ -63,7 +63,7 @@ def est_valide():
 
 def menu():
     boutons = Boutons((10,10))
-    boutons.cree_bouton_texte(1, 1, 8, 1, "Attention")
+    boutons.cree_bouton_texte(1, 1, 8, 1, "Attention !")
     boutons.cree_bouton_texte(1, 2, 8, 2, "Une sauvegarde a été détectée.")
     boutons.cree_bouton_simple(1, 4, 8, 4, 'Continuer la partie', arrondi=0.75)
     boutons.cree_bouton_simple(1, 6, 8, 6, 'Ecraser la sauvegarde', arrondi=0.75)
@@ -75,7 +75,6 @@ def menu():
         try:        
             fltk.efface_tout()
             graphiques.background("#3f3e47")
-            boutons.grille.draw()
             boutons.dessiner_boutons(ev)
             
             ev = fltk.attend_ev()

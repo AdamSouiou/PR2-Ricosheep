@@ -12,18 +12,6 @@ import son
 ETAT = [None, "B", "G", "S"]
 
 
-def init_boutons(Echec=False):
-    boutons = Boutons((10,10))
-    boutons.cree_bouton_texte(1, 2, 8, 2, "Nombre de lignes", arrondi=0.75)
-    boutons.cree_bouton_texte(1, 4, 8, 4, "Nombre de colonnes", arrondi=0.75)
-    boutons.cree_bouton_simple(1, 6, 8, 6, "Valider", arrondi = 1)
-
-    if Echec:
-        boutons.cree_bouton_texte(1, 1, 8, 1, "Veuillez mettre que des entiers positifs.", unifier_texte= False)
-
-    boutons.init()
-    return boutons
-
 def init_boutons_grille(nb_lignes, nb_colonnes):
     Liste = []
     boutons = Boutons((nb_lignes, nb_colonnes))
@@ -81,16 +69,18 @@ def test(carte):
 
 
 def debut():
-    dixieme_hauteur = cfg.hauteur_fenetre / 10
-    dixieme_largeur = cfg.largeur_fenetre / 10
-
-    boutons = init_boutons()
-
-    #A mieux positionner
-    lignes = fltk.boite_texte(dixieme_largeur, dixieme_hauteur*3.2, "Courier 20", "25", "center" )
-    colonnes = fltk.boite_texte(dixieme_largeur, dixieme_hauteur*5.1, "Courier 20", "25", "center" )
-
+    boutons = Boutons((10,10))
+    boutons.cree_bouton_texte(1, 2, 5, 2, "Nombre de lignes :", arrondi=0.75)
+    boutons.cree_bouton_texte(1, 4, 5, 4, "Nombre de colonnes :", arrondi=0.75)
+    boutons.entree_texte(7, 2, 8, 2, "lignes")
+    boutons.entree_texte(7, 4, 8, 4, "colonnes")
+    boutons.cree_bouton_simple(2, 6, 7, 6, "Valider", arrondi = 1)
+    entiers_positifs = "Veuillez insérer des entiers positifs !"
+    boutons.cree_bouton_texte(1, 8, 8, 8, entiers_positifs,
+                              invisible=True, couleur_texte='red')
+    boutons.init()
     ev = None
+
     while True:
         fltk.efface_tout()
         graphiques.background("#3f3e47")
@@ -107,22 +97,16 @@ def debut():
         if tev == "ClicGauche":
             if click not in {None}:
                 son.sound('MenuOk')
-                nb_lignes = lignes.get()
-                nb_colonnes = colonnes.get()
+                nb_lignes = boutons.entrees_texte['lignes'].get()
+                nb_colonnes = boutons.entrees_texte['colonnes'].get()
 
                 if nb_lignes.isdigit() and nb_colonnes.isdigit():
                     nb_lignes = int(nb_lignes)
                     nb_colonnes = int(nb_colonnes)
-                    if nb_lignes * nb_colonnes == 0:
-                        boutons = init_boutons(True)
-                    else:
-                        lignes.destroy()
-                        colonnes.destroy()
-                        fltk.resetfocus()
-
+                    if not nb_lignes * nb_colonnes == 0:
                         return main(nb_lignes, nb_colonnes)
                 else:
-                    boutons = init_boutons(True)
+                    boutons.boutons[entiers_positifs].invisible = False
 
         fltk.mise_a_jour()
 
@@ -139,6 +123,7 @@ def main(lignes, colonnes):
         draw(plateau, boutons.grille)
         
         ev = fltk.attend_ev()
+        print(ev)
         tev = fltk.type_ev(ev)
         click = boutons.nom_clic(ev)
 

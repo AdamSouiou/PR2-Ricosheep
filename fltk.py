@@ -559,20 +559,15 @@ def touche_pressee(keysym):
     """
     return keysym in __canevas.pressed_keys
 
-def boite_prompt(Name, Text):
-    return tkinter.simpledialog.askstring(Name, Text)
 
-def boite_texte(x, y,font="Courier 10", width="20", justify = "left"):
-    entry = Entry(__canevas.canvas, justify=justify, width=width, font=font)
-    #entry.focus_set()
-    entry.place(x=x, y=y)
+def entree_texte(x, y, width, height, font="Courier", justify="left"):
+    entry = Entry(__canevas.canvas, justify=justify, font=font)
+    entry.place(x=x, y=y, width=width, height=height)
+    #__canevas.canvas.focus_set()
     return entry
 
-def delete_boitetexte(boite):
+def detruit_entree_texte(boite):
     boite.destroy()
-    __canevas.canvas.focus_set()
-
-def resetfocus():
     __canevas.canvas.focus_set()
 
 

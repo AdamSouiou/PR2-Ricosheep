@@ -3,7 +3,6 @@ from time import time
 from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
-from accueil import menu
 import graphiques
 import cfg
 import fltk
@@ -17,6 +16,7 @@ DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
 
 def jeu(plateau: Plateau):
+    son.song("Otherside")
     start_deplacement = 0
     dt = 0
     while True:
@@ -88,9 +88,5 @@ if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
                       'Ricosheep')
     son.initialisation()
-
-    while True:
-        son.song("Wait")
-        plateau = menu()
-        son.song("Otherside")
-        jeu(plateau)
+    from accueil import menu # Evite l'import infini
+    menu()

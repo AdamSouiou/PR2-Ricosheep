@@ -1,5 +1,6 @@
 from bouton import Boutons
 from plateau import Plateau
+from ricosheep import jeu
 import graphiques
 import cfg
 import fltk
@@ -10,8 +11,9 @@ import son
 
 
 def menu():
+    son.song("Wait")
     boutons = Boutons((10,10))
-    boutons.cree_bouton_simple(1, 2, 8, 2, "Editeur de Niveaux", arrondi = 0.75)
+    boutons.cree_bouton_simple(1, 2, 8, 2, "Editeur de niveaux", arrondi=0.75)
     boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer', arrondi=0.75)
     boutons.cree_bouton_simple(1, 6, 8, 6, 'Niveaux', arrondi=0.75)
     boutons.cree_bouton_simple(1, 8, 8, 8, 'Options', arrondi=0.75)
@@ -45,21 +47,21 @@ def menu():
                 print(fltk.touche(ev))
 
             elif tev == "ClicGauche":
-                if click in {'Jouer', 'Niveaux', 'Editeur de Niveaux'}:
-                    plateau = None
-                    if sauvegarde.est_valide():
-                        plateau = sauvegarde.menu()
+                plateau = None
+                if sauvegarde.est_valide():
+                    plateau = sauvegarde.menu()
 
-                    if click == "Jouer":
-                        son.sound('MenuOk')
-                        return plateau or Plateau(cfg.carte, duree_anime=0.15)
-                    elif click == "Niveaux":
-                        son.sound('Menubeep')
-                        selecteur.menu()
-                        cfg.maj()
-                    elif click == "Editeur de Niveaux":
-                        son.sound('Menubeep')
-                        editeur.debut()
+                if click == "Jouer":
+                    son.sound('MenuOk')
+                    jeu(plateau or Plateau(cfg.carte, duree_anime=0.15))
+                    son.song("Wait")
+                elif click == "Niveaux":
+                    son.sound('Menubeep')
+                    selecteur.menu()
+                    cfg.maj()
+                elif click == "Editeur de Niveaux":
+                    son.sound('Menubeep')
+                    editeur.debut()
                 elif click == 'son':
                     son.toggle_sound()
 
