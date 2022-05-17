@@ -1,5 +1,6 @@
 import fltk
 import cfg
+from bouton import Boutons
 
 def background(couleur: str) -> None:
     """
@@ -16,17 +17,17 @@ def background(couleur: str) -> None:
 
     return None
 
-def victory():
-    marge = [cfg.largeur_fenetre/10, cfg.hauteur_fenetre/3]
-    fltk.rectangle(
-        marge[0], marge[1],
-        cfg.largeur_fenetre - marge[0],
-        cfg.hauteur_fenetre - marge[1],
-        remplissage="white")
+def logo():
+    image = box_image('media/Logo_ricosheep.png', (cfg.largeur_fenetre*0.7, cfg.largeur_fenetre*0.7*(1/3)))
+    return image
 
-    fltk.texte(cfg.largeur_fenetre/2, cfg.hauteur_fenetre/2, "C'est gagné !!",
-      police="Courier", taille=30, couleur="green",
-      ancrage='center')
+def game_over_init(text, hexcode, second):
+    boutons = Boutons((10,10))
+    boutons.cree_bouton_texte(2, 3, 7, 5, text, arrondi=0.5)
+    boutons.boutons[text].couleur_texte = hexcode
+    boutons.cree_bouton_simple(3, 7, 6, 7, second, arrondi=1)
+    boutons.init()
+    return boutons
 
 def affiche_case(x, y, grille, img):
     case = grille.cases[y][x]

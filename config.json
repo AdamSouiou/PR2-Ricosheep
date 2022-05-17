@@ -5,7 +5,7 @@
     },
     "son": true,
     "carte": [
-        "wide",
-        "wide4.txt"
+        "square",
+        "map4.txt"
     ]
 }

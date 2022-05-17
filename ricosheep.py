@@ -4,6 +4,7 @@ from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
 from accueil import menu
+import concurrent.futures
 import graphiques
 import cfg
 import fltk
@@ -11,12 +12,14 @@ import solveur
 import sauvegarde
 import son
 
-
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
-
 def jeu(plateau: Plateau):
+    victory_buttons = graphiques.game_over_init("C'est gagné !!", "#008141", "Quitter")
+    defeat_buttons = graphiques.game_over_init("C'est perdu :'(", "#A90813", "Reset")
+
+    game_over = False
     start_deplacement = 0
     dt = 0
     while True:
@@ -25,15 +28,24 @@ def jeu(plateau: Plateau):
             fltk.efface_tout()
             graphiques.background("#3f3e47")
             plateau.draw(start_deplacement, dt)
-            
-            # if plateau.isGagne():
-                # graphiques.victory()
-                # print("C'est gagné !")
-                # fltk.mise_a_jour()
-                # fltk.attend_ev()
 
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
+
+            if plateau.isGagne():
+                
+                victory_buttons.dessiner_boutons(ev)
+                click = victory_buttons.nom_clic(ev)
+                if click == "Quitter" and tev == "ClicGauche":
+                    return
+
+            elif game_over == True:
+                defeat_buttons.dessiner_boutons(ev)
+                click = defeat_buttons.nom_clic(ev)
+                if click == "Reset" and tev == "ClicGauche":
+                    plateau.reset()
+                    game_over = False
+
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
@@ -44,28 +56,47 @@ def jeu(plateau: Plateau):
                     # Vérifie si un déplacement n'est pas déjà en cours :
                     and plateau.last_direction is None):
                     start_deplacement = time()
+
                     plateau.deplace_moutons(touche)
+
+                    deepcopy_plateau = deepcopy(plateau)
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(solveur.profondeur, deepcopy_plateau)
+                    historique = plateau.historique
+
                     son.sound('Sheep')
-                    # Vérifier ici à ce moment la défaite (attendre la fin du déplacement pour l'annoncer?)
+                    chemin, _ = future.result()
+                    plateau.historique = historique
+
+                    if chemin is None:
+                        print(game_over)
+                        game_over = True
+                    else:
+                        game_over = False
+
 
                 if touche == "s":
-                    plateau.clear_historique()
-                    start = time()
-                    chemin, _ = solveur.profondeur(deepcopy(plateau))
-                    elapsed = time() - start
+                    if len(plateau.historique) <= 1:
+                        print("test")
+                        start = time()
+                        chemin, _ = solveur.profondeur(deepcopy(plateau))
+                        elapsed = time() - start
                     
                     if chemin is None:
                         print("Pas de solutions, chacal!")
+                        game_over = True
                     else:
                         print(chemin)
                         print("Le solveur a bon? :", solveur.test(chemin, plateau))
                         # print(chemin)
-                        print(f"La longueur du chemin est de {len(chemin)},",
-                              f"il a fallu {elapsed:.3f}s pour le déterminer.")
+                        print(f"La longueur du chemin est de {len(chemin)},")
+                            #   f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                 elif touche == "r":
+                    game_over = False
                     plateau.reset()
                 elif touche == 'u':
+                    game_over = False
                     plateau.undo()
                 elif touche == 'Escape':
                     return

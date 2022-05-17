@@ -10,14 +10,15 @@ import son
 
 
 def menu():
-    boutons = Boutons((10,10))
-    boutons.cree_bouton_simple(1, 2, 8, 2, "Editeur de Niveaux", arrondi = 0.75)
-    boutons.cree_bouton_simple(1, 4, 8, 4, 'Jouer', arrondi=0.75)
-    boutons.cree_bouton_simple(1, 6, 8, 6, 'Niveaux', arrondi=0.75)
-    boutons.cree_bouton_simple(1, 8, 8, 8, 'Options', arrondi=0.75)
+    logo = graphiques.logo()
+    boutons = Boutons((20,20))
+    boutons.cree_bouton_simple(3, 6, 16, 7, "Editeur de Niveaux", arrondi = 0.75)
+    boutons.cree_bouton_simple(3, 9, 16, 10, 'Jouer', arrondi=0.75)
+    boutons.cree_bouton_simple(3, 12, 16, 13, 'Niveaux', arrondi=0.75)
+    boutons.cree_bouton_simple(3, 15, 16, 16, 'Options', arrondi=0.75)
     
     boutons.cree_bouton_booleen(
-        9, 9, 9, 9,
+        18, 18, 19, 19,
         'son', cfg,
         'Son!', 'Muet', arrondi=1, marge_texte=0.8
     )
@@ -26,22 +27,28 @@ def menu():
     # fltk.efface_tout()
     ev = None
 
+
+
     while True:
         try:
             fltk.efface_tout()
             graphiques.background("#3f3e47")
             #boutons.grille.draw()
             boutons.dessiner_boutons(ev)
+            fltk.afficher_image(cfg.largeur_fenetre/2, cfg.hauteur_fenetre*0.15, logo, 'center')
 
             ev = fltk.attend_ev()
             tev = fltk.type_ev(ev)
-            click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
 
-            elif tev == "Touche":
+            click = boutons.nom_clic(ev)
+
+
+
+            if tev == "Touche":
                 print(fltk.touche(ev))
 
             elif tev == "ClicGauche":
@@ -52,7 +59,7 @@ def menu():
 
                     if click == "Jouer":
                         son.sound('MenuOk')
-                        return plateau or Plateau(cfg.carte, duree_anime=0.15)
+                        return plateau or Plateau(cfg.carte, duree_anime=0.2)
                     elif click == "Niveaux":
                         son.sound('Menubeep')
                         selecteur.menu()
