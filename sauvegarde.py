@@ -1,4 +1,5 @@
 import json
+from os import path
 from json.decoder import JSONDecodeError
 import selecteur
 import cfg
@@ -24,12 +25,11 @@ def check_in():
             try:
                 save = json.load(file)
             except JSONDecodeError:
-                print("Le fichier lu est incorrect, réinitialisation du fichier")
+                print("La sauvegarde lue est incorrecte, réinitialisation du fichier")
                 clear_save()
     except FileNotFoundError:
-        print("Le fichier n'existe pas !, réinitialisation du fichier")
+        print("La sauvegarde n'existe plus !, réinitialisation du fichier")
         clear_save()
-
 
 def clear_save():
     save_write([], [], [])
@@ -58,6 +58,11 @@ def save_read():
 
 def est_valide():
     check_in()
+            
+    if save['carte'] and not path.exists(path.join('maps', *save['carte'])):
+        clear_save()
+        raise FileNotFoundError
+
     return bool(save['carte'] and save['historique'] and save['position'])
 
 

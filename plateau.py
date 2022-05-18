@@ -1,4 +1,5 @@
-from typing import List, Tuple, Dict, Set
+from typing import List, Tuple, Dict, Set, Union
+from os import PathLike
 from time import time
 from pprint import pprint
 from mouton import Mouton
@@ -8,7 +9,11 @@ from copy import copy, deepcopy
 import fltk
 import cfg
 
-# Le dt est mal utilisé
+
+class FichierInvalide(Exception):
+    pass
+
+
 class Plateau:
     # Utiliser __slots__ pour les gains de mémoire...
     # Il faudrait que troupeau soit un set...
@@ -38,14 +43,10 @@ class Plateau:
                  duree_anime=0.15,
                  grille_base=None,
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
-                 test_mode=False,
-                 editeur=False):
+                 test_mode=False):
 
-        if not editeur:
-            print('Jeu reçu par l instance Plateau', gridfile)
-            self.grid_parse(gridfile)
-        else:
-            self.grid_parselst(editeur)
+        print('Jeu reçu par l instance Plateau', gridfile)
+        self.grid_parse(gridfile)
 
         self.anime = bool(duree_anime)
         self.duree_anime = duree_anime
@@ -66,42 +67,33 @@ class Plateau:
             "heureux": box_image('media/sheep_grass.png', (self.taille_image,))
         }
 
-    def grid_parse(self, file: str):
+    def grid_parse(self, data: Union[List[List[str]], PathLike]):
+        it = open(data, 'r') if type(data) is str else data
         self.troupeau = []
         self.env = {'buissons': set(), 'touffes': set()}
         self.nb_lignes = 0
-        with open(file) as f:
-            for line in f.readlines(): # enumerate ?
-                self.nb_colonnes = 0
-                for char in line:
-                    pos = (self.nb_lignes, self.nb_colonnes)
-                    if char in 'B':
-                        self.env['buissons'].add(pos)
-                    elif char == 'G':
-                        self.env['touffes'].add(pos)
-                    elif char == 'S':
-                        self.troupeau.append(Mouton(*pos))
-                    self.nb_colonnes += 1
-                self.nb_lignes += 1
-        self.historique = [tuple(deepcopy(self.troupeau))]
-
-    def grid_parselst(self, editeur):
-        self.troupeau = []
-        self.env = {'buissons': set(), 'touffes': set()}
-        self.nb_lignes = 0
-        for lignes in editeur:
+        for ligne in it:
             self.nb_colonnes = 0
-            for elem in lignes:
+            for char in ligne:
                 pos = (self.nb_lignes, self.nb_colonnes)
-                if elem == "B":
+                if char == 'B':
                     self.env['buissons'].add(pos)
-                elif elem == 'G':
+                elif char == 'G':
                     self.env['touffes'].add(pos)
-                elif elem == "S":
+                elif char == 'S':
                     self.troupeau.append(Mouton(*pos))
+                elif char == '_':
+                    pass
+                elif char == '\n':
+                    continue
+                else:
+                    raise FichierInvalide(
+                        f"Le fichier contient un caractère non reconnu: {char}",
+                        f"à la ligne {self.nb_lignes}, colonne {self.nb_colonnes}")
                 self.nb_colonnes += 1
             self.nb_lignes += 1
         self.historique = [tuple(deepcopy(self.troupeau))]
+        if type(data) is str: it.close()
 
     def draw(self, start_time=0, dt=0):
         self.grille.draw()

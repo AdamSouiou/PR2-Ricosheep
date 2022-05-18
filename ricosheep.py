@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from sys import setrecursionlimit
 from time import time
 from copy import deepcopy
@@ -70,8 +72,8 @@ def jeu(plateau: Plateau):
                 elif touche == 'Escape':
                     return
                 elif touche == 'p':
-                    print(cfg.carte_lst, plateau.historique, plateau.troupeau)
                     sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                    print("Partie sauvegardée")
                 """print('Historique :')
                 pprint(plateau.historique)
                 print('Troupeau :', plateau.troupeau)
@@ -86,7 +88,7 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
-                      'Ricosheep')
+                      'Ricosheep', icone=None)
     son.initialisation()
     from accueil import menu # Evite l'import infini
     menu()

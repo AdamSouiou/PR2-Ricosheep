@@ -95,14 +95,8 @@ def demande_nom(plateau):
 def enregistrement(plateau, nom):
     file = ""
     with open(os.path.join("maps", "custom", nom+".txt"), 'w') as fichier:
-        for ligne in range(len(plateau)):
-            temp = ""
-            for char in plateau[ligne]:
-                if char == None:
-                    temp += "_"
-                else:
-                    temp += str(char)
-            file += temp
+        for ligne in plateau:
+            file += ''.join(ligne)
             if ligne != (len(plateau) - 1):
                 file += "\n"
 

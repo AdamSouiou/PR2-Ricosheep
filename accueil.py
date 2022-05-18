@@ -1,5 +1,5 @@
 from bouton import Boutons
-from plateau import Plateau
+from plateau import Plateau, FichierInvalide
 from ricosheep import jeu
 import graphiques
 import cfg
@@ -24,10 +24,8 @@ def menu():
         'Son!', 'Muet', arrondi=1, marge_texte=0.8
     )
     boutons.init()
-
-    # fltk.efface_tout()
     ev = None
-
+    
     while True:
         try:
             fltk.efface_tout()
@@ -47,21 +45,41 @@ def menu():
                 print(fltk.touche(ev))
 
             elif tev == "ClicGauche":
-                plateau = None
-                if sauvegarde.est_valide():
-                    plateau = sauvegarde.menu()
+                # On propose au joueur de reprendre
+                if click in {'Jouer', 'Niveaux'}:
+                    plateau = None
+                    try:
+                        if sauvegarde.est_valide():
+                            plateau = sauvegarde.menu()
+                            if plateau is not None:
+                                jeu(plateau)
+                                continue
+                    except FileNotFoundError:
+                        print("La map associée à la sauvegarde n'existe plus",
+                             "veuillez sélectionner une autre map")
 
-                if click == "Jouer":
+                if click == 'Jouer':
                     son.sound('MenuOk')
-                    jeu(plateau or Plateau(cfg.carte, duree_anime=0.15))
-                    son.song("Wait")
+                    try:
+                        plateau = Plateau(cfg.carte, duree_anime=0.15)
+                        jeu(plateau)
+                        son.song("Wait")
+                    except FileNotFoundError:
+                        print("La map demandée n'existe pas")
+                        pass
+                    except FichierInvalide:
+                        print("Le format de la map est incorrect")
+                        pass
+
                 elif click == "Niveaux":
                     son.sound('Menubeep')
                     selecteur.menu()
                     cfg.maj()
-                elif click == "Editeur de Niveaux":
+
+                elif click == "Editeur de niveaux":
                     son.sound('Menubeep')
                     editeur.debut()
+
                 elif click == 'son':
                     son.toggle_sound()
 

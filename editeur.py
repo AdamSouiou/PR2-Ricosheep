@@ -1,6 +1,7 @@
 from bouton import Boutons
 from plateau import Plateau
-from graphiques import box_image
+from graphiques import box_image, affiche_env_element
+from pprint import pprint
 import graphiques
 import cfg
 import fltk
@@ -9,19 +10,20 @@ import creation_niveaux
 import son
 
 
-ETAT = [None, "B", "G", "S"]
+ETAT = ['_', "B", "G", "S"]
 
 
 def init_boutons_grille(nb_lignes, nb_colonnes):
-    Liste = []
+    liste = []
     boutons = Boutons((nb_lignes, nb_colonnes))
     for colonne in range(nb_colonnes):
         temp = []
         for ligne in range(nb_lignes):
-            temp.append(None)
-            boutons.cree_bouton_invisible(ligne, colonne, ligne, colonne, f"{colonne} {ligne}")
-        Liste.append(temp)
-    return boutons, Liste
+            temp.append('_')
+            boutons.cree_bouton_invisible(ligne, colonne, ligne, colonne,
+                                          f"{colonne} {ligne}")
+        liste.append(temp)
+    return boutons, liste
 
 def change_case(plateau, coord):
     num = (ETAT.index(plateau[coord[0]][coord[1]]) + 1 ) % 4
@@ -37,33 +39,27 @@ def initplateau(grille):
         }
 
 
-affiche_env_element = lambda case, img: fltk.afficher_image(
-        case.centre_x,
-        case.centre_y,
-        img, ancrage= "center")
-
 def draw(plateau, grille):
     grille.draw()
+    # pprint(plateau)
 
     for ligne in range(len(plateau)):
         case = grille.cases[ligne]
-        for elem in range(len(plateau[0])):
-            if plateau[ligne][elem] != None:
-                affiche_env_element(case[elem], images[plateau[ligne][elem]])
+        for colonne in range(len(plateau[0])):
+            if plateau[ligne][colonne] != '_':
+                affiche_env_element(case[colonne], images[plateau[ligne][colonne]])
 
 def test(carte):
-    plateau = Plateau(carte, editeur = carte)
+    plateau = Plateau(carte)
     pos_tmp = solveur.tri_copy(plateau.troupeau)
     chemin, _ = solveur.profondeur(plateau)
 
-    if chemin == None:
+    if chemin is None:
         print("Pas de solutions, chacal!, recommence ton niveau")
         return False
     else:
         solveur.restore(plateau.troupeau, pos_tmp)
-        print(chemin)
         print("Le solveur a bon? :", solveur.test(chemin, plateau))
-        # print(chemin)
         print(f"La longueur du chemin est de {len(chemin)}")
         return True
 

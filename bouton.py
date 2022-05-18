@@ -494,7 +494,8 @@ class Boutons:
                 break
             taille_texte += 2
 
-        print(f'Appel de taille_texte_bouton pour : le bouton {bouton.texte if not type(bouton) == BoutonBooleen else bouton.texte_actif} de type {type(bouton)} et de format {bouton.format}')
+        #print(f'Appel de taille_texte_bouton pour : le bouton',
+        #        f'{bouton.texte} {type(bouton)=} et de format {bouton.format}')
         Boutons.cache_taille_texte[bouton] = taille_texte-1
         
         return taille_texte-1
