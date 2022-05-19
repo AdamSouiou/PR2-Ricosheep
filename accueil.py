@@ -12,8 +12,8 @@ import son
 
 def menu():
     son.song("Wait")
-    logo = graphiques.logo()
     boutons = Boutons((20,20))
+    logo = graphiques.image_grille(2, 0, 17, 5, 'media/Logo_ricosheep.png', boutons.grille)
     boutons.cree_bouton_simple(3, 6, 16, 7, "Editeur de niveaux", arrondi=0.75)
     boutons.cree_bouton_simple(3, 9, 16, 10, 'Jouer', arrondi=0.75)
     boutons.cree_bouton_simple(3, 12, 16, 13, 'Niveaux', arrondi=0.75)
@@ -25,6 +25,7 @@ def menu():
         'Son!', 'Muet', arrondi=1, marge_texte=0.8
     )
     boutons.init()
+    
     ev = None
 
     while True:
@@ -33,18 +34,15 @@ def menu():
             graphiques.background("#3f3e47")
             #boutons.grille.draw()
             boutons.dessiner_boutons(ev)
-            fltk.afficher_image(cfg.largeur_fenetre/2, cfg.hauteur_fenetre*0.15, logo, 'center')
+            fltk.afficher_image(logo.centre_x, logo.centre_y, logo.image, 'center')
 
             ev = fltk.attend_ev()
             tev = fltk.type_ev(ev)
+            click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
-
-            click = boutons.nom_clic(ev)
-
-
 
             if tev == "Touche":
                 print(fltk.touche(ev))
