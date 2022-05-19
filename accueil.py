@@ -1,5 +1,6 @@
 from bouton import Boutons
 from plateau import Plateau
+import animation
 import graphiques
 import cfg
 import fltk
@@ -22,22 +23,28 @@ def menu():
         'son', cfg,
         'Son!', 'Muet', arrondi=1, marge_texte=0.8
     )
+    boutons.cree_bouton_booleen(
+        15, 18, 16, 19,
+        'animation', cfg,
+        'Anim !', 'Beeeh', arrondi=1, marge_texte=0.8
+    )
     boutons.init()
 
     # fltk.efface_tout()
     ev = None
 
-
+    liste_chute = animation.initialisation(12)
 
     while True:
         try:
             fltk.efface_tout()
             graphiques.background("#3f3e47")
+            if cfg.animation: animation.dessiner(liste_chute)
             #boutons.grille.draw()
             boutons.dessiner_boutons(ev)
             fltk.afficher_image(cfg.largeur_fenetre/2, cfg.hauteur_fenetre*0.15, logo, 'center')
 
-            ev = fltk.attend_ev()
+            ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
 
             if tev == 'Quitte':
@@ -45,8 +52,6 @@ def menu():
                 exit()
 
             click = boutons.nom_clic(ev)
-
-
 
             if tev == "Touche":
                 print(fltk.touche(ev))
@@ -69,6 +74,11 @@ def menu():
                         editeur.debut()
                 elif click == 'son':
                     son.toggle_sound()
+
+                elif click == 'animation':
+                    cfg.toggle_sound_anim('animation')
+
+
 
             fltk.mise_a_jour()
 

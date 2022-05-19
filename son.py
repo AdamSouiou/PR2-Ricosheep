@@ -46,7 +46,7 @@ def sound(type):
 def toggle_sound():
     if pygame_available:
         pygame.mixer.music.stop()
-        cfg.toggle_sound()
+        cfg.toggle_sound_anim('sound')
         if cfg.son:
             song('Wait')
         

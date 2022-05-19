@@ -4,8 +4,9 @@
         "hauteur_fenetre": 500
     },
     "son": true,
+    "animation": true,
     "carte": [
         "square",
-        "map4.txt"
+        "map3.txt"
     ]
 }
