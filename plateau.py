@@ -61,10 +61,10 @@ class Plateau:
         if test_mode: return
         global images
         images = {
-            "buissons": box_image('media/bush.png', (self.taille_image,)),
-            "touffes": box_image('media/grass.png', (self.taille_image,)),
-            "mouton": box_image('media/sheep.png', (self.taille_image,)),
-            "heureux": box_image('media/sheep_grass.png', (self.taille_image,))
+            "buissons": box_image('media/images/bush.png', (self.taille_image,)),
+            "touffes": box_image('media/images/grass.png', (self.taille_image,)),
+            "mouton": box_image('media/images/sheep.png', (self.taille_image,)),
+            "heureux": box_image('media/images/sheep_grass.png', (self.taille_image,))
         }
 
     def grid_parse(self, data: Union[List[List[str]], PathLike]):

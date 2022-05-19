@@ -15,7 +15,7 @@ import son
 def menu():
     son.song("Wait")
     boutons = Boutons((20,20))
-    logo = graphiques.image_grille(2, 0, 17, 5, 'media/Logo_ricosheep.png', boutons.grille)
+    logo = graphiques.image_grille(2, 0, 17, 5, 'media/images/Logo_ricosheep.png', boutons.grille)
     boutons.cree_bouton_simple(3, 6, 16, 7, 'Jouer', arrondi=0.75)
     boutons.cree_bouton_simple(3, 9, 16, 10, 'Niveaux', arrondi=0.75)
     boutons.cree_bouton_simple(3, 12, 16, 13, "Editeur de niveaux", arrondi=0.75)
@@ -72,8 +72,9 @@ def menu():
                              "veuillez sélectionner une autre map")
 
                 if click == 'Jouer':
-                    son.sound('MenuOk')
+                    son.sound('MenuAccept')
                     try:
+                        print(cfg.carte)
                         plateau = Plateau(cfg.carte, duree_anime=0.2)
                         jeu(plateau)
                         son.song("Wait")
@@ -85,16 +86,16 @@ def menu():
                         pass
 
                 elif click == "Niveaux":
-                    son.sound('Menubeep')
+                    son.sound('MenuBleep')
                     selecteur.menu()
                     cfg.maj()
 
                 elif click == "Editeur de niveaux":
-                    son.sound('Menubeep')
+                    son.sound('MenuBleep')
                     editeur.debut()
 
                 elif click == "Niveau aléatoire":
-                    son.sound('MenuOk')
+                    son.sound('MenuAccept')
                     carte = randomizer.generation100()
                     plateau = Plateau(carte, duree_anime=0.2)
                     jeu(plateau)

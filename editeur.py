@@ -33,9 +33,9 @@ def initplateau(grille):
     global images
     taille_image = grille.largeur_case * 0.8
     images = {
-            "B" : box_image('media/bush.png',  (taille_image,)),
-            "G" : box_image('media/grass.png', (taille_image,)),
-            "S" : box_image('media/sheep.png', (taille_image,)),
+            "B" : box_image('media/images/bush.png',  (taille_image,)),
+            "G" : box_image('media/images/grass.png', (taille_image,)),
+            "S" : box_image('media/images/sheep.png', (taille_image,)),
         }
 
 
@@ -96,7 +96,7 @@ def debut():
 
         if tev == "ClicGauche":
             if click not in {None}:
-                son.sound('MenuOk')
+                son.sound('MenuAccept')
                 nb_lignes = boutons.entrees_texte['lignes'].get()
                 nb_colonnes = boutons.entrees_texte['colonnes'].get()
 
@@ -136,7 +136,7 @@ def main(lignes, colonnes):
             print(touche)
 
             if touche == "t":
-                son.sound('MenuOk')
+                son.sound('MenuAccept')
         
                 if test(plateau):
                     return creation_niveaux.menu(plateau)

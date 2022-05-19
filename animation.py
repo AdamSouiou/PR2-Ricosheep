@@ -17,8 +17,8 @@ class FallingSheep:
 def initialisation(number):
     liste = []
 
-    img1 = Image.open('media\chute1.png')
-    img2 = Image.open('media\chute2.png')
+    img1 = Image.open('media\images\chute1.png')
+    img2 = Image.open('media\images\chute2.png')
     
     for _ in range(number+1):
 

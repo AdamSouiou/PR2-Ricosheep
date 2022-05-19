@@ -15,6 +15,8 @@ import son
 import randomizer
 import creation_niveaux
 import selecteur
+import os
+import verification
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -126,8 +128,10 @@ def jeu(plateau: Plateau):
 
 
 if __name__ == "__main__":
+    verification.main()
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
-                      'Ricosheep', icone=None)
+                    'Ricosheep', icone= os.path.join("media", "images", "Illustration.png"))
     son.initialisation()
     from accueil import menu # Evite l'import infini
     menu()
+        

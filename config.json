@@ -6,7 +6,7 @@
     "son": true,
     "animation": true,
     "carte": [
-        "custom",
-        "Random.txt"
+        "tests",
+        "losable.txt"
     ]
 }
