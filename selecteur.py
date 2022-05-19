@@ -3,7 +3,7 @@ import json
 from bouton import Boutons
 import graphiques
 import fltk
-from plateau import Plateau
+from plateau import Plateau, FichierInvalide
 import son
 
 
@@ -49,8 +49,11 @@ def menu():
 
                     else:
                         choix = modif_json(directory, click)
-                        plateau = open_plateau(choix, boutons)
-
+                        try:
+                            plateau = open_plateau(choix, boutons)
+                        except FichierInvalide:
+                            plateau = None
+                            choix = None
                     boutons = init_boutons(split, directory, choix)
 
                 if click == "Valider":

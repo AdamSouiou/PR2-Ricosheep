@@ -31,8 +31,6 @@ __all__ = [
     'afficher_image',
     'taille_image',
     'redimensionner_image',
-    'calcul_taille_image',
-    'box_image',
     # Texte
     'texte',
     'taille_texte',
@@ -75,7 +73,8 @@ class CustomCanvas:
 
     _default_ev = ['ClicGauche', 'ClicDroit', 'Touche']
 
-    def __init__(self, width, height, title, refresh_rate=100, events=None):
+    def __init__(self, width, height, title,
+                 refresh_rate=100, events=None, icone=None):
         # width and height of the canvas
         self.width = width
         self.height = height
@@ -84,6 +83,8 @@ class CustomCanvas:
         # root Tk object
         self.root = tk.Tk()
         self.root.title(title)
+        if icone:
+            self.root.iconphoto(True, ImageTk.PhotoImage(file=icone))
 
         # canvas attached to the root object
         self.canvas = tk.Canvas(self.root, width=width,
@@ -173,18 +174,18 @@ class FenetreDejaCree(Exception):
 #############################################################################
 
 
-def cree_fenetre(largeur, hauteur, titre='tk', frequence=100):
+def cree_fenetre(largeur, hauteur, titre='tk', frequence=100, icone=None):
     """
-    Crée une fenêtre avec un titre, de dimensions ``largeur`` x ``hauteur``
-    pixels, et avec une frequence de rafraîchissement de 100 images par
-    secondes par défaut
+    Crée une fenêtre avec un titre et une icône, de dimensions
+    ``largeur`` x ``hauteur`` pixels, et avec une frequence de
+    rafraîchissement de 100 images par secondes par défaut.
     :rtype:
     """
     global __canevas
     if __canevas is not None:
         raise FenetreDejaCree(
             'La fenêtre a déjà été crée avec la fonction "cree_fenetre".')
-    __canevas = CustomCanvas(largeur, hauteur, titre, frequence)
+    __canevas = CustomCanvas(largeur, hauteur, titre, frequence, icone=icone)
 
 
 def taille_fenetre():
@@ -559,20 +560,15 @@ def touche_pressee(keysym):
     """
     return keysym in __canevas.pressed_keys
 
-def boite_prompt(Name, Text):
-    return tkinter.simpledialog.askstring(Name, Text)
 
-def boite_texte(x, y,font="Courier 10", width="20", justify = "left"):
-    entry = Entry(__canevas.canvas, justify=justify, width=width, font=font)
-    #entry.focus_set()
-    entry.place(x=x, y=y)
+def entree_texte(x, y, width, height, font="Courier", justify="left"):
+    entry = Entry(__canevas.canvas, justify=justify, font=font)
+    entry.place(x=x, y=y, width=width, height=height)
+    #__canevas.canvas.focus_set()
     return entry
 
-def delete_boitetexte(boite):
+def detruit_entree_texte(boite):
     boite.destroy()
-    __canevas.canvas.focus_set()
-
-def resetfocus():
     __canevas.canvas.focus_set()
 
 

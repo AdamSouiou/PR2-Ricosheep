@@ -9,8 +9,8 @@ from bouton import Boutons
 
 def menu(plateau):
     boutons = Boutons((10,10))
-    boutons.cree_bouton_texte(1, 2, 8, 2, "Voulez-vous enregistrer votre", arrondi = 0.75)
-    boutons.cree_bouton_texte(1, 3, 8, 3, "Niveaux ?", arrondi = 0.75)
+    boutons.cree_bouton_texte(1, 2, 8, 2, "Voulez-vous enregistrer")
+    boutons.cree_bouton_texte(1, 3, 8, 3, "votre niveau ?")
 
     boutons.cree_bouton_simple(1, 6, 4, 6, 'Enregistrer', arrondi=0.75)
     boutons.cree_bouton_simple(5, 6, 8, 6, 'Annuler', arrondi=0.75)
@@ -61,9 +61,9 @@ def demande_nom(plateau):
     boutons = Boutons((10,10))
     boutons.cree_bouton_texte(1, 2, 8, 2, "Nom de votre plateau", arrondi = 0.75)
     boutons.cree_bouton_simple(1, 8, 8, 8, "Valider", arrondi = 0.75)
+    boutons.entree_texte(1, 4, 8, 4, 'filename')
 
     boutons.init()
-    texte = fltk.boite_texte( cfg.largeur_fenetre/6, cfg.hauteur_fenetre/2, "Courier 20", width = 20 )
 
     ev = None
     while True:
@@ -82,12 +82,11 @@ def demande_nom(plateau):
         if tev == "ClicGauche":
             if click is not None:
                 son.sound('MenuOk')
-                fichier = texte.get()
+                fichier = boutons.entrees_texte['filename'].get()
                 fichier = fichier.strip()
 
                 if fichier != "":
                     enregistrement(plateau, fichier)
-                    fltk.delete_boitetexte(texte)
                     return
 
 
@@ -96,14 +95,8 @@ def demande_nom(plateau):
 def enregistrement(plateau, nom):
     file = ""
     with open(os.path.join("maps", "custom", nom+".txt"), 'w') as fichier:
-        for ligne in range(len(plateau)):
-            temp = ""
-            for char in plateau[ligne]:
-                if char == None:
-                    temp += "_"
-                else:
-                    temp += str(char)
-            file += temp
+        for ligne in plateau:
+            file += ''.join(ligne)
             if ligne != (len(plateau) - 1):
                 file += "\n"
 

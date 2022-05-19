@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
+
 from sys import setrecursionlimit
 from time import time
 from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
-from accueil import menu
 import concurrent.futures
 import graphiques
 import cfg
@@ -16,10 +17,12 @@ setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
 def jeu(plateau: Plateau):
+    son.song("Otherside")
+
     victory_buttons = graphiques.game_over_init("C'est gagné !!", "#008141", "Quitter")
     defeat_buttons = graphiques.game_over_init("C'est perdu :'(", "#A90813", "Reset")
-
     game_over = False
+
     start_deplacement = 0
     dt = 0
     while True:
@@ -59,9 +62,8 @@ def jeu(plateau: Plateau):
 
                     plateau.deplace_moutons(touche)
 
-                    deepcopy_plateau = deepcopy(plateau)
                     with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(solveur.profondeur, deepcopy_plateau)
+                        future = executor.submit(solveur.profondeur, deepcopy(plateau))
                     historique = plateau.historique
 
                     son.sound('Sheep')
@@ -101,8 +103,8 @@ def jeu(plateau: Plateau):
                 elif touche == 'Escape':
                     return
                 elif touche == 'p':
-                    print(cfg.carte_lst, plateau.historique, plateau.troupeau)
                     sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                    print("Partie sauvegardée")
                 """print('Historique :')
                 pprint(plateau.historique)
                 print('Troupeau :', plateau.troupeau)
@@ -117,11 +119,7 @@ def jeu(plateau: Plateau):
 
 if __name__ == "__main__":
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
-                      'Ricosheep')
+                      'Ricosheep', icone=None)
     son.initialisation()
-
-    while True:
-        son.song("Wait")
-        plateau = menu()
-        son.song("Otherside")
-        jeu(plateau)
+    from accueil import menu # Evite l'import infini
+    menu()

@@ -1,5 +1,6 @@
 from bouton import Boutons
-from plateau import Plateau
+from plateau import Plateau, FichierInvalide
+from ricosheep import jeu
 import animation
 import graphiques
 import cfg
@@ -11,9 +12,10 @@ import son
 
 
 def menu():
-    logo = graphiques.logo()
+    son.song("Wait")
     boutons = Boutons((20,20))
-    boutons.cree_bouton_simple(3, 6, 16, 7, "Editeur de Niveaux", arrondi = 0.75)
+    logo = graphiques.image_grille(2, 0, 17, 5, 'media/Logo_ricosheep.png', boutons.grille)
+    boutons.cree_bouton_simple(3, 6, 16, 7, "Editeur de niveaux", arrondi=0.75)
     boutons.cree_bouton_simple(3, 9, 16, 10, 'Jouer', arrondi=0.75)
     boutons.cree_bouton_simple(3, 12, 16, 13, 'Niveaux', arrondi=0.75)
     boutons.cree_bouton_simple(3, 15, 16, 16, 'Options', arrondi=0.75)
@@ -29,8 +31,7 @@ def menu():
         'Anim !', 'Beeeh', arrondi=1, marge_texte=0.8
     )
     boutons.init()
-
-    # fltk.efface_tout()
+    
     ev = None
 
     liste_chute = animation.initialisation(12)
@@ -42,36 +43,55 @@ def menu():
             if cfg.animation: animation.dessiner(liste_chute)
             #boutons.grille.draw()
             boutons.dessiner_boutons(ev)
-            fltk.afficher_image(cfg.largeur_fenetre/2, cfg.hauteur_fenetre*0.15, logo, 'center')
+            fltk.afficher_image(logo.centre_x, logo.centre_y, logo.image, 'center')
 
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
+            click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
 
-            click = boutons.nom_clic(ev)
-
             if tev == "Touche":
                 print(fltk.touche(ev))
 
             elif tev == "ClicGauche":
-                if click in {'Jouer', 'Niveaux', 'Editeur de Niveaux'}:
+                # On propose au joueur de reprendre
+                if click in {'Jouer', 'Niveaux'}:
                     plateau = None
-                    if sauvegarde.est_valide():
-                        plateau = sauvegarde.menu()
+                    try:
+                        if sauvegarde.est_valide():
+                            plateau = sauvegarde.menu()
+                            if plateau is not None:
+                                jeu(plateau)
+                                continue
+                    except FileNotFoundError:
+                        print("La map associée à la sauvegarde n'existe plus",
+                             "veuillez sélectionner une autre map")
 
-                    if click == "Jouer":
-                        son.sound('MenuOk')
-                        return plateau or Plateau(cfg.carte, duree_anime=0.2)
-                    elif click == "Niveaux":
-                        son.sound('Menubeep')
-                        selecteur.menu()
-                        cfg.maj()
-                    elif click == "Editeur de Niveaux":
-                        son.sound('Menubeep')
-                        editeur.debut()
+                if click == 'Jouer':
+                    son.sound('MenuOk')
+                    try:
+                        plateau = Plateau(cfg.carte, duree_anime=0.2)
+                        jeu(plateau)
+                        son.song("Wait")
+                    except FileNotFoundError:
+                        print("La map demandée n'existe pas")
+                        pass
+                    except FichierInvalide:
+                        print("Le format de la map est incorrect")
+                        pass
+
+                elif click == "Niveaux":
+                    son.sound('Menubeep')
+                    selecteur.menu()
+                    cfg.maj()
+
+                elif click == "Editeur de niveaux":
+                    son.sound('Menubeep')
+                    editeur.debut()
+
                 elif click == 'son':
                     son.toggle_sound()
 
