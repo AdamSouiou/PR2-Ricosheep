@@ -1,17 +1,16 @@
 import unittest
+import solveur
 from os import path
 from sys import setrecursionlimit
-setrecursionlimit(10**6)
 from glob import glob
-import solveur
 from plateau import Plateau
+setrecursionlimit(10**6)
 
 join = lambda l : path.join(*l)
 
 maps_impossibles = set(
     map(join,
-        [ ['maps', 'square', 'map1.txt'],
-          ['maps', 'custom', '1.txt'] ]
+        [ ['maps', 'custom', '1.txt'] ]
     )
 )
 
@@ -31,8 +30,9 @@ class TestSolveur(unittest.TestCase):
                 if map_file in maps_impossibles:
                     self.assertTrue(
                         chemin is None,
-                        "Le solveur à renvoyé autre chose\
-                        que None, alors que la map est insolvable")
+                        f"Le solveur à renvoyé autre chose\
+                        que None, alors que la map est insolvable, \
+                        la map était {map_file}")
                     continue
                 else:
                     self.assertTrue(
@@ -41,11 +41,11 @@ class TestSolveur(unittest.TestCase):
                 
                 solveur.restore(plateau.troupeau, back)
                 
-                self.assertTrue(solveur.test(chemin, plateau) is True,
+                self.assertTrue(solveur.test(chemin, plateau, unittest=True) is True,
                     f"Le chemin n'est pas correct, la map était {map_file}")
             nb_tests += 1
         print(f"{nb_tests} tests ont été réalisés")
-                
+
 
 if __name__ == '__main__':
     unittest.main()

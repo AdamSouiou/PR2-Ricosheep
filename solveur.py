@@ -71,11 +71,11 @@ def anim_brute(plateau: Plateau, pause: int):
     fltk.mise_a_jour()
     sleep(pause)
 
-def test(chemin: List[str], plateau: Plateau):
+def test(chemin: List[str], plateau: Plateau, unittest=False):
     for mouv in chemin:
         plateau.deplace_moutons(mouv, solveur=True)
 
-    plateau.reposition_moutons()
+    if not unittest: plateau.reposition_moutons()
     return plateau.isGagne()
 
 if __name__ == '__name__':

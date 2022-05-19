@@ -57,6 +57,7 @@ class Mouton:
             self.en_deplacement = False
 
     def deplace(self, direction: str, plateau):
+        pos_initiale = (self.y, self.x)
         if direction == "Up":
             while plateau.isPositionValid(self.x, self.y-1):
                 self.y -= 1
@@ -73,14 +74,15 @@ class Mouton:
             while plateau.isPositionValid(self.x+1, self.y):
                 self.x += 1
 
+        self.en_deplacement = self != pos_initiale
+
     def deplace_vitesse(self, mouton_initial, plateau, direction):
         """
         Détermine la vitesse du mouton lors du déplacement animé
         pour satisfaire la contrainte de durée imposée par le
         plateau
         """
-        if self != mouton_initial:
-            self.en_deplacement = True
+        if self.en_deplacement:
             distance = abs(
                 getattr(self, axes[direction])\
                 - getattr(mouton_initial, axes[direction])

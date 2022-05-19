@@ -50,6 +50,8 @@ class Plateau:
 
         self.anime = bool(duree_anime)
         self.duree_anime = duree_anime
+        if test_mode: return
+
         self.grille = Grille(self.nb_colonnes, self.nb_lignes,
                              grille_base=grille_base,
                              grille_pos=grille_pos)
@@ -58,7 +60,6 @@ class Plateau:
         self.last_direction = None
         self.nb_places = 0
 
-        if test_mode: return
         global images
         images = {
             "buissons": box_image('media/bush.png', (self.taille_image,)),
@@ -163,20 +164,27 @@ class Plateau:
                 and self.isNotPosMouton(x, y))
 
     def deplace_moutons(self, direction: str, solveur=False):
+        """
+        Déplace les moutons dans la direction demandée.
+        Le booléen solveur est utilisé pour éviter de
+        d'actualiser l'historique.
+        Retourne si un déplacement devra être réalisé
+        """
+        deplacement = False
         if not solveur:
-            # Evite le cas où le joueur appuie pendant le déplacement
-            if self.last_direction is not None: return
+            self.historique.append(tuple(deepcopy(self.troupeau)))
             if self.anime:
                 self.last_direction = direction
-            self.historique.append(tuple(deepcopy(self.troupeau)))
 
         self.tri_moutons(direction)
         for mouton in self.troupeau:
-            if self.anime:
-                mouton_initial = copy(mouton)
+            if self.anime: mouton_initial = copy(mouton)
             mouton.deplace(direction, self)
             if self.anime:
                 mouton.deplace_vitesse(mouton_initial, self, direction)
+            if mouton.en_deplacement: deplacement = True
+        
+        return deplacement
                 
 
     def tri_moutons(self, direction):

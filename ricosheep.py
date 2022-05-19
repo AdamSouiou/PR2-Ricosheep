@@ -5,7 +5,10 @@ from time import time
 from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
+from collections import deque
 import concurrent.futures
+from concurrent.futures import thread
+from multiprocessing import Pool
 import graphiques
 import cfg
 import fltk
@@ -16,13 +19,34 @@ import son
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
+
+def file_defaite(threads_defaite: deque):
+    """
+    Traite un résultat de la file FIFO, et
+    renvoie ``True`` si la partie devient impossible.
+
+    :param deque threads_defaite: File des threads
+    exécutés calculant la viabilité de la partie.
+    """
+    if threads_defaite:
+        if threads_defaite[0].ready():
+            chemin, _ = threads_defaite[0].get()
+            threads_defaite.popleft()
+            if chemin is None:
+                return True
+    return False
+
+
 def jeu(plateau: Plateau):
     son.song("Otherside")
 
     victory_buttons = graphiques.game_over_init("C'est gagné !!", "#008141", "Quitter")
     defeat_buttons = graphiques.game_over_init("C'est perdu :'(", "#A90813", "Reset")
+    
     game_over = False
-
+    threads_defaite = deque()
+    process_pool = Pool(processes=2)
+    
     start_deplacement = 0
     dt = 0
     while True:
@@ -36,13 +60,15 @@ def jeu(plateau: Plateau):
             tev = fltk.type_ev(ev)
 
             if plateau.isGagne():
-                
                 victory_buttons.dessiner_boutons(ev)
                 click = victory_buttons.nom_clic(ev)
                 if click == "Quitter" and tev == "ClicGauche":
+                    process_pool.terminate()
+                    process_pool.join()
                     return
-
-            elif game_over == True:
+            
+            if file_defaite(threads_defaite) or game_over:
+                game_over = True
                 defeat_buttons.dessiner_boutons(ev)
                 click = defeat_buttons.nom_clic(ev)
                 if click == "Reset" and tev == "ClicGauche":
@@ -59,30 +85,20 @@ def jeu(plateau: Plateau):
                     # Vérifie si un déplacement n'est pas déjà en cours :
                     and plateau.last_direction is None):
                     start_deplacement = time()
-
-                    plateau.deplace_moutons(touche)
-
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(solveur.profondeur, deepcopy(plateau))
-                    historique = plateau.historique
-
                     son.sound('Sheep')
-                    chemin, _ = future.result()
-                    plateau.historique = historique
 
-                    if chemin is None:
-                        print(game_over)
-                        game_over = True
-                    else:
-                        game_over = False
+                    if plateau.deplace_moutons(touche): threads_defaite.append(
+                        process_pool.apply_async(
+                            solveur.profondeur, (deepcopy(plateau),)
+                        )
+                    )
 
+                    pprint(threads_defaite)
 
                 if touche == "s":
-                    if len(plateau.historique) <= 1:
-                        print("test")
-                        start = time()
-                        chemin, _ = solveur.profondeur(deepcopy(plateau))
-                        elapsed = time() - start
+                    start = time()
+                    chemin, _ = solveur.profondeur(deepcopy(plateau))
+                    elapsed = time() - start
                     
                     if chemin is None:
                         print("Pas de solutions, chacal!")
@@ -91,8 +107,8 @@ def jeu(plateau: Plateau):
                         print(chemin)
                         print("Le solveur a bon? :", solveur.test(chemin, plateau))
                         # print(chemin)
-                        print(f"La longueur du chemin est de {len(chemin)},")
-                            #   f"il a fallu {elapsed:.3f}s pour le déterminer.")
+                        print(f"La longueur du chemin est de {len(chemin)},",
+                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                 elif touche == "r":
                     game_over = False
@@ -101,20 +117,20 @@ def jeu(plateau: Plateau):
                     game_over = False
                     plateau.undo()
                 elif touche == 'Escape':
+                    threads_defaite.clear()
+                    process_pool.terminate()
+                    process_pool.join()
                     return
                 elif touche == 'p':
                     sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
                     print("Partie sauvegardée")
-                """print('Historique :')
-                pprint(plateau.historique)
-                print('Troupeau :', plateau.troupeau)
-                print()"""
 
             fltk.mise_a_jour()
             dt = time() - dt_start
 
         except KeyboardInterrupt:
             exit()
+
 
 
 if __name__ == "__main__":
