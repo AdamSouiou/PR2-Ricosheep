@@ -12,6 +12,9 @@ import fltk
 import solveur
 import sauvegarde
 import son
+import randomizer
+import creation_niveaux
+import selecteur
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -103,7 +106,12 @@ def jeu(plateau: Plateau):
                 elif touche == 'Escape':
                     return
                 elif touche == 'p':
-                    sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                    if cfg.carte_lst == ['custom', 'Random.txt']:
+                        selecteur.modif_json('custom', 'Random.txt')
+                        creation_niveaux.enregistrement(randomizer.plateau, "Random")
+                        sauvegarde.save_write(['custom','Random.txt'], plateau.historique, plateau.troupeau)
+                    else:
+                        sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
                     print("Partie sauvegardée")
                 """print('Historique :')
                 pprint(plateau.historique)

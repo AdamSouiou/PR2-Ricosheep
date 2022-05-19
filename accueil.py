@@ -1,6 +1,7 @@
 from bouton import Boutons
 from plateau import Plateau, FichierInvalide
 from ricosheep import jeu
+import randomizer
 import animation
 import graphiques
 import cfg
@@ -15,11 +16,11 @@ def menu():
     son.song("Wait")
     boutons = Boutons((20,20))
     logo = graphiques.image_grille(2, 0, 17, 5, 'media/Logo_ricosheep.png', boutons.grille)
-    boutons.cree_bouton_simple(3, 6, 16, 7, "Editeur de niveaux", arrondi=0.75)
-    boutons.cree_bouton_simple(3, 9, 16, 10, 'Jouer', arrondi=0.75)
-    boutons.cree_bouton_simple(3, 12, 16, 13, 'Niveaux', arrondi=0.75)
-    boutons.cree_bouton_simple(3, 15, 16, 16, 'Options', arrondi=0.75)
-    
+    boutons.cree_bouton_simple(3, 6, 16, 7, 'Jouer', arrondi=0.75)
+    boutons.cree_bouton_simple(3, 9, 16, 10, 'Niveaux', arrondi=0.75)
+    boutons.cree_bouton_simple(3, 12, 16, 13, "Editeur de niveaux", arrondi=0.75)
+    boutons.cree_bouton_simple(3, 15, 16, 16, 'Niveau aléatoire', arrondi=0.75)
+
     boutons.cree_bouton_booleen(
         18, 18, 19, 19,
         'son', cfg,
@@ -91,6 +92,14 @@ def menu():
                 elif click == "Editeur de niveaux":
                     son.sound('Menubeep')
                     editeur.debut()
+
+                elif click == "Niveau aléatoire":
+                    son.sound('MenuOk')
+                    carte = randomizer.generation100()
+                    plateau = Plateau(carte, duree_anime=0.2)
+                    jeu(plateau)
+                    son.song("Wait")
+
 
                 elif click == 'son':
                     son.toggle_sound()
