@@ -55,11 +55,7 @@ def menu():
             click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
-                fltk.ferme_fenetre()
-                exit()
-
-            if tev == "Touche":
-                print(fltk.touche(ev))
+                return
 
             elif tev == "ClicGauche":
                 # On propose au joueur de reprendre
@@ -115,4 +111,4 @@ def menu():
             fltk.mise_a_jour()
 
         except KeyboardInterrupt:
-            exit()
+            return

@@ -108,3 +108,7 @@ def box_image(fichier, box, marge=0):
             marge
         )
     )
+
+def close():
+    fltk.ferme_fenetre()
+    exit(0)

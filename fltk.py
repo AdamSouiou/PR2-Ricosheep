@@ -63,6 +63,7 @@ class CustomCanvas:
     """
 
     _on_osx = sys.platform.startswith("darwin")
+    _on_win = sys.platform.startswith("win32")
 
     _ev_mapping = {
         'ClicGauche': '<Button-1>',
@@ -74,8 +75,8 @@ class CustomCanvas:
 
     _default_ev = ['ClicGauche', 'ClicDroit', 'Touche']
 
-    def __init__(self, width, height, title,
-                 refresh_rate=100, events=None, icone=None):
+    def __init__(self, width, height, title='tk',
+                 refresh_rate=60, events=None, icone=None):
         # width and height of the canvas
         self.width = width
         self.height = height
@@ -86,6 +87,11 @@ class CustomCanvas:
         self.root.title(title)
         if icone:
             self.root.iconphoto(True, ImageTk.PhotoImage(file=icone))
+            if self._on_win :
+                import ctypes
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                    title
+                )
 
         # canvas attached to the root object
         self.canvas = tk.Canvas(self.root, width=width,
@@ -175,7 +181,7 @@ class FenetreDejaCree(Exception):
 #############################################################################
 
 
-def cree_fenetre(largeur, hauteur, titre='tk', frequence=100, icone=None):
+def cree_fenetre(largeur, hauteur, titre='tk', frequence=60, icone=None):
     """
     Crée une fenêtre avec un titre et une icône, de dimensions
     ``largeur`` x ``hauteur`` pixels, et avec une frequence de

@@ -1,7 +1,7 @@
 import os
 import json
 from bouton import Boutons
-import graphiques
+from graphiques import close, background
 import fltk
 from plateau import Plateau, FichierInvalide
 import son
@@ -18,7 +18,7 @@ def menu():
     while True:
         try:
             fltk.efface_tout()
-            graphiques.background("#3f3e47")
+            background("#3f3e47")
             #boutons.grille.draw()
             boutons.dessiner_boutons()
             
@@ -29,8 +29,7 @@ def menu():
             click = boutons.nom_clic(ev)
 
             if tev == 'Quitte':
-                fltk.ferme_fenetre()
-                exit()
+                close()
 
             elif tev == "ClicGauche":
                 if click not in {None, "Valider", choix}:

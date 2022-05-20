@@ -1,6 +1,6 @@
 from bouton import Boutons
 from plateau import Plateau
-from graphiques import box_image, affiche_env_element
+from graphiques import box_image, affiche_env_element, close
 from pprint import pprint
 import graphiques
 import cfg
@@ -91,8 +91,7 @@ def debut():
         click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
-            fltk.ferme_fenetre()
-            exit()
+            close()
 
         if tev == "ClicGauche":
             if click not in {None}:
@@ -123,21 +122,16 @@ def main(lignes, colonnes):
         draw(plateau, boutons.grille)
         
         ev = fltk.attend_ev()
-        print(ev)
         tev = fltk.type_ev(ev)
         click = boutons.nom_clic(ev)
 
         if tev == "Quitte":
-            fltk.ferme_fenetre()
-            exit()
+            close()
 
         if tev == "Touche":
             touche = fltk.touche(ev)
-            print(touche)
-
             if touche == "t":
                 son.sound('MenuAccept')
-        
                 if test(plateau):
                     return creation_niveaux.menu(plateau)
 

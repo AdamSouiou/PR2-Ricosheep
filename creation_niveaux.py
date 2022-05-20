@@ -5,6 +5,7 @@ import cfg
 import os
 import son
 from bouton import Boutons
+from graphiques import close
 
 
 def menu(plateau):
@@ -28,8 +29,7 @@ def menu(plateau):
         click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
-            fltk.ferme_fenetre()
-            exit()
+            close()
 
         if tev == "ClicGauche":
             if click not in {None}:
@@ -76,8 +76,7 @@ def demande_nom(plateau):
         click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
-            fltk.ferme_fenetre()
-            exit()
+            close()
 
         if tev == "ClicGauche":
             if click is not None:
@@ -88,7 +87,6 @@ def demande_nom(plateau):
                 if fichier != "":
                     enregistrement(plateau, fichier)
                     return
-
 
         fltk.mise_a_jour()
 

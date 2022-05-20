@@ -568,10 +568,13 @@ class Boutons:
     
         return nom_bouton_survole
 
+    def is_click(self, ev): return fltk.type_ev(ev) in self.is_click.CLICS
+    is_click.CLICS = {'ClicGauche', 'ClicDroit'}
+
     def nom_clic(self, ev):
         for identificateur, bouton in self.boutons.items():
-            if self.curseur_sur_bouton(bouton, ev):
-                if isinstance(bouton, BoutonBooleen) and fltk.type_ev(ev) == 'ClicGauche':
+            if self.is_click(ev) and self.curseur_sur_bouton(bouton, ev):
+                if isinstance(bouton, BoutonBooleen):
                     etat = getattr(bouton.object_ref, bouton.attribute)
                     setattr(bouton.object_ref, bouton.attribute, not etat)
                 return identificateur

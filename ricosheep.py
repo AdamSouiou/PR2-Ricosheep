@@ -18,7 +18,6 @@ import randomizer
 import creation_niveaux
 import selecteur
 import verification
-
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
@@ -96,8 +95,6 @@ def jeu(plateau: Plateau):
                         )
                     )
 
-                    pprint(threads_defaite)
-
                 if touche == "s":
                     start = time()
                     chemin, _ = solveur.profondeur(deepcopy(plateau))
@@ -140,7 +137,6 @@ def jeu(plateau: Plateau):
             exit()
 
 
-
 if __name__ == "__main__":
     verification.main()
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
@@ -148,4 +144,4 @@ if __name__ == "__main__":
     son.initialisation()
     from accueil import menu # Evite l'import infini
     menu()
-        
+    fltk.ferme_fenetre()
