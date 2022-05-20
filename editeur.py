@@ -93,6 +93,10 @@ def debut():
         if tev == 'Quitte':
             boutons.destroy_entree_textes()
             close()
+        if tev == "Touche":
+            if fltk.touche(ev) == "Escape":
+                boutons.destroy_entree_textes()
+                return
 
         if tev == "ClicGauche":
             if click not in {None}:
@@ -136,6 +140,10 @@ def main(lignes, colonnes):
                 son.sound('MenuAccept')
                 if test(plateau):
                     return creation_niveaux.menu(plateau)
+
+            if touche == "Escape":
+                boutons.destroy_entree_textes()
+                return
 
         if tev == "ClicGauche":
             if click not in {None}:

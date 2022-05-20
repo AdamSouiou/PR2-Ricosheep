@@ -6,7 +6,7 @@
     "son": true,
     "animation": true,
     "carte": [
-        "square",
-        "map3.txt"
+        "custom",
+        "geant__.txt"
     ]
 }
