@@ -27,12 +27,12 @@ def menu():
     boutons.cree_bouton_booleen(
         18, 18, 19, 19,
         'son', cfg,
-        'Son!', 'Muet', arrondi=1, marge_texte=0.8
+        '🔊', '🔇', arrondi=1, marge_texte=0.8, unifier_texte = False
     )
     boutons.cree_bouton_booleen(
         15, 18, 16, 19,
         'animation', cfg,
-        'Anim !', 'Beeeh', arrondi=1, marge_texte=0.8
+        '🐑', '🚫', arrondi=1, marge_texte=0.8, unifier_texte = False
     )
     
     boutons.init()
