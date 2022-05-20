@@ -31,7 +31,7 @@ def generation100():
         test, chemin = editeur.test(plateau, False)
         if len(chemin) <= 10:
             test = False
-    print(nb_colonnes,nb_lignes)
+    #print(nb_colonnes,nb_lignes)
     cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
         

@@ -5,6 +5,7 @@ from time import time
 from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
+from bouton import Boutons
 from collections import deque
 from multiprocessing import Pool
 from os import path
@@ -38,12 +39,24 @@ def file_defaite(threads_defaite: deque):
                 return True
     return False
 
+def boutons_jeu_init():
+    boutons = Boutons((20,23), carre=False)
+    boutons.cree_bouton_simple(16, 0, 19, 2, "Reset")
+    boutons.cree_bouton_simple(16, 4, 19, 6, "Undo")
+    boutons.cree_bouton_simple(16, 8, 19, 10, "Sauvegarde", unifier_texte=False)
+    boutons.cree_bouton_simple(16, 12, 19, 14, "Sol. profondeur", unifier_texte=False)
+    boutons.cree_bouton_simple(16, 16, 19, 18, "Sol. largeur", unifier_texte=False)
+    boutons.cree_bouton_simple(16, 20, 19, 22, "Quitter")
+    boutons.init()
+    return boutons
 
-def jeu(plateau: Plateau):
-    son.song("Otherside")
 
-    victory_buttons = graphiques.game_over_init("C'est gagné !!", "#008141", "Quitter")
-    defeat_buttons = graphiques.game_over_init("C'est perdu :'(", "#A90813", "Reset")
+def jeu(plateau: Plateau, boutons_jeu):
+    son.song('Otherside')
+
+
+    victory_buttons = graphiques.game_over_init("C'est gagné !!", "#008141", boutons_jeu.grille)
+    defeat_buttons = graphiques.game_over_init("C'est perdu :'(", "#A90813", boutons_jeu.grille)
     
     game_over = False
     threads_defaite = deque()
@@ -53,22 +66,25 @@ def jeu(plateau: Plateau):
     
     start_deplacement = 0
     dt = 0
+
     while True:
         try:
             dt_start = time()
             fltk.efface_tout()
             graphiques.background("#3f3e47")
             plateau.draw(start_deplacement, dt)
+            boutons_jeu.dessiner_boutons()
 
             ev = fltk.donne_ev()
             tev = fltk.type_ev(ev)
+            click = boutons_jeu.nom_clic(ev)
 
             if plateau.isGagne():
-                victory_buttons.dessiner_boutons(ev)
-                click = victory_buttons.nom_clic(ev)
+                victory_buttons.dessiner_boutons()
                 if click == "Quitter" and tev == "ClicGauche":
                     process_pool.terminate()
                     process_pool.join()
+                    son.song("Wait")
                     return
             
             if file_defaite(threads_defaite) or game_over:
@@ -82,10 +98,62 @@ def jeu(plateau: Plateau):
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
-            elif tev == 'Touche':
+
+            elif tev == "ClicGauche":
+                if click is not None:
+                    son.sound('MenuBleep')
+                    if click == "Quitter":
+                        threads_defaite.clear()
+                        process_pool.terminate()
+                        process_pool.join()
+                        son.song("Wait")
+                        return
+                    elif chemin:
+                        pass
+                    elif click == "Reset":
+                        game_over = False
+                        plateau.reset()
+
+                    elif click == "Undo":
+                        game_over = False
+                        plateau.undo()
+
+                    elif click == "Sauvegarde":
+                        if cfg.carte_lst == ['custom', 'Random.txt']:
+                            selecteur.modif_json('custom', 'Random.txt')
+                            creation_niveaux.enregistrement(randomizer.plateau, "Random")
+                            sauvegarde.save_write(['custom','Random.txt'], plateau.historique, plateau.troupeau)
+                        else:
+                            sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                        print("Partie sauvegardée")
+
+                    elif click == "Sol. profondeur":
+                        start = time()
+                        chemin, _ = solveur.profondeur(deepcopy(plateau))
+                        elapsed = time() - start
+                        
+                        if chemin is None:
+                            print("Pas de solutions, chacal!")
+                            game_over = True
+                        else:
+                            print(chemin)
+                            print(f"La longueur du chemin est de {len(chemin)},")
+                            #print(f"il a fallu {elapsed:.3f}s pour le déterminer.")
+
+                    elif click == "Sol. largeur":
+                        pass
+
+            elif tev == "Touche":
                 touche = fltk.touche(ev)
             else:
                 touche = None
+
+            if touche == 'Escape':
+                threads_defaite.clear()
+                process_pool.terminate()
+                process_pool.join()
+                son.song("Wait")
+                return
 
                 # Vérifie si un déplacement n'est pas déjà en cours :
             if (plateau.last_direction is None
@@ -103,49 +171,6 @@ def jeu(plateau: Plateau):
                         solveur.profondeur, (deepcopy(plateau),)
                     )
                 )
-
-            elif touche == 'Escape':
-                threads_defaite.clear()
-                process_pool.terminate()
-                process_pool.join()
-                return
-
-            # Bloque l'usage du plateau lors de la solution
-            if not chemin:
-                if touche == "s":
-                    start = time()
-                    chemin, _ = solveur.profondeur(deepcopy(plateau))
-                    elapsed = time() - start
-                    
-                    if chemin is None:
-                        print("Pas de solutions, chacal!")
-                        game_over = True
-                    else:
-                        print(chemin)
-                        # print("Le solveur a bon? :", solveur.test(chemin, plateau))
-                        print(f"La longueur du chemin est de {len(chemin)},",
-                               f"il a fallu {elapsed:.3f}s pour le déterminer.")
-        
-                elif touche == "r":
-                    game_over = False
-                    plateau.reset()
-        
-                elif touche == 'u':
-                    game_over = False
-                    plateau.undo()
-
-                elif touche == 'p':
-                    if cfg.carte_lst == ['custom', 'Random.txt']:
-                        selecteur.modif_json('custom', 'Random.txt')
-                        creation_niveaux.enregistrement(randomizer.plateau, "Random")
-                        sauvegarde.save_write(
-                            ['custom','Random.txt'], plateau.historique, plateau.troupeau
-                        )
-                    else:
-                        sauvegarde.save_write(
-                            cfg.carte_lst, plateau.historique, plateau.troupeau
-                        )
-                    print("Partie sauvegardée")
 
             fltk.mise_a_jour()
             dt = time() - dt_start

@@ -30,7 +30,7 @@ def files_check():
             elif fichier == "savefile.json":
                 create_savefile()
             else:
-                print(f"\nIl vous manque au moins {fichier}, veuillez réinstaller"
+                print(f"\nIl vous manque au moins {fichier}, veuillez réinstaller "
                       "Ricosheep pour résoudre ce problème.\n")
                 return False
     return True
@@ -39,13 +39,13 @@ def media_check():
     dossier_utilisateur = os.listdir('media')
     for dossier in MEDIA:
         if dossier not in dossier_utilisateur:
-            print(f"\nIl vous manque au moins le dossier {dossier},"
+            print(f"\nIl vous manque au moins le dossier {dossier}, "
                   "veuillez réinstaller Ricosheep pour résoudre ce problème.\n")
             return False
         fichier_utilisateur = os.listdir(os.path.join('media', dossier))
         for fichier in MEDIA[dossier]:
             if fichier not in fichier_utilisateur:
-                print(f"\nIl vous manque au moins le fichier {fichier},"
+                print(f"\nIl vous manque au moins le fichier {fichier}, "
                       "veuillez réinstaller Ricosheep pour résoudre ce problème.\n")
                 return False
     return True
@@ -57,7 +57,7 @@ def niveaux_check():
         dossier = os.listdir(os.path.join("maps"))
     except:
         print("\nVous n'avez même pas de dossier 'maps', "
-              "veuillez suivre l'installation de Ricosheep pour"
+              "veuillez suivre l'installation de Ricosheep pour "
               "profiter pleinement du jeu.\n")
         return False
     niveau = True
@@ -79,7 +79,7 @@ def niveaux_check():
               "avec l'installation du jeu.\n")
     else:
         print("\nVous n'avez aucun niveau jouable, "
-              "veuillez installer ne serait-ce que les niveaux fournis"
+              "veuillez installer ne serait-ce que les niveaux fournis "
               "avec l'installation du jeu.\n")
 
     return False

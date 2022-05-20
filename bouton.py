@@ -111,8 +111,10 @@ class Boutons:
 
     # Lorsque une instance ne sera plus utilisée on
     # s'assure que les champs de texte soient supprimés
+
     def __del__(self):
-        self.destroy_entree_textes()
+        pass
+        #self.destroy_entree_textes()
 
     def destroy_entree_textes(self):
         """Supprime tous les champs de textes précédents"""
@@ -148,7 +150,7 @@ class Boutons:
                     font=f'{b.police} {b.taille_texte}'
                 )
 
-        print(f'Boutons chargés en {time()-self.time_start:.3f}s')
+        #print(f'Boutons chargés en {time()-self.time_start:.3f}s')
 
     format_bouton = staticmethod(lambda ax, ay, bx, by: (bx - ax + 1, by - ay + 1))
 
@@ -332,7 +334,7 @@ class Boutons:
         appeler la méthode ``get()``, exemple :
         ``boutons.entrees_texte['identificateur'].get()``
         """
-        print(ax, ay, bx, by, identificateur)
+        #print(ax, ay, bx, by, identificateur)
         bouton = EntreeTexte(
                     self.grille.cases[ay][ax].ax,
                     self.grille.cases[ay][ax].ay,
@@ -423,7 +425,7 @@ class Boutons:
         """
 
         for nom, bouton in self.boutons.items():
-            if type(bouton) is Bouton: continue
+            if type(bouton) is Bouton or not bouton.unifier_texte: continue
             len_texte = len(bouton.texte)
 
             if bouton.format in self.formats_texte:

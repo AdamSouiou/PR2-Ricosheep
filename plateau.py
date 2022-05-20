@@ -45,7 +45,7 @@ class Plateau:
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
                  test_mode=False):
 
-        print('Jeu reçu par l instance Plateau', gridfile)
+        #print('Jeu reçu par l instance Plateau', gridfile)
         self.grid_parse(gridfile)
 
         self.anime = bool(duree_anime)
@@ -153,7 +153,7 @@ class Plateau:
         if fini == len(self.troupeau) and self.last_direction is not None:
             self.last_direction = None
             self.reposition_moutons()
-            print(f'Temps du déplacement: {(time() - start_time - dt):.3f}s')
+            #print(f'Temps du déplacement: {(time() - start_time - dt):.3f}s')
 
 
     def isNotPosMouton(self, x, y):
