@@ -73,7 +73,8 @@ class Plateau:
         self.troupeau = []
         self.env = {'buissons': set(), 'touffes': set()}
         self.nb_lignes = 0
-        for ligne in it:
+        len_first_line = 0
+        for i, ligne in enumerate(it):
             self.nb_colonnes = 0
             for char in ligne:
                 pos = (self.nb_lignes, self.nb_colonnes)
@@ -92,6 +93,13 @@ class Plateau:
                         f"Le fichier contient un caractère non reconnu: {char}",
                         f"à la ligne {self.nb_lignes}, colonne {self.nb_colonnes}")
                 self.nb_colonnes += 1
+            if i == 0:
+                len_first_line = self.nb_colonnes
+            else:
+                if self.nb_colonnes != len_first_line:
+                    raise FichierInvalide(
+                        "Les lignes n'ont pas tous la même longueur"
+                    )
             self.nb_lignes += 1
         if self.nb_lignes == 0:
             raise FichierInvalide("Le fichier est vide !")
