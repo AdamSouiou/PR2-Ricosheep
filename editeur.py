@@ -33,9 +33,9 @@ def initplateau(grille):
     global images
     taille_image = grille.largeur_case * 0.8
     images = {
-            "B" : box_image('media/bush.png',  (taille_image,)),
-            "G" : box_image('media/grass.png', (taille_image,)),
-            "S" : box_image('media/sheep.png', (taille_image,)),
+            "B" : box_image('media/images/bush.png',  (taille_image,)),
+            "G" : box_image('media/images/grass.png', (taille_image,)),
+            "S" : box_image('media/images/sheep.png', (taille_image,)),
         }
 
 
@@ -49,19 +49,23 @@ def draw(plateau, grille):
             if plateau[ligne][colonne] != '_':
                 affiche_env_element(case[colonne], images[plateau[ligne][colonne]])
 
-def test(carte):
+def test(carte, editeur=True):
     plateau = Plateau(carte)
     pos_tmp = solveur.tri_copy(plateau.troupeau)
     chemin, _ = solveur.profondeur(plateau)
 
     if chemin is None:
-        print("Pas de solutions, chacal!, recommence ton niveau")
-        return False
+        if editeur == True:
+            print("Pas de solutions, chacal!, recommence ton niveau")
+            return False
+        return False, []
     else:
         solveur.restore(plateau.troupeau, pos_tmp)
-        print("Le solveur a bon? :", solveur.test(chemin, plateau))
-        print(f"La longueur du chemin est de {len(chemin)}")
-        return True
+        if editeur == True:
+            print("Le solveur a bon? :", solveur.test(chemin, plateau))
+            print(f"La longueur du chemin est de {len(chemin)}")
+            return True
+        return True, chemin
 
 
 def debut():
@@ -92,7 +96,7 @@ def debut():
 
         if tev == "ClicGauche":
             if click not in {None}:
-                son.sound('MenuOk')
+                son.sound('MenuAccept')
                 nb_lignes = boutons.entrees_texte['lignes'].get()
                 nb_colonnes = boutons.entrees_texte['colonnes'].get()
 
@@ -132,7 +136,7 @@ def main(lignes, colonnes):
             print(touche)
 
             if touche == "t":
-                son.sound('MenuOk')
+                son.sound('MenuAccept')
         
                 if test(plateau):
                     return creation_niveaux.menu(plateau)

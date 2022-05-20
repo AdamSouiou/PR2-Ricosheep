@@ -34,13 +34,13 @@ def menu(plateau):
         if tev == "ClicGauche":
             if click not in {None}:
                 if click == "Enregistrer":
-                    son.sound('MenuOk')
+                    son.sound('MenuAccept')
                     demande_nom(plateau)
                     return
                     
 
                 elif click == "Annuler":
-                    son.sound('Menubeep')
+                    son.sound('MenuBleep')
                     boutons = Boutons((10,10))
                     boutons.cree_bouton_texte(1, 2, 8, 2, "Revenir au menu", arrondi = 0.75)
                     boutons.cree_bouton_texte(1, 3, 8, 3, "principal ?", arrondi = 0.75)
@@ -49,10 +49,10 @@ def menu(plateau):
                     boutons.cree_bouton_simple(5, 6, 8, 6, 'Editeur', arrondi=0.75)
                     boutons.init()
                 elif click == "Menu":
-                    son.sound('MenuOk')
+                    son.sound('MenuAccept')
                     return
                 elif click == "Editeur":
-                    son.sound('Menubeep')
+                    son.sound('MenuBleep')
                     editeur.debut()
 
         fltk.mise_a_jour()
@@ -81,7 +81,7 @@ def demande_nom(plateau):
 
         if tev == "ClicGauche":
             if click is not None:
-                son.sound('MenuOk')
+                son.sound('MenuAccept')
                 fichier = boutons.entrees_texte['filename'].get()
                 fichier = fichier.strip()
 

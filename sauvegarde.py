@@ -41,7 +41,7 @@ def save_write(carte, historique, troupeau):
         save['carte'] = carte
         save['historique'] = historique
         save['position'] = troupeau
-        jsonFile.write(json.dumps(save, indent=2, cls=SaveEncoder))
+        jsonFile.write(json.dumps(save, cls=SaveEncoder))
 
 
 def save_read():

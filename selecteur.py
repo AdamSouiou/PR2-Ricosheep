@@ -34,7 +34,7 @@ def menu():
 
             elif tev == "ClicGauche":
                 if click not in {None, "Valider", choix}:
-                    son.sound('Menubeep')
+                    son.sound('MenuBleep')
                     if click == "=>":
                         split += 1
                     elif click == "<=":
@@ -57,7 +57,7 @@ def menu():
                     boutons = init_boutons(split, directory, choix)
 
                 if click == "Valider":
-                    son.sound('MenuOk')
+                    son.sound('MenuAccept')
                     return
 
             fltk.mise_a_jour()

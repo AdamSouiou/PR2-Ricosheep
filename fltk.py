@@ -1,10 +1,11 @@
 import subprocess
 import sys
 import tkinter as tk
-import tkinter.simpledialog 
+import tkinter.simpledialog
+from typing import Union, Tuple
 from tkinter import Entry
 from collections import deque
-from os import system
+from os import system, PathLike
 from time import time, sleep
 from tkinter.font import Font
 
@@ -389,7 +390,8 @@ def point(x, y, couleur='black', epaisseur=1, tag=''):
 
 # Image
 
-def afficher_image(x, y, image, ancrage='center', tag=''):
+def afficher_image(x, y, image: Union[PathLike, Image.Image],
+                   ancrage='center', tag=''):
     """
     Affiche l'image avec ``(x, y)`` comme centre. Les
     valeurs possibles du point d'ancrage sont ``'center'``, ``'nw'``, etc.
@@ -418,7 +420,7 @@ def afficher_image(x, y, image, ancrage='center', tag=''):
     return img_object
 
 
-def taille_image(fichier) -> tuple:
+def taille_image(fichier: PathLike) -> Tuple[int, int]:
     """
     Retourne un tuple représentant la largeur et la hauteur
     de l'image.
@@ -433,7 +435,7 @@ def taille_image(fichier) -> tuple:
     return None
 
 
-def redimensionner_image(fichier, coeff: float, reechantillonage=None):
+def redimensionner_image(fichier: PathLike, coeff: float, reechantillonage=None):
     """
     Ouvre une image et la redimensionne avec un coefficient multiplicateur,
     il est également possible d'appliquer un filtre de réchantillonage pour

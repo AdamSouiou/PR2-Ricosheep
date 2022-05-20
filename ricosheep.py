@@ -6,15 +6,18 @@ from copy import deepcopy
 from pprint import pprint
 from plateau import Plateau
 from collections import deque
-import concurrent.futures
-from concurrent.futures import thread
 from multiprocessing import Pool
+from os import path
 import graphiques
 import cfg
 import fltk
 import solveur
 import sauvegarde
 import son
+import randomizer
+import creation_niveaux
+import selecteur
+import verification
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -122,7 +125,12 @@ def jeu(plateau: Plateau):
                     process_pool.join()
                     return
                 elif touche == 'p':
-                    sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+                    if cfg.carte_lst == ['custom', 'Random.txt']:
+                        selecteur.modif_json('custom', 'Random.txt')
+                        creation_niveaux.enregistrement(randomizer.plateau, "Random")
+                        sauvegarde.save_write(['custom','Random.txt'], plateau.historique, plateau.troupeau)
+                    else:
+                        sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
                     print("Partie sauvegardée")
 
             fltk.mise_a_jour()
@@ -134,8 +142,10 @@ def jeu(plateau: Plateau):
 
 
 if __name__ == "__main__":
+    verification.main()
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
-                      'Ricosheep', icone=None)
+                    'Ricosheep', icone=path.join('media', 'images', 'icone.ico'))
     son.initialisation()
     from accueil import menu # Evite l'import infini
     menu()
+        
