@@ -93,6 +93,8 @@ class Plateau:
                         f"à la ligne {self.nb_lignes}, colonne {self.nb_colonnes}")
                 self.nb_colonnes += 1
             self.nb_lignes += 1
+        if self.nb_lignes == 0:
+            raise FichierInvalide("Le fichier est vide !")
         self.historique = [tuple(deepcopy(self.troupeau))]
         if type(data) is str: it.close()
 

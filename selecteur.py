@@ -50,9 +50,10 @@ def menu():
                         choix = modif_json(directory, click)
                         try:
                             plateau = open_plateau(choix, boutons)
-                        except FichierInvalide:
+                        except FichierInvalide as e:
                             plateau = None
                             choix = None
+                            print(e)
                     boutons = init_boutons(split, directory, choix)
 
                 if click == "Valider":
