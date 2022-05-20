@@ -18,7 +18,7 @@ def menu():
     boutons = Boutons((20,20))
     logo = graphiques.image_grille(
         2, 0, 17, 5,
-        path.join('media', 'images', 'Logo_ricosheep_lowered.png'), boutons.grille)
+        path.join('media', 'images', 'Logo_ricosheep.png'), boutons.grille)
     boutons.cree_bouton_simple(3, 6, 16, 7, 'Jouer', arrondi=0.75)
     boutons.cree_bouton_simple(3, 9, 16, 10, 'Niveaux', arrondi=0.75)
     boutons.cree_bouton_simple(3, 12, 16, 13, "Editeur de niveaux", arrondi=0.75)
