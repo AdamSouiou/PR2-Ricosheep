@@ -28,7 +28,7 @@ def initialisation(number):
                       if bool(random.getrandbits(1)) else
                       img2.copy())
         
-        imagechute = resize(imagechute, 120, proportion)
+        imagechute = resize(imagechute, 24, proportion)
 
         liste.append(
             FallingSheep(
