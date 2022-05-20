@@ -30,6 +30,10 @@ def menu():
 
             if tev == 'Quitte':
                 close()
+            elif tev == "Touche":
+                touche = fltk.touche(ev)
+                if touche == "Escape":
+                    return
 
             elif tev == "ClicGauche":
                 if click not in {None, "Valider", choix}:

@@ -91,6 +91,7 @@ def debut():
         click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
+            boutons.destroy_entree_textes()
             close()
 
         if tev == "ClicGauche":
@@ -126,11 +127,12 @@ def main(lignes, colonnes):
         click = boutons.nom_clic(ev)
 
         if tev == "Quitte":
+            boutons.destroy_entree_textes()
             close()
 
         if tev == "Touche":
             touche = fltk.touche(ev)
-            if touche == "t":
+            if touche == "Return":
                 son.sound('MenuAccept')
                 if test(plateau):
                     return creation_niveaux.menu(plateau)

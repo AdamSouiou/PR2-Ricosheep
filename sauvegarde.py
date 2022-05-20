@@ -1,6 +1,7 @@
 import json
 from os import path
 from json.decoder import JSONDecodeError
+from ricosheep import boutons_jeu_init
 import selecteur
 import cfg
 import fltk
@@ -48,12 +49,13 @@ def save_read():
     check_in()
     selecteur.modif_json(save['carte'][0], save['carte'][1])
     cfg.maj()
-    plateau = Plateau(cfg.carte)
+    boutons_jeu = boutons_jeu_init()
+    plateau = Plateau(cfg.carte, grille_base = boutons_jeu.grille, grille_pos=(0,0,15,22))
     plateau.historique_savewrite(save['historique'])
     plateau.troupeau_savewrite(save['position'])
     plateau.reposition_moutons()
      
-    return plateau
+    return plateau, boutons_jeu
 
 
 def est_valide():
@@ -98,7 +100,7 @@ def menu():
                     elif click == "Ecraser la sauvegarde":
                         clear_save()
                         check_in()
-                        return None
+                        return None, None
 
             fltk.mise_a_jour()
 

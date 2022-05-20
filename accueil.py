@@ -1,6 +1,6 @@
 from bouton import Boutons
 from plateau import Plateau, FichierInvalide
-from ricosheep import jeu
+from ricosheep import boutons_jeu_init, jeu
 from os import path
 import randomizer
 import animation
@@ -63,9 +63,9 @@ def menu():
                     plateau = None
                     try:
                         if sauvegarde.est_valide():
-                            plateau = sauvegarde.menu()
+                            plateau, boutons_jeu = sauvegarde.menu()
                             if plateau is not None:
-                                jeu(plateau)
+                                jeu(plateau, boutons_jeu)
                                 continue
                     except FileNotFoundError:
                         print("La map associée à la sauvegarde n'existe plus",
@@ -74,10 +74,11 @@ def menu():
                 if click == 'Jouer':
                     son.sound('MenuAccept')
                     try:
-                        print(cfg.carte)
-                        plateau = Plateau(cfg.carte, duree_anime=0.2)
-                        jeu(plateau)
-                        son.song("Wait")
+                        #print(cfg.carte)
+                        boutons_jeu = boutons_jeu_init()
+                        plateau = Plateau(cfg.carte, grille_base = boutons_jeu.grille, grille_pos=(0,0,15,22),duree_anime=0.2)
+                        son.song("Otherside")
+                        jeu(plateau, boutons_jeu)
                     except FileNotFoundError:
                         print("La map demandée n'existe pas")
                         pass
@@ -97,10 +98,9 @@ def menu():
                 elif click == "Niveau aléatoire":
                     son.sound('MenuAccept')
                     carte = randomizer.generation100()
-                    plateau = Plateau(carte, duree_anime=0.2)
-                    jeu(plateau)
-                    son.song("Wait")
-
+                    boutons_jeu = boutons_jeu_init()
+                    plateau = Plateau(carte,grille_base = boutons_jeu.grille, grille_pos=(0,0,15,22), duree_anime=0.2)
+                    jeu(plateau, boutons_jeu)
 
                 elif click == 'son':
                     son.toggle_sound()

@@ -1,12 +1,12 @@
 {
     "windows": {
-        "largeur_fenetre": 500,
+        "largeur_fenetre": 1000,
         "hauteur_fenetre": 500
     },
     "son": true,
     "animation": true,
     "carte": [
-        "tests",
-        "losable.txt"
+        "square",
+        "map3.txt"
     ]
 }

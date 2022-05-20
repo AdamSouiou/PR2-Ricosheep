@@ -29,6 +29,7 @@ def menu(plateau):
         click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
+            boutons.destroy_entree_textes()
             close()
 
         if tev == "ClicGauche":
@@ -76,6 +77,7 @@ def demande_nom(plateau):
         click = boutons.nom_clic(ev)
 
         if tev == 'Quitte':
+            boutons.destroy_entree_textes()
             close()
 
         if tev == "ClicGauche":
@@ -86,6 +88,7 @@ def demande_nom(plateau):
 
                 if fichier != "":
                     enregistrement(plateau, fichier)
+                    boutons.destroy_entree_textes()
                     return
 
         fltk.mise_a_jour()
