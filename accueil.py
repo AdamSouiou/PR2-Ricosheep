@@ -59,7 +59,7 @@ def menu():
 
             elif tev == "ClicGauche":
                 # On propose au joueur de reprendre
-                if click in {'Jouer', 'Niveaux'}:
+                if click in {'Jouer', 'Niveaux', "100% Aléatoire", "Aléatoire Contrôlé"}:
                     plateau = None
                     try:
                         if sauvegarde.est_valide():
