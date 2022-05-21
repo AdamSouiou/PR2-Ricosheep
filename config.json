@@ -3,10 +3,10 @@
         "largeur_fenetre": 1000,
         "hauteur_fenetre": 500
     },
-    "son": true,
+    "son": false,
     "animation": true,
     "carte": [
-        "square",
-        "map2.txt"
+        "big",
+        "big2.txt"
     ]
 }

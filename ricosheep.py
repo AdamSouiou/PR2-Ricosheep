@@ -126,13 +126,19 @@ def jeu(plateau: Plateau, boutons_jeu):
                             game_over = True
                         else:
                             print(chemin)
-                            print("Le solveur a bon? :", solveur.test(chemin, plateau))
+                            #print("Le solveur a bon? :", solveur.test(chemin, plateau))
                             # print(chemin)
                             print(f"La longueur du chemin est de {len(chemin)},")
                             #print(f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                     elif click =="Solveur largeur":
-                        pass
+                        chemin = solveur.largeur(deepcopy(plateau))
+
+                        if chemin is None:
+                            print("Pas de solutions... :(")
+                            game_over = False
+                        else:
+                            print(chemin)
 
                     elif click =="Quitter":
                         threads_defaite.clear()
