@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-
-from sys import setrecursionlimit
-from time import time
-from copy import deepcopy
-from pprint import pprint
-from plateau import Plateau
-from bouton import Boutons
-from collections import deque
-from multiprocessing import Pool
-from os import path
 import verification
 import graphiques
 import cfg
@@ -19,6 +9,16 @@ import son
 import randomizer
 import creation_niveaux
 import selecteur
+from sys import setrecursionlimit
+from time import time
+from copy import deepcopy
+from pprint import pprint
+from plateau import Plateau
+from bouton import Boutons
+from collections import deque
+from multiprocessing import Pool
+from os import path
+
 
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
@@ -170,8 +170,6 @@ def jeu(plateau: Plateau, boutons_jeu):
 
 
 if __name__ == "__main__":
-    verification.main()
-    cfg.maj()
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
                     'Ricosheep', icone=path.join('media', 'images', 'icone.ico'))
     son.initialisation()

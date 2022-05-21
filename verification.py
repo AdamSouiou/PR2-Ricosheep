@@ -1,7 +1,7 @@
 import fltk
 import os
 import json
-from plateau import Plateau, FichierInvalide
+
 
 DOSSIER = {
     "accueil.py", "animation.py", "bouton.py", "cfg.py",
@@ -11,12 +11,12 @@ DOSSIER = {
     "savefile.json","selecteur.py","solveur.py", "son.py", "unit-tests.py"}
 
 MEDIA = {
-    'music': ['Otherside.mp3', 'Wait.mp3'], 
-    'son':['MenuAccept.wav', 'MenuBleep.wav', 'sheep1.wav',
-           'sheep2.wav', 'sheep3.wav', 'sheep4.wav'],
-    'images':['bush.png', 'chute1.png', 'chute2.png', 'grass.png',
-              'Illustration.png', 'Logo_ricosheep.png', 'sheep_grass.png', 'sheep.png',
-              'icone.ico']
+    "music": ["Otherside.mp3", "Wait.mp3"], 
+    "son":["MenuAccept.wav", "MenuBleep.wav", "sheep1.wav",
+           "sheep2.wav", "sheep3.wav", "sheep4.wav"],
+    "images":["bush.png", "chute1.png", "chute2.png", "grass.png",
+              "Illustration.png", "Logo_ricosheep.png", "sheep_grass.png", "sheep.png",
+              "icone.ico"]
 }
 
 CHARACTER = {'B', 'G', 'S', '_', '\n'}
@@ -36,13 +36,13 @@ def files_check():
     return True
 
 def media_check():
-    dossier_utilisateur = os.listdir('media')
+    dossier_utilisateur = os.listdir("media")
     for dossier in MEDIA:
         if dossier not in dossier_utilisateur:
             print(f"\nIl vous manque au moins le dossier {dossier}, "
                   "veuillez réinstaller Ricosheep pour résoudre ce problème.\n")
             return False
-        fichier_utilisateur = os.listdir(os.path.join('media', dossier))
+        fichier_utilisateur = os.listdir(os.path.join("media", dossier))
         for fichier in MEDIA[dossier]:
             if fichier not in fichier_utilisateur:
                 print(f"\nIl vous manque au moins le fichier {fichier}, "
@@ -67,9 +67,13 @@ def niveaux_check():
             test = os.listdir(os.path.join("maps", sous_dos))
             file = test[0]
             if file[-4:] == ".txt":
+                from plateau import Plateau, FichierInvalide
                 try:
+                    
                     Plateau(os.path.join("maps", sous_dos, file),
                             test_mode=True)
+                    if configcreated:
+                        create_configjson(dos, file)
                     return True
                 except FichierInvalide:
                     niveau = False
@@ -85,34 +89,43 @@ def niveaux_check():
     return False
 
 
-def create_configjson():
-    data = {}
-
-    data['windows'] = {"largeur_fenetre":1000, "hauteur_fenetre":500}
-    data['son'] = True
-    data['animation'] = True
-    data['carte'] = [dos, file]
+def create_configjson(dos="square", file="map1.txt"):
+    global configcreated
+    configcreated = True
+    data = {
+        "windows": {
+            "largeur_fenetre": 1000, 
+            "hauteur_fenetre": 500
+            },
+        "son": True,
+        "animation": True,
+        "carte": [dos, file]
+    }
 
     with open("config.json", "w+") as jsonFile:
         jsonFile.write(json.dumps(data, indent=4))
 
 
 def create_savefile():
-    data = {}
-
-    data['carte'] = []
-    data['historique'] = []
-    data['position'] = []
+    data = {
+        "carte": [],
+        "historique": [],
+        "position": []
+    }
 
     with open("savefile.json", "w+") as jsonFile:
         jsonFile.write(json.dumps(data))
 
 
 def main():
+    global configcreated
     if fltk.PIL_AVAILABLE == False:
-        print('\nVeuillez installer PIL pour pouvoir jouer au jeu.\n')
+        print("\nVeuillez installer PIL pour pouvoir jouer au jeu.\n")
         exit()
 
     else:
+        configcreated = False
         if not files_check() or not media_check() or not niveaux_check():
             exit()
+
+main()
