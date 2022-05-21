@@ -95,7 +95,7 @@ def menu():
                     son.sound('MenuBleep')
                     editeur.debut()
 
-                elif click == "Niveau aléatoire":
+                elif click == "100% Aléatoire":
                     son.sound('MenuAccept')
                     carte = randomizer.generation100()
                     boutons_jeu = boutons_jeu_init()
@@ -105,6 +105,9 @@ def menu():
                 elif click == "Aléatoire Contrôlé":
                     son.sound('MenuAccept')
                     carte = randomizer.menu_control()
+                    boutons_jeu = boutons_jeu_init()
+                    plateau = Plateau(carte, grille_base= boutons_jeu.grille, grille_pos=(0,0,15,22), duree_anime=0.2)
+                    jeu(plateau, boutons_jeu)
 
                 elif click == 'son':
                     son.toggle_sound()

@@ -33,7 +33,7 @@ def generation100():
                     ligne.append(editeur.ETAT[3])
             plateau.append(ligne)
         test, chemin = editeur.test(plateau, False)
-        print(len(chemin), chemin)
+        #print(len(chemin), chemin)
         if len(chemin) <= 3:
             test = False
     #print(nb_colonnes,nb_lignes)
@@ -41,6 +41,7 @@ def generation100():
     return plateau
 
 def aleatoirecontrole(liste):
+    global plateau
     test= False
 
     while not test:
@@ -49,10 +50,17 @@ def aleatoirecontrole(liste):
         colonnes = liste[1]
         moutons = liste[2]
         herbes = liste[3]
+        buisson = 0
         for _ in range(lignes):
             ligne=[]
             for _ in range(colonnes):
-                ligne.append(editeur.ETAT[random.getrandbits(1)])
+                if (lignes*colonnes) > (moutons+herbes+buisson):
+                    etat = random.getrandbits(1)
+                    ligne.append(editeur.ETAT[etat])
+                    if etat == 1:
+                        buisson += 1
+                else:
+                    ligne.append(editeur.ETAT[0])
 
             plateau.append(ligne)
         print(plateau)
@@ -61,20 +69,21 @@ def aleatoirecontrole(liste):
             casey = random.randint(0, colonnes-1)
             
             if plateau[casex][casey] == "_":
-                plateau[casex][casey] = editeur.ETAT[2]
+                plateau[casex][casey] = editeur.ETAT[3]
                 moutons -= 1
+        print(plateau)
         
         while herbes != 0:
             casex = random.randint(0, lignes-1)
             casey = random.randint(0, colonnes-1)
             if plateau[casex][casey] == "_":
-                print(plateau[casex][casey])
                 plateau[casex][casey] = editeur.ETAT[2]
                 herbes -= 1
+        print(plateau, "\n")
 
         test, chemin = editeur.test(plateau, False)
-        print(len(chemin), chemin)
-        if len(chemin) < liste[4]:
+        #print(len(chemin), chemin)
+        if len(chemin) != liste[4]:
             test = False
         cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
@@ -96,7 +105,7 @@ def menu_control():
     boutons.cree_bouton_texte(1, 5, 5, 5, "Nombre de touffes :", arrondi=0.75)
     boutons.entree_texte(7, 5, 8, 5, "herbes")
 
-    boutons.cree_bouton_texte(1, 6, 5, 6, "Nombre de coups minimum :", unifier_texte=False, arrondi=0.75)
+    boutons.cree_bouton_texte(1, 6, 5, 6, "Nombre de coups :", unifier_texte=False, arrondi=0.75)
     boutons.entree_texte(7, 6, 8, 6, "difficulte")
 
     boutons.cree_bouton_simple(2, 8, 7, 8, "Valider", arrondi = 1)

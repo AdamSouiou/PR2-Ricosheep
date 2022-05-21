@@ -25,5 +25,3 @@ def toggle_sound_anim(option):
     with open("config.json", "w+") as jsonFile:
         jsonFile.write(json.dumps(data, indent=4))
 
-
-maj()

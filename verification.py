@@ -88,7 +88,7 @@ def niveaux_check():
 def create_configjson():
     data = {}
 
-    data['windows'] = {"largeur_fenetre":500, "hauteur_fenetre":500}
+    data['windows'] = {"largeur_fenetre":1000, "hauteur_fenetre":500}
     data['son'] = True
     data['animation'] = True
     data['carte'] = [dos, file]

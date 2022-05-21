@@ -9,6 +9,7 @@ from bouton import Boutons
 from collections import deque
 from multiprocessing import Pool
 from os import path
+import verification
 import graphiques
 import cfg
 import fltk
@@ -18,7 +19,7 @@ import son
 import randomizer
 import creation_niveaux
 import selecteur
-import verification
+
 setrecursionlimit(10**6)
 DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
 
@@ -122,9 +123,8 @@ def jeu(plateau: Plateau, boutons_jeu):
                         if cfg.carte_lst == ['custom', 'Random.txt']:
                             selecteur.modif_json('custom', 'Random.txt')
                             creation_niveaux.enregistrement(randomizer.plateau, "Random")
-                            sauvegarde.save_write(['custom','Random.txt'], plateau.historique, plateau.troupeau)
-                        else:
-                            sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
+
+                        sauvegarde.save_write(cfg.carte_lst, plateau.historique, plateau.troupeau)
                         print("Partie sauvegardée")
 
                     elif click == "Sol. profondeur":
@@ -133,23 +133,25 @@ def jeu(plateau: Plateau, boutons_jeu):
                         elapsed = time() - start
                         
                         if chemin is None:
-                            print("Pas de solutions, chacal!")
+                            print("Pas de solutions... :( ")
                             game_over = True
                         else:
                             print(chemin)
-                            #print("Le solveur a bon? :", solveur.test(chemin, plateau))
-                            # print(chemin)
                             print(f"La longueur du chemin est de {len(chemin)},")
-                            #print(f"il a fallu {elapsed:.3f}s pour le déterminer.")
+                            print(f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
                     elif click =="Sol. largeur":
+                        start = time()
                         chemin = solveur.largeur(deepcopy(plateau))
+                        elapsed = time() - start
 
                         if chemin is None:
                             print("Pas de solutions... :(")
-                            game_over = False
+                            game_over = True
                         else:
                             print(chemin)
+                            print(f"La longueur du chemin est de {len(chemin)},")
+                            print(f"il a fallu {elapsed:.3f}s pour le déterminer.")
 
             elif tev == "Touche":
                 touche = fltk.touche(ev)
@@ -189,6 +191,7 @@ def jeu(plateau: Plateau, boutons_jeu):
 
 if __name__ == "__main__":
     verification.main()
+    cfg.maj()
     fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
                     'Ricosheep', icone=path.join('media', 'images', 'icone.ico'))
     son.initialisation()
