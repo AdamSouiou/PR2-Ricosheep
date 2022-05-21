@@ -52,7 +52,7 @@ def draw(plateau, grille):
 
 def test(carte, editeur=True):
     plateau = Plateau(carte)
-    chemin = solveur.largeur(deepcopy(plateau))
+    chemin, _ = solveur.largeur(deepcopy(plateau))
 
     if chemin is None:
         if editeur == True:

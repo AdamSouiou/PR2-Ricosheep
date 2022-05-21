@@ -151,7 +151,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                     solver = (solveur.largeur if click == "Sol. largeur"
                              else solveur.profondeur)
                     start = time()
-                    chemin = solver(deepcopy(plateau))
+                    chemin, _ = solver(deepcopy(plateau))
                     elapsed = time() - start
 
                     if chemin is None:
