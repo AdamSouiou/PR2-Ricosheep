@@ -1,5 +1,7 @@
 from typing import List, Tuple, Set
 from plateau import Plateau
+from collections import deque
+from functools import partial
 import collections
 
 DIRECTIONS = ("Up", "Right", "Down", "Left")
@@ -44,15 +46,17 @@ def profondeur(plateau,
     return None, visite
 
 
-def largeur(plateau) -> List[str]:
+def iteratif(plateau, largeur=False) -> List[str]:
 
     directions = DIRECTIONS
     visite = set()
-    parcours = collections.deque()
+    parcours = deque()
     parcours.append((tri_copy(plateau.troupeau), []))
+    popping = (partial(parcours.popleft) if largeur
+              else partial(parcours.pop))
     
     while parcours:
-        positions, chemin = parcours.popleft()
+        positions, chemin = popping()
         restore(plateau.troupeau, positions)
 
         if plateau.isGagne():
