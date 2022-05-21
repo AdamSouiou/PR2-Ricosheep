@@ -98,7 +98,9 @@ def menu():
                     son.sound('MenuAccept')
                     carte = randomizer.generation100()
                     boutons_jeu = boutons_jeu_init()
-                    plateau = Plateau(carte,grille_base = boutons_jeu.grille, grille_pos=(0,0,15,22), duree_anime=0.2)
+                    plateau = Plateau(carte,grille_base=boutons_jeu.grille,
+                                      grille_pos=(0,0,15,22),
+                                      duree_anime=0.2)
                     jeu(plateau, boutons_jeu)
 
                 elif click == 'son':
