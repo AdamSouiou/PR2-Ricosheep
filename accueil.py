@@ -28,19 +28,18 @@ def menu():
     boutons.cree_bouton_booleen(
         18, 18, 19, 19,
         'son', cfg,
-        '🔊', '🔇', arrondi=1, marge_texte=0.8, unifier_texte = False
+        '🔊', '🔇', arrondi=1, marge_texte=0.8
     )
     boutons.cree_bouton_booleen(
         15, 18, 16, 19,
         'animation', cfg,
-        '🐑', '🚫', arrondi=1, marge_texte=0.8, unifier_texte = False
+        '🐑', '🚫', arrondi=1, marge_texte=0.8
     )
     
     boutons.init()
     
     ev = None
     liste_chute = animation.initialisation(12)
-
 
     while True:
         try:

@@ -425,7 +425,7 @@ class Boutons:
         """
 
         for nom, bouton in self.boutons.items():
-            if type(bouton) is Bouton: continue
+            if type(bouton) is Bouton or not bouton.unifier_texte: continue
             len_texte = len(bouton.texte)
 
             if bouton.format in self.formats_texte:
@@ -570,29 +570,28 @@ class Boutons:
     
         return nom_bouton_survole
 
-    def is_click(self, ev): return fltk.type_ev(ev) in self.is_click.CLICS
-    is_click.CLICS = {'ClicGauche', 'ClicDroit'}
-
     def nom_clic(self, ev):
         for identificateur, bouton in self.boutons.items():
-            if self.is_click(ev) and self.curseur_sur_bouton(bouton, ev):
+            if self.curseur_sur_bouton(bouton, ev):
                 if isinstance(bouton, BoutonBooleen):
                     etat = getattr(bouton.object_ref, bouton.attribute)
                     setattr(bouton.object_ref, bouton.attribute, not etat)
                 return identificateur
         return None
 
-    @staticmethod
-    def curseur_sur_bouton(bouton: Bouton, ev: tuple) -> bool:
+    def is_click(self, ev): return fltk.type_ev(ev) in self.is_click.CLICS
+    is_click.CLICS = {'ClicGauche', 'ClicDroit'}
+    
+    def curseur_sur_bouton(self, bouton: Bouton, ev: tuple) -> bool:
         """
-        Détecte si le curseur est situé sur le rectangle formé par
+        Détecte si le clic est situé sur le rectangle formé par
         ses composantes ax, ay, bx et by, définies dans l'objet Bouton
         et renvoie ``True`` si tel est le cas.
     
         :param Bouton: Objet ``Bouton``
         :return bool:
         """
-        if ev is None: return False
+        if ev is None or not self.is_click(ev): return False
         return ((bouton.ax <= fltk.abscisse(ev) <= bouton.bx)
                 and (bouton.ay <= fltk.ordonnee(ev) <= bouton.by))
     
