@@ -93,7 +93,7 @@ def jeu(plateau: Plateau, boutons_jeu):
             if tev == 'Quitte':
                 fltk.ferme_fenetre()
                 exit()
-            
+
             elif (touche == 'Escape'
                  or (tev == 'ClicGauche' and click == "Quitter")):
                 threads_defaite.clear()

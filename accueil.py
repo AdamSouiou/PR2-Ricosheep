@@ -22,7 +22,8 @@ def menu():
     boutons.cree_bouton_simple(3, 6, 16, 7, 'Jouer', arrondi=0.75)
     boutons.cree_bouton_simple(3, 9, 16, 10, 'Niveaux', arrondi=0.75)
     boutons.cree_bouton_simple(3, 12, 16, 13, "Editeur de niveaux", arrondi=0.75)
-    boutons.cree_bouton_simple(3, 15, 16, 16, 'Niveau aléatoire', arrondi=0.75)
+    boutons.cree_bouton_simple(3, 15, 9, 16, "100% Aléatoire", arrondi=0.75, unifier_texte=False)
+    boutons.cree_bouton_simple(10, 15, 16, 16, 'Aléatoire Contrôlé', arrondi=0.75,unifier_texte=False)
 
     boutons.cree_bouton_booleen(
         18, 18, 19, 19,
@@ -75,7 +76,12 @@ def menu():
                     try:
                         #print(cfg.carte)
                         boutons_jeu = boutons_jeu_init()
-                        plateau = Plateau(cfg.carte, grille_base = boutons_jeu.grille, grille_pos=(0,0,15,22),duree_anime=0.2)
+                        plateau = Plateau(
+                            cfg.carte,
+                            grille_base=boutons_jeu.grille,
+                            grille_pos=(0,0,15,22),
+                            duree_anime=0.2
+                        )
                         son.song("Otherside")
                         jeu(plateau, boutons_jeu)
                     except FileNotFoundError:
@@ -102,6 +108,10 @@ def menu():
                                       grille_pos=(0,0,15,22),
                                       duree_anime=0.2)
                     jeu(plateau, boutons_jeu)
+                
+                elif click == "Aléatoire Contrôlé":
+                    son.sound('MenuAccept')
+                    carte = randomizer.menu_control()
 
                 elif click == 'son':
                     son.toggle_sound()

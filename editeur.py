@@ -2,6 +2,7 @@ from bouton import Boutons
 from plateau import Plateau
 from graphiques import box_image, affiche_env_element, close
 from pprint import pprint
+from copy import deepcopy
 import graphiques
 import cfg
 import fltk
@@ -51,8 +52,7 @@ def draw(plateau, grille):
 
 def test(carte, editeur=True):
     plateau = Plateau(carte)
-    pos_tmp = solveur.tri_copy(plateau.troupeau)
-    chemin, _ = solveur.profondeur(plateau)
+    chemin = solveur.largeur(deepcopy(plateau))
 
     if chemin is None:
         if editeur == True:
@@ -60,9 +60,7 @@ def test(carte, editeur=True):
             return False
         return False, []
     else:
-        solveur.restore(plateau.troupeau, pos_tmp)
         if editeur == True:
-            print("Le solveur a bon? :", solveur.test(chemin, plateau))
             print(f"La longueur du chemin est de {len(chemin)}")
             return True
         return True, chemin
