@@ -6,7 +6,7 @@
     "son": false,
     "animation": true,
     "carte": [
-        "square",
-        "map2.txt"
+        "custom",
+        "Random.txt"
     ]
 }

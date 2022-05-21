@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<p style="text-align: center;">
+<img src = "media/images/Logo_ricosheep.png" width=80%>
+</p>
+<hr>
+<h2 style="text-align: center;"> Projet informatique 2 <br> 
+L1 Mathématiques et Informatique <br>
+Année 2021-2022 - Semestre 2 <br>
+<a href = https://github.com/AdamSouiou/PR2-Ricosheep> https://github.com/AdamSouiou/PR2-Ricosheep </a>
+<h3 style="text-align: center;"> Réalisé par: Amal Abdalah, Nicolas Seban et Adam Souiou</h3>
+  </h2>
+<hr>
+<h1 style= "text-align:center"> Sommaire </h1>
+<div style = "text-align:center">
+<h2 id="manuel-dutilisateur"><a href="#Manuel">Manuel d'utilisateur</a></h2>
+<h2 id="etat-davancement-du-projet"><a href="#Etat">Etat d'avancement du projet</a></h2>
+<h2 id="organisation-du-travail"><a href="#Organisation">Organisation du travail</a></h2>
+<h2 id="conclusion"><a href="#Conclusion">Conclusion</a></h2>
+<h2 id="cr%C3%A9dits"><a href="#Cr%C3%A9dits">Crédits</a></h2>
+</div>
+<hr>
+<div style="page-break-after: always;"></div>
+<hr>
+<div style = "text-align:center">
+<h1 id="a-name%22manuel%22manuel-dutilisateura"><a name="Manuel">Manuel d'utilisateur</a></h1>
+</div>
+<h2 id="installation"><strong>Installation</strong></h2>
+<p>Pour pouvoir jouer à Ricosheep, il vous faudra installer deux bibliothèques.</p>
+<ul>
+<li>PIL qui est essentiel pour le bon fonctionnement du programme.</li>
+<li>Pygame pour pouvoir profiter des sons et des musiques, bien qu'optionnel</li>
+</ul>
+<p>Pour installer PIL et pygame il suffit de taper dans le terminal :</p>
+<pre class="hljs"><code><div>pip install pillow pygame
+</div></code></pre>
+<h2 id="lancement-du-programme"><strong>Lancement du programme</strong></h2>
+<p>Pour lancer le jeu Ricosheep. Il suffit de vous placer dans le dossier Ricosheep grâce au terminal :</p>
+<pre class="hljs"><code><div>cd [emplacement du dossier]
+</div></code></pre>
+<p>Puis pour lancer le jeu :</p>
+<pre class="hljs"><code><div>python ricosheep.py
+</div></code></pre>
+<h2 id="naviguation-dans-les-menus"><strong>Naviguation dans les menus</strong></h2>
+<p>En lançant le jeu, vous découvrirez le menu d'accueil suivant :</p>
+<img src = "rapport/Screenshot1.png" width=40%>
+<p>Plusieurs choix s'offrent à vous :</p>
+<ul>
+<li>
+<p><strong>&quot;Jouer&quot;</strong> permet de jouer sur un niveau selectionner.<br>
+Par défaut il s'agit du niveau jouer dans la session précédente ou un niveau par défaut.</p>
+</li>
+<li>
+<p><strong>&quot;Niveaux&quot;</strong> permet de choisir un niveau parmis tous ceux installer dans le dossier &quot;maps&quot;, l'exploration se fait à la souris.<br></p>
+</li>
+<li>
+<p><strong>&quot;Editeur de niveaux&quot;</strong> nous permet de créer un niveaux et par la suite de le sauvegarder.</p>
+</li>
+<li>
+<p><strong>&quot;100% Aléatoire&quot;</strong> permet de générer une grille complètement aléatoire entre un plateau 4x4 cases et 9x9 cases résoluble.</p>
+</li>
+<li>
+<p><strong>&quot;Aléatoire contrôlé&quot;</strong> permet de générer un niveau aléatoire en prenant comme paramètre entré par le joueur:</p>
+<ul>
+<li>La taille de la grille<br></li>
+<li>Le nombre de moutons</li>
+<li>Le nombre de touffes d'herbes</li>
+<li>Nombre de coups pour réussir le niveau.</li>
+</ul>
+</li>
+<li>
+<p>Les boutons circulaire en bas de l'écran permettent d'activer ou désactiver les divers sons, ainsi que l'animation d'arrière plan sur l'écran d'accueil.</p>
+</li>
+</ul>
+<h2 id="r%C3%A8gles-du-jeu"><strong>Règles du jeu</strong></h2>
+<p>Le jeu se joue en tours successifs. À chaque tour, le joueur peut déplacer les moutons de la façon suivante :</p>
+<ul>
+<li>Le joueur choisit une instruction aux moutons en choississant une direction parmi Haut, Gauche, Droite ou Bas.</li>
+<li>Les moutons se déplacent en troupeau : tous les moutons suivent l'instruction donnée.</li>
+<li>Les moutons effectuent le déplacement maximal dans la direction donnée, donc jusqu'à être bloqué par un buisson, le bord du plateau ou bien un autre mouton.</li>
+<li>Les moutons ne peuvent pas se superposer sur la même case.</li>
+</ul>
+<p>Le but du jeu est que chaque touffe d'herbe reçoit un mouton. Mais attention, il se peut que certains coups ne soient pas reversible, et donc le joueur perd la partie.</p>
+<h2 id="comment-jouer"><strong>Comment jouer</strong></h2>
+<p>Lorsque vous cliquer sur jouer ou un niveau généré aléatoirement vous obtiendrez l'écran suivant.</p>
+<img src = "rapport/Screenshot2.png" width=40%>
+<p>La partie principale est réservé au jeu tandis que la colonne à droite sert pour différente fonctionnalité.<br>
+Le troupeau de mouton est contrôlé avec les flèches du clavier.<br></p>
+<p>Sur le panneau de droite on a:</p>
+<ul>
+<li><strong>Reset</strong> : qui permet de réinitialiser le plateau à l'état de départ.</li>
+<li><strong>Undo</strong> : qui permet d'annuler un mouvement pour revenir à l'étape d'avant.</li>
+<li><strong>Sauvegarde</strong> : qui permet de sauvegarder la partie, qui sera automatiquement chargé si le joueur clique sur &quot;jouer&quot; lors d'une future session.</li>
+<li><strong>Sol. profondeur</strong> : qui permet d'avoir une solution au niveau rapidement mais pas minimal.</li>
+<li><strong>Sol. largeur</strong> : qui permet d'avoir une solution minimal au niveau.</li>
+<li><strong>Quitter</strong> : qui permet de revenir à l'écran d'accueil.</li>
+</ul>
+<p>Sur l'éditeur de niveaux, il suffit de cliquer sur une case pour continuer le cycle entre &quot;Vide&quot;, &quot;Buisson&quot;, Mouton&quot;, et &quot;Herbes. Puis d'appuyer sur entrée pour tester le niveau.</p>
+<hr>
+<div style="page-break-after: always;"></div>
+<hr>
+<div style = "text-align:center">
+<h1 id="a-name%22etat%22etat-davancement-du-projeta"><a name="Etat">Etat d'avancement du projet</a></h1>
+</div>
+<h2 id="fonctionnalit%C3%A9s-r%C3%A9alis%C3%A9es-et-non-r%C3%A9alis%C3%A9es"><strong>Fonctionnalités réalisées et non réalisées</strong></h2>
+<ul>
+<li>
+<p>Fonctionnalités réalisées:</p>
+<ul>
+<li>Interface 100% graphique</li>
+<li>Utilisation complète du programme dans l'interface graphique</li>
+<li>Selecteur de niveaux dans le programme</li>
+<li>Détection de la défaite</li>
+<li>Fonction &quot;Retour en arrière&quot;</li>
+<li>Créateur de niveaux avec sauvegarde du niveau créé</li>
+<li>Sauvegarde et chargement de partie avec détection d'une sauvegarde déjà présente</li>
+<li>Solveur de niveaux</li>
+<li>Solveur avec recherche d'une solution minimale</li>
+<li>Affichage de solutions</li>
+<li>Générateur de niveaux 100% aléatoire resolubles</li>
+<li>Générateur de niveaux avec difficultés choisies</li>
+</ul>
+</li>
+<li>
+<p>Fonctionnalités non-réalisées:</p>
+<ul>
+<li>Solveur graphique</li>
+<li>Ajout de règles de jeu avec des herbes et des moutons colorés</li>
+<li>Ajout de règles de jeu avec des loups</li>
+<li>Menu d'option pour changer la taille de la fenêtre en cours d'exécution</li>
+</ul>
+</li>
+</ul>
+<h2 id="probl%C3%A8mes-connus"><strong>Problèmes connus</strong></h2>
+<p>Aucun problème connu à ce jour.</p>
+<h2 id="am%C3%A9liorations-r%C3%A9alis%C3%A9es"><strong>Améliorations réalisées</strong></h2>
+<ul>
+<li>Vérification des fichiers avant le lancement du jeu</li>
+<li>Ajout de champs de textes</li>
+<li>Automatisation de boutons
+<ul>
+<li>Avec possibilité d'arrondir les angles</li>
+</ul>
+</li>
+<li>Icone de fenetre</li>
+<li>Logo de jeu</li>
+<li>Animation de déplacements</li>
+<li>Animation du menu d'accueil</li>
+<li>Ambiances et effets sonores</li>
+</ul>
+<h2 id="explications-des-choix"><strong>Explications des choix</strong></h2>
+<h3 id="lutilisation-des-classes"><strong>L'utilisation des classes :</strong></h3>
+<p>L'utilisation des classes nous a permis de fortement simplifier la gestion et l'implémentation de fonctionnalités autour de celle-ci, de pouvoir jongler facilement avec différent paramètre en cas de besoin.
+C'est ainsi que nous avons une grille de boutons qui permet de placer la grille de plateau, permettant d'avoir une air de jeu délimité proprement et confortablement.</p>
+<h3 id="son-et-animation"><strong>Son et animation :</strong></h3>
+<p>Bien que ce ne soit purement esthétique, les animations et autres effets sonores donnent un côté fini très agréable au jeu, Améliorant ainsi considérablement le plaisir de jouer.</p>
+<h3 id="la-non-r%C3%A9alisation-des-diff%C3%A9rentes-r%C3%A8gles-de-jeu"><strong>La non-réalisation des différentes règles de jeu:</strong></h3>
+<p>Nous avons préféré nous concentrer sur le jeu de base ainsi que sur un plus grand nombre de fonctionnalités utilisable plutôt que d'ajouter des règles qui impacteraient les solveurs, générateurs aléatoires, et éditeur de niveaux.</p>
+<hr>
+<div style="page-break-after: always;"></div>
+<hr>
+<div style = "text-align:center">
+<h1 id="a-name%22organisation%22organisation-du-travaila"><a name="Organisation">Organisation du travail</a></h1>
+</div>
+<h2 id="communication-et-synchronisation-du-groupe"><strong>Communication et synchronisation du groupe</strong></h2>
+<p>Nous communiquions énormément sur la plateforme de messageries instantanée <em>Discord</em>, nous permettant ainsi de nous donner mutuellement des tâches, de prévenir le groupe sur nos avancées , et ainsi avoir un travail fluide et efficace.</p>
+<h2 id="r%C3%A9partition-quantifi%C3%A9e-des-t%C3%A2ches"><strong>Répartition quantifiée des tâches</strong></h2>
+<ul>
+<li>
+<p><strong>Amal ABDALLAH : 40%</strong></p>
+<ul>
+<li>Solveur en profondeur</li>
+<li>Logo, dessin des moutons pour l'animation du menu d'accueil</li>
+<li>Animation du menu d'accueil, Ambiance/Effet sonore</li>
+<li>Editeur de niveaux (avec sauvegarde de niveaux)</li>
+<li>Générateur de niveaux aléatoire (/à difficulté choisies)</li>
+<li>Sauvegarde et Chargement d'une partie</li>
+<li>Selecteur de niveaux dans l'interface graphique</li>
+<li>Algorithme de déplacements de moutons</li>
+<li>Menu d'accueil</li>
+<li>Gestion du fichier de configuration</li>
+<li>Modification de fltk pour ajouter des champs de textes</li>
+<li>Ecran de fin de jeu</li>
+<li>Réinitialisation du plateau</li>
+<li>Vérification des fichiers avant le lancement du jeu</li>
+<li>Correction de bugs</li>
+<li>Détecteur de défaite</li>
+<li>Boutons de fonctionnalités pendant une partie</li>
+</ul>
+</li>
+<li>
+<p><strong>Nicolas SEBAN : 40%</strong></p>
+<ul>
+<li>Moteur du jeu</li>
+<li>Classe du plateau de jeu</li>
+<li>Création et gestions des divers boutons</li>
+<li>Exception pour le parsing</li>
+<li>Interface graphique</li>
+<li>Affichage graphique de la solution</li>
+<li>Animation des déplacements</li>
+<li>Retour en arrière</li>
+<li>Prévisualisation des maps dans le menu de selection de niveaux</li>
+<li>Fenetre de jeu avec une icône</li>
+<li>Optimisation du programme</li>
+<li>Correction de bugs</li>
+<li>Création de test unitaire</li>
+</ul>
+</li>
+<li>
+<p><strong>Adam SOUIOU : 20%</strong></p>
+<ul>
+<li>Création d'un plateau à partir d'un fichier texte</li>
+<li>Détection de victoire</li>
+<li>Solveur a solution minimale</li>
+</ul>
+</li>
+</ul>
+<h2 id="difficult%C3%A9s-rencontr%C3%A9es"><strong>Difficultés rencontrées</strong></h2>
+<p>Les difficultés rencontrées dans ce projet sont :</p>
+<ul>
+<li>Les champs de textes à implémenter dans fltk.</li>
+<li>Le solveur à solution minimal</li>
+<li>Générateur de niveaux à difficultés choisies</li>
+<li>Calcul de la taille des textes pour le bouton</li>
+</ul>
+<hr>
+<div style="page-break-after: always;"></div>
+<hr>
+<div style = "text-align:center">
+<h1 id="a-name%22conclusion%22conclusiona"><a name="Conclusion">Conclusion</a></h1>
+</div>
+<h2 id="pistes-dam%C3%A9liorations-projets-inachev%C3%A9s"><strong>Pistes d'améliorations, projets inachevés</strong></h2>
+<ul>
+<li>Améliorations :
+<ul>
+<li>L'ajout des règles de moutons et herbes colorés</li>
+<li>L'ajout de règle des loups</li>
+</ul>
+</li>
+<li>Projets Inachevés :
+<ul>
+<li>Solveur graphique</li>
+</ul>
+</li>
+</ul>
+<h2 id="commentaire-libre"><strong>Commentaire libre</strong></h2>
+<h3 id="ce-qui-nous-a-plu">Ce qui nous a plu :</h3>
+<ul>
+<li>Les Générateurs de niveaux aléatoires</li>
+<li>L'Ambiance et les effets sonores</li>
+<li>Les animations de déplacements</li>
+<li>Solveur à solutions minimales</li>
+<li>L'interface graphique</li>
+</ul>
+<h3 id="ce-qui-nous-a-d%C3%A9plu">Ce qui nous a déplu :</h3>
+<ul>
+<li>La rigidité de fltk et le besoin constant d'implémenter des fonctionnalités estimés essentielles
+<ul>
+<li>Boite de textes, redimenssionnement et rotation des images</li>
+</ul>
+</li>
+</ul>
+<h3 id="ce-quon-ferait-diff%C3%A9remment">Ce qu'on ferait différemment :</h3>
+<ul>
+<li>Une organisation plus contrôlée</li>
+<li>Une meilleure gestion du temps pour implémenter d'autres fonctionnalités</li>
+</ul>
+<hr>
+<h1 id="a-name--cr%C3%A9dits-cr%C3%A9dits-a"><a name = Crédits> Crédits </a></h1>
+<h2 id="effets-sonores"><strong>Effets sonores</strong></h2>
+<ul>
+<li>Les effet sonore des menus sont tirés du jeu Sonic Mania</li>
+<li>Les sons des moutons sont tirés du jeu Minecraft</li>
+</ul>
+<h2 id="musique"><strong>Musique</strong></h2>
+<ul>
+<li><em>Otherside</em> par Lena Raine</li>
+<li><em>Wait</em> par C418</li>
+</ul>
+
+</body>
+</html>

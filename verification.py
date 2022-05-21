@@ -7,7 +7,7 @@ DOSSIER = {
     "accueil.py", "animation.py", "bouton.py", "cfg.py",
     "config.json", "creation_niveaux.py", "editeur.py", "fltk.py",
     "graphiques.py", "grille.py", "mouton.py", "plateau.py",
-    "randomizer.py", "README.md", "ricosheep.py", "sauvegarde.py",
+    "randomizer.py", "ricosheep.py", "sauvegarde.py",
     "savefile.json","selecteur.py","solveur.py", "son.py", "unit-tests.py"}
 
 MEDIA = {
