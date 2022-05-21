@@ -44,7 +44,7 @@ def image_grille(ax: int, ay: int, bx: int, by: int,
 
 
 def game_over_init(text, hexcode, grille):
-    boutons = Boutons((20,20), grille_base= grille)
+    boutons = Boutons((20,20), grille_base=grille)
     boutons.cree_bouton_texte(3, 6, 12, 13, text, arrondi=0.5, couleur_texte=hexcode)
     boutons.init()
     return boutons
