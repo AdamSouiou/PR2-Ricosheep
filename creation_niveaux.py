@@ -6,6 +6,7 @@ import os
 import son
 from bouton import Boutons
 from graphiques import close
+from pprint import pprint
 
 
 def menu(plateau):
@@ -103,3 +104,16 @@ def enregistrement(plateau, nom):
 
         fichier.write(file)
 
+def plateau_vide(lignes, colonnes):
+    return [['_' for _ in range(colonnes)] for _ in range(lignes)]
+
+def plateau_to_ll(plateau):
+    lst = plateau_vide(plateau.nb_lignes, plateau.nb_colonnes)
+    for mouton in plateau.historique[0]:
+        lst[mouton.y][mouton.x] = 'S'
+    for g in plateau.env['touffes']:
+        lst[g[0]][g[1]] = 'G'
+    for g in plateau.env['buissons']:
+        lst[g[0]][g[1]] = 'B'
+    pprint(lst)
+    return lst

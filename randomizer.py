@@ -1,5 +1,10 @@
 from plateau import Plateau
 from bouton import Boutons
+from typing import List, Tuple, Set
+from random import randint
+from pprint import pprint
+from solveur import iteratif
+from math import ceil
 import son
 import graphiques 
 import fltk
@@ -10,7 +15,6 @@ import os
 
 #ATTENTION! Au dela d'un plateau 7x7, l'application crash sans donner d'erreur.
 #Crash générer lors d'un random entre 5x5 et 8x8
-
 def generation100():
     global plateau
     test = False
@@ -40,54 +44,65 @@ def generation100():
     cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
 
-def aleatoirecontrole(liste):
-    global plateau
-    test= False
+def map_dict(d, func):
+    for cle, valeur in d.items():
+        d[cle] = func(valeur)
 
-    while not test:
-        plateau = []
-        lignes = liste[0]
-        colonnes = liste[1]
-        moutons = liste[2]
-        herbes = liste[3]
-        buisson = 0
-        for _ in range(lignes):
-            ligne=[]
-            for _ in range(colonnes):
-                if (lignes*colonnes) > (moutons+herbes+buisson):
-                    etat = random.getrandbits(1)
-                    ligne.append(editeur.ETAT[etat])
-                    if etat == 1:
-                        buisson += 1
-                else:
-                    ligne.append(editeur.ETAT[0])
+def in_sets(elem, sets: List[Set[Tuple]]):
+    """
+    Renvoie vrai si ``elem`` est présent dans au
+    moins un des itérables de la liste d'entrée.
+    """
+    for i_set in sets:
+        if elem in i_set:
+            return True
+    return False
 
-            plateau.append(ligne)
-        print(plateau)
-        while moutons != 0:
-            casex = random.randint(0, lignes-1)
-            casey = random.randint(0, colonnes-1)
-            
-            if plateau[casex][casey] == "_":
-                plateau[casex][casey] = editeur.ETAT[3]
-                moutons -= 1
-        print(plateau)
-        
-        while herbes != 0:
-            casex = random.randint(0, lignes-1)
-            casey = random.randint(0, colonnes-1)
-            if plateau[casex][casey] == "_":
-                plateau[casex][casey] = editeur.ETAT[2]
-                herbes -= 1
-        print(plateau, "\n")
 
-        test, chemin = editeur.test(plateau, False)
-        print(len(chemin), chemin)
-        if len(chemin) != liste[4]:
-            test = False
-        cfg.carte_lst = ['custom', 'Random.txt']
-    return plateau
-            
+def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]]):
+    """
+    Renvoie un set aléatoire de tuple de positions, en s'assurant
+    qu'aucune de ces nouvelles positions ne soient présente dans
+    les itérables de la liste ``sets``.
+    """
+    new_set = set()
+    while len(new_set) < nb_tuple:
+        tup = (randint(0, max_y-1), randint(0, max_x-1))
+        if (tup not in new_set
+            and not in_sets(tup, sets)):
+            new_set.add(tup)
+
+    return new_set
+
+
+def aleatoirecontrole(params: dict, percent_buisson: Tuple[float, float]):
+    """
+    :param tuple percent_buisson: Tuple de nombre représentant
+    le pourcentage min et max du nombre de buissons par rapport
+    à l'espace vide restant après placement des herbes et moutons
+    """
+    lignes, colonnes, nb_moutons, nb_herbes =\
+        params['lignes'], params['colonnes'], params['moutons'], params['herbes']
+
+    max_nb_buissons = lignes * colonnes - nb_herbes - nb_herbes
+    buissons_min = int(max_nb_buissons * (percent_buisson[0] / 100))
+    buissons_max = ceil(max_nb_buissons * (percent_buisson[1] / 100))
+
+    while True:
+        troupeau = set_aleatoire(nb_moutons, lignes, colonnes, [])
+        herbes = set_aleatoire(nb_herbes, lignes, colonnes, [troupeau])
+        buissons = set_aleatoire(
+            randint(buissons_min, buissons_max),
+            lignes, colonnes, [troupeau, herbes]
+        )
+
+        plateau = Plateau('', test_mode=True,
+                          parsed_data=[troupeau, buissons, herbes, lignes, colonnes])
+        chemin, _ = iteratif(plateau, largeur=True)
+
+        if chemin is not None and len(chemin) >= params['difficulte']:
+            cfg.carte_lst = ['custom', 'Random.txt']
+            return plateau
 
 
 def menu_control():
@@ -104,7 +119,7 @@ def menu_control():
     boutons.cree_bouton_texte(1, 5, 5, 5, "Nombre de touffes :", arrondi=0.75)
     boutons.entree_texte(7, 5, 8, 5, "herbes")
 
-    boutons.cree_bouton_texte(1, 6, 5, 6, "Nombre de coups :", unifier_texte=False, arrondi=0.75)
+    boutons.cree_bouton_texte(1, 6, 5, 6, "Nombre de coups :", arrondi=0.75)
     boutons.entree_texte(7, 6, 8, 6, "difficulte")
 
     boutons.cree_bouton_simple(2, 8, 7, 8, "Valider", arrondi = 1)
@@ -141,50 +156,37 @@ def menu_control():
                 boutons.destroy_entree_textes()
                 return
 
-        if tev == "ClicGauche":
-            if click not in {None}:
-                son.sound('MenuAccept')
-                nb_lignes = boutons.entrees_texte['lignes'].get()
-                nb_colonnes = boutons.entrees_texte['colonnes'].get()
-                nb_moutons = boutons.entrees_texte['moutons'].get()
-                nb_herbes = boutons.entrees_texte['herbes'].get()
-                nb_coups = boutons.entrees_texte['difficulte'].get()
+        if tev == "ClicGauche" and click is not None:
+            son.sound('MenuAccept')
 
-                liste = [nb_lignes, nb_colonnes, nb_moutons, nb_herbes, nb_coups]
+            params = {nom: entree.get() for nom, entree in boutons.entrees_texte.items()}
+            if all(n.isdecimal() for n in params.values()):
+                map_dict(params, int)
+                changement = True
+            else:
+                changement = False
 
-                for i in range(len(liste)):
-                    if liste[i].isdigit():
-                        liste[i] = int(liste[i])
-                        changement = True
-                    
-                    else:
-                        changement = False
-                        break
+            if changement:
+                
+                if all(n > 0 for n in params.values()):
+                    boutons.boutons[entiers_positifs].invisible = True
 
-
-                if changement:
-                    
-                    if liste[0]> 0 and liste[1]> 0 and liste[2]> 0 and liste[3] >0 and liste[4] >0:
-                        boutons.boutons[entiers_positifs].invisible = True
-
-                        if liste[2] < liste[3]:
-                            boutons.boutons[règle_de_jeuM].invisible = False
-                            boutons.boutons[règle_de_jeuT].invisible = True
-
-                        elif (liste[0] * liste[1]) <= (liste[2] + liste[3]):
-                            boutons.boutons[règle_de_jeuT].invisible = False
-                            boutons.boutons[règle_de_jeuM].invisible = True
-  
-                        else:
-                            boutons.destroy_entree_textes()
-                            return aleatoirecontrole(liste)   
-
-                    else:
-                        boutons.boutons[entiers_positifs].invisible = False
+                    if params['moutons'] < params['herbes']:
+                        boutons.boutons[règle_de_jeuM].invisible = False
                         boutons.boutons[règle_de_jeuT].invisible = True
+
+                    elif ((params['lignes'] * params['colonnes'])\
+                          <= (params['moutons'] + params['herbes'])):
+                        boutons.boutons[règle_de_jeuT].invisible = False
                         boutons.boutons[règle_de_jeuM].invisible = True
 
+                    else:
+                        boutons.destroy_entree_textes()
+                        return aleatoirecontrole(params, (20,60))
+
+                else:
+                    boutons.boutons[entiers_positifs].invisible = False
+                    boutons.boutons[règle_de_jeuT].invisible = True
+                    boutons.boutons[règle_de_jeuM].invisible = True
+
         fltk.mise_a_jour()
-        
-
-

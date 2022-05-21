@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict, Set, Union
+from typing import List, Tuple, Dict, Set, Union, Iterable, Sequence, NamedTuple
 from os import PathLike
 from time import time
 from pprint import pprint
@@ -39,26 +39,37 @@ class Plateau:
         return sorted(self.troupeau) == sorted(other.troupeau)
 
     def __init__(self,
-                 gridfile: str,
+                 gridfile: Union[Sequence[Sequence[str]], PathLike, NamedTuple],
                  duree_anime=0.15,
                  grille_base=None,
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
+                 parsed_data=[],
                  test_mode=False):
 
         #print('Jeu reçu par l instance Plateau', gridfile)
-        self.grid_parse(gridfile)
+        if parsed_data:
+            self.parse_tuple(*parsed_data)
+        else:
+            self.grid_parse(gridfile)
 
-        self.anime = bool(duree_anime)
         self.duree_anime = duree_anime
-        if test_mode: return
+        self.anime = False
+        self.last_direction = None
+        self.nb_places = 0
+        if not test_mode:
+            self.gen_grille(duree_anime, grille_base, grille_pos)
 
+    def gen_grille(self,
+                   duree_anime=0,
+                   grille_base=None,
+                   grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre)):
+        self.anime = bool(duree_anime)
         self.grille = Grille(self.nb_colonnes, self.nb_lignes,
                              grille_base=grille_base,
                              grille_pos=grille_pos)
+        self.reset()
         self.reposition_moutons()
         self.taille_image = self.grille.largeur_case * 0.8
-        self.last_direction = None
-        self.nb_places = 0
 
         global images
         images = {
@@ -67,6 +78,17 @@ class Plateau:
             "mouton": box_image('media/images/sheep.png', (self.taille_image,)),
             "heureux": box_image('media/images/sheep_grass.png', (self.taille_image,))
         }
+
+    def parse_tuple(self,
+                    troupeau: Iterable[tuple],
+                    buissons: Iterable[tuple],
+                    herbes: Iterable[tuple],
+                    lignes: int, colonnes: int):
+        self.env = {'buissons': buissons, 'touffes': herbes}
+        self.troupeau = [Mouton(m[0], m[1]) for m in troupeau]
+        self.nb_lignes = lignes
+        self.nb_colonnes = colonnes
+        self.historique = [tuple(deepcopy(self.troupeau))]
 
     def grid_parse(self, data: Union[List[List[str]], PathLike]):
         it = open(data, 'r') if type(data) is str else data

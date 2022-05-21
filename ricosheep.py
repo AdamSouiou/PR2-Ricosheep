@@ -6,9 +6,9 @@ import fltk
 import solveur
 import sauvegarde
 import son
-import randomizer
 import creation_niveaux
 import selecteur
+from functools import partial
 from sys import setrecursionlimit
 from time import time
 from copy import deepcopy
@@ -21,7 +21,7 @@ from os import path
 
 
 setrecursionlimit(10**6)
-DIRECTIONS = {'Up', 'Left', 'Right', 'Down'}
+DIRECTIONS = ('Up', 'Left', 'Right', 'Down')
 
 
 def file_defaite(threads_defaite: deque):
@@ -60,6 +60,7 @@ def jeu(plateau: Plateau, boutons_jeu):
         "C'est perdu :'(", "#A90813", boutons_jeu.grille)
     
     game_over = False
+    gagne = False
     threads_defaite = deque()
     process_pool = Pool(processes=2)
     
@@ -80,14 +81,11 @@ def jeu(plateau: Plateau, boutons_jeu):
             tev = fltk.type_ev(ev)
             click = boutons_jeu.nom_clic(ev)
 
-            if plateau.isGagne():
-                victory_buttons.dessiner_boutons()
-            
-            elif file_defaite(threads_defaite):
+            if file_defaite(threads_defaite) or game_over:
                 game_over = True
-
-            elif game_over:
                 defeat_buttons.dessiner_boutons(ev)
+            elif gagne:
+                victory_buttons.dessiner_boutons()
 
             touche = fltk.touche(ev) if tev == 'Touche' else None
 
@@ -109,12 +107,16 @@ def jeu(plateau: Plateau, boutons_jeu):
                 start_deplacement = time()
                 son.sound('Sheep')
                 if chemin:
-                    touche = chemin.pop(0)
+                    touche = chemin.popleft()
                 deplacement = plateau.deplace_moutons(touche)
 
-                if deplacement and not chemin: threads_defaite.append(
+                gagne = False
+                if plateau.isGagne():
+                    gagne = True
+                
+                elif deplacement and not chemin: threads_defaite.append(
                     process_pool.apply_async(
-                        solveur.profondeur, (deepcopy(plateau),)
+                        solveur.iteratif, (deepcopy(plateau), False)
                     )
                 )
 
@@ -124,6 +126,7 @@ def jeu(plateau: Plateau, boutons_jeu):
 
                 if click == "Reset":
                     game_over = False
+                    gagne = False
                     plateau.reset()
 
                 elif click == "Undo":
@@ -133,8 +136,9 @@ def jeu(plateau: Plateau, boutons_jeu):
                 elif click == "Sauvegarde":
                     if cfg.carte_lst == ['custom', 'Random.txt']:
                         selecteur.modif_json('custom', 'Random.txt')
+                        plateau_lst = creation_niveaux.plateau_to_ll(plateau)
                         creation_niveaux.enregistrement(
-                            randomizer.plateau, "Random"
+                            plateau_lst, "Random"
                         )
                         sauvegarde.save_write(
                             ['custom','Random.txt'],
@@ -148,8 +152,8 @@ def jeu(plateau: Plateau, boutons_jeu):
                     print("Partie sauvegardée")
 
                 elif click in {"Sol. profondeur", "Sol. largeur"}:
-                    solver = (solveur.largeur if click == "Sol. largeur"
-                             else solveur.profondeur)
+                    solver = (partial(solveur.iteratif, largeur=True) if click == "Sol. largeur"
+                             else partial(solveur.iteratif, largeur=False))
                     start = time()
                     chemin, _ = solver(deepcopy(plateau))
                     elapsed = time() - start
@@ -158,6 +162,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                         print("Pas de solutions, chacal!")
                         game_over = True
                     else:
+                        chemin = deque(chemin)
                         print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)},")
                         print(f"Il a fallu {elapsed:.3f}s pour le déterminer.")
