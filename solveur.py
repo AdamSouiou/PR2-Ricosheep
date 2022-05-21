@@ -56,7 +56,7 @@ def largeur(plateau) -> List[str]:
         restore(plateau.troupeau, positions)
 
         if plateau.isGagne():
-            return chemin, visite
+            return chemin
 
         if positions in visite:
             continue
@@ -72,7 +72,7 @@ def largeur(plateau) -> List[str]:
             parcours.append((tri_copy(plateau.troupeau), chemin + [direction]))
             restore(plateau.troupeau, positions)
 
-    return None, visite
+    return None
 
 
 def tri_copy(troupeau):

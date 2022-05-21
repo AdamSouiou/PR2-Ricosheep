@@ -82,12 +82,11 @@ def aleatoirecontrole(liste):
         print(plateau, "\n")
 
         test, chemin = editeur.test(plateau, False)
-        #print(len(chemin), chemin)
+        print(len(chemin), chemin)
         if len(chemin) != liste[4]:
             test = False
         cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
-        
             
 
 
