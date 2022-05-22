@@ -48,7 +48,7 @@ def generation100() -> Plateau:
                 elif case == 12:
                     ligne.append(editeur.ETAT[3])
             plateau.append(ligne)
-        test, chemin = editeur.test(plateau, False, False)
+        test, chemin = editeur.test(plateau, False, True)
         if len(chemin) <= 3:
             test = False
     cfg.carte_lst = ['custom', 'Random.txt']
