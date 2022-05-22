@@ -1,7 +1,7 @@
 import fltk
 import os
 import json
-
+from plateau import Plateau, FichierInvalide
 
 DOSSIER = {
     "accueil.py", "animation.py", "bouton.py", "cfg.py",
@@ -93,7 +93,6 @@ def niveaux_check():
             test = os.listdir(os.path.join("maps", sous_dos))
             file = test[0]
             if file[-4:] == ".txt":
-                from plateau import Plateau, FichierInvalide
                 try:
                     
                     Plateau(os.path.join("maps", sous_dos, file),

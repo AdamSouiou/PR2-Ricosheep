@@ -1,6 +1,6 @@
 import unittest
 import solveur
-from typing import List, Tuple, Set, Optional
+from typing import List
 from os import path
 from sys import setrecursionlimit
 from glob import glob

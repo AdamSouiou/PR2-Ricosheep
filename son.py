@@ -1,8 +1,12 @@
 import random
 import os 
 import cfg
-import verification
-from pprint import pprint
+
+MEDIA = {
+    "music": ["Otherside.mp3", "Wait.mp3"], 
+    "son":["MenuAccept.wav", "MenuBleep.wav", "sheep1.wav",
+           "sheep2.wav", "sheep3.wav", "sheep4.wav"],
+}
 
 try:
     import pygame
@@ -22,7 +26,7 @@ def initialisation() -> None:
     if PYGAME_AVAILABLE:
         pygame.init()
         liste_son = {}
-        for son in verification.MEDIA['son']:
+        for son in MEDIA['son']:
             liste_son[son[:-4]] = pygame.mixer.Sound(os.path.join('media', 'son', son))
 
         for son in liste_son:
@@ -67,4 +71,3 @@ def song(name: str) -> None:
         pygame.mixer.music.load(os.path.join('media','music', f'{name}.mp3'))
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.8)
-

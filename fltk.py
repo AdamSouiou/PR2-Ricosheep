@@ -249,7 +249,7 @@ def mise_a_jour() -> None:
 # Formes géométriques
 
 def ligne(ax: float, ay: float, bx: float, by: float,
-          couleur: Literal[...] = 'black', epaisseur: float = 1, tag=''):
+          couleur: str = 'black', epaisseur: float = 1, tag=''):
     """
     Trace un segment reliant le point ``(ax, ay)`` au point ``(bx, by)``.
 
@@ -270,7 +270,7 @@ def ligne(ax: float, ay: float, bx: float, by: float,
 
 
 def fleche(ax: float, ay: float, bx: float, by: float,
-           couleur: Literal[...] = 'black', epaisseur: float = 1, tag=''):
+           couleur: str = 'black', epaisseur: float = 1, tag=''):
     """
     Trace une flèche du point ``(ax, ay)`` au point ``(bx, by)``.
 
@@ -296,9 +296,9 @@ def fleche(ax: float, ay: float, bx: float, by: float,
 
 
 def polygone(points: List[Tuple[float, float]],
-             couleur: Literal[...] = 'black',
-             remplissage: Literal[...] = '',
-             remplissage_actif: Literal[...] = '',
+             couleur: str = 'black',
+             remplissage: str = '',
+             remplissage_actif: str = '',
              epaisseur: float = 1, tag=''):
     """
     Trace un polygone dont la liste de points est fournie.
@@ -320,9 +320,9 @@ def polygone(points: List[Tuple[float, float]],
 
 
 def rectangle(ax: float, ay: float, bx: float, by: float,
-              couleur: Literal[...] = 'black',
-              remplissage: Literal[...] = '',
-              remplissage_actif: Literal[...] = '',
+              couleur: str = 'black',
+              remplissage: str = '',
+              remplissage_actif: str = '',
               epaisseur: float = 1, tag=''):
     """
     Trace un rectangle noir ayant les point ``(ax, ay)`` et ``(bx, by)``
@@ -349,8 +349,8 @@ def rectangle(ax: float, ay: float, bx: float, by: float,
 
 
 def cercle(x: float, y: float, r: float,
-           couleur: Literal[...] = 'black',
-           remplissage: Literal[...] = '',
+           couleur: str = 'black',
+           remplissage: str = '',
            epaisseur: float = 1, tag=''):
     """
     Trace un cercle de centre ``(x, y)`` et de rayon ``r`` en noir.
@@ -374,7 +374,7 @@ def cercle(x: float, y: float, r: float,
 
 def arc(x: float, y: float, r: float,
         ouverture: float = 90, depart: float = 0,
-        couleur: Literal[...] = 'black', remplissage: Literal[...] = '',
+        couleur: str = 'black', remplissage: str = '',
         epaisseur: float = 1, tag=''):
     """
     Trace un arc de cercle de centre ``(x, y)``, de rayon ``r`` et
@@ -405,7 +405,7 @@ def arc(x: float, y: float, r: float,
 
 
 def point(x: float, y: float,
-          couleur: Literal[...] = 'black', epaisseur: float = 1,
+          couleur: str = 'black', epaisseur: float = 1,
           tag=''):
     """
     Trace un point aux coordonnées ``(x, y)`` en noir.
@@ -427,7 +427,7 @@ def point(x: float, y: float,
 
 def afficher_image(x: float, y: float,
                    image: Union[PathLike, Image.Image],
-                   ancrage: Literal[...] = 'center', tag='') -> Image:
+                   ancrage: str = 'center', tag='') -> Image:
     """
     Affiche l'image avec ``(x, y)`` comme centre. Les
     valeurs possibles du point d'ancrage sont ``'center'``, ``'nw'``, etc.
@@ -507,7 +507,7 @@ def redimensionner_image(
 
 
 def texte(x: float, y: float, chaine: str,
-          couleur: Literal[...] = 'black',
+          couleur: str = 'black',
           ancrage: Literal[
               'nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se'
           ] = 'nw',
@@ -718,7 +718,7 @@ def touche(ev: Tuple[str, tkinter.Event]) -> str:
     return attribut(ev, 'keysym')
 
 
-def attribut(ev: Tuple[str, tkinter.Event], nom: Literal):
+def attribut(ev: Tuple[str, tkinter.Event], nom: str):
     if ev is None:
         raise TypeEvenementNonValide(
             "Accès à l'attribut", nom, 'impossible sur un événement vide')

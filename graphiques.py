@@ -1,6 +1,6 @@
 import fltk
 import cfg
-import son
+from son import sound
 from bouton import Boutons
 from grille import Grille
 from collections import namedtuple as nt
@@ -89,10 +89,10 @@ def demande_affichage(grille_jeu: Grille):
         ev = fltk.attend_ev()
         click = invite.nom_clic(ev)
         if click == 'Oui':
-            son.sound('MenuAccept')
+            sound('MenuAccept')
             return True
         elif click == 'Non':
-            son.sound('MenuBleep')
+            sound('MenuBleep')
             return False
 
 
@@ -112,7 +112,7 @@ def demande_profondeur(grille_jeu: Grille):
         ev = fltk.attend_ev()
         click = invite.nom_clic(ev)
         if click is not None:
-            son.sound('MenuAccept')
+            sound('MenuAccept')
         if click == "Récursif":
             return solveur.profondeur
         elif click == "Itératif":
