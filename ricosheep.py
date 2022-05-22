@@ -34,7 +34,7 @@ def file_defaite(threads_defaite: deque):
     """
     if threads_defaite:
         if threads_defaite[0].ready():
-            chemin, _ = threads_defaite[0].get()
+            chemin = threads_defaite[0].get()
             threads_defaite.popleft()
             if chemin is None:
                 return True
@@ -133,6 +133,7 @@ def jeu(plateau: Plateau, boutons_jeu):
 
                 elif click == "Undo":
                     game_over = False
+                    gagne = False
                     plateau.undo()
 
                 elif click == "Sauvegarde":
@@ -157,7 +158,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                     solver = (partial(solveur.iteratif, largeur=True) if click == "Sol. largeur"
                              else partial(solveur.iteratif, largeur=False))
                     start = time()
-                    chemin, _ = solver(deepcopy(plateau))
+                    chemin = solver(deepcopy(plateau))
                     elapsed = time() - start
 
                     if chemin is None:

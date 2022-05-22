@@ -8,7 +8,8 @@ DOSSIER = {
     "config.json", "creation_niveaux.py", "editeur.py", "fltk.py",
     "graphiques.py", "grille.py", "mouton.py", "plateau.py",
     "randomizer.py", "ricosheep.py", "sauvegarde.py",
-    "savefile.json","selecteur.py","solveur.py", "son.py", "unit-tests.py"}
+    "savefile.json","selecteur.py","solveur.py", "son.py", "unit-tests.py"
+}
 
 MEDIA = {
     "music": ["Otherside.mp3", "Wait.mp3"], 
