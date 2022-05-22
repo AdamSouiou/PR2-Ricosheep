@@ -43,10 +43,8 @@ def generation100() -> Plateau:
                     ligne.append(editeur.ETAT[3])
             plateau.append(ligne)
         test, chemin = editeur.test(plateau, False, False)
-        #print(len(chemin), chemin)
         if len(chemin) <= 3:
             test = False
-    #print(nb_colonnes,nb_lignes)
     cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
 
@@ -97,13 +95,17 @@ def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]])
     return new_set
 
 
-def aleatoirecontrole(params: dict, percent_buisson: Tuple[float, float]) -> Plateau:
+def aleatoirecontrole(params: dict,
+                      percent_buisson: Tuple[float, float]) -> Plateau:
     """
-    :param dict params: Dictionnaire des paramètres pour réaliser
-    la génération
+    Génère une map aléatoirement, respectent les conditions du dictionnaire
+    params (nb_moutons, nb_herbes, nb_lignes, nb_colonnes, difficulte)
+    
+    :param dict params: Dictionnaire des paramètres pour réaliser la génération
     :param tuple percent_buisson: Tuple de nombre représentant
     le pourcentage min et max du nombre de buissons par rapport
-    à l'espace vide restant après placement des herbes et moutons
+    à l'espace vide restant après placement des herbes et moutons.
+    :return Plateau: Plateau valide prêt à l'emploi
     """
     lignes, colonnes, nb_moutons, nb_herbes =\
         params['lignes'], params['colonnes'], params['moutons'], params['herbes']
@@ -206,7 +208,7 @@ def menu_control():
 
                     else:
                         boutons.destroy_entree_textes()
-                        return aleatoirecontrole(params, (20,60))
+                        return aleatoirecontrole(params, (20,70))
 
                 else:
                     boutons.boutons[entiers_positifs].invisible = False

@@ -104,6 +104,7 @@ def demande_profondeur(grille_jeu: Grille):
     while True:
         ev = fltk.attend_ev()
         click = invite.nom_clic(ev)
+        if click is not None: son.sound('MenuAccept')
         if click == "Récursif":
             return solveur.profondeur
         elif click == "Itératif":
