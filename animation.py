@@ -4,7 +4,7 @@ import cfg
 from dataclasses import dataclass
 from PIL import Image, ImageTk
 from os import path
-from typing import List
+from typing import List, Optional
 
 @dataclass
 class FallingSheep:
@@ -15,7 +15,12 @@ class FallingSheep:
     speed: float
     height: float
 
-def initialisation(number):
+def initialisation(number: int):
+    """
+    Initialise les images et les objets FallingSheep contenant les moutons pour 
+    l'animation du menu d'accueil selon le nombre "number, et renvoie
+    la liste contenant tous les objets FallingSheep 
+    """
     liste = []
     
     img1 = Image.open(path.join('media', 'images', 'chute1.png'))
@@ -48,16 +53,25 @@ def initialisation(number):
     liste.sort(key=lambda elem: elem.speed)
     return liste
 
-def resize(image, taille, proportion=1):
+def resize(image: object, taille: int, proportion: Optional[int]=1):
+    """
+    Redimensionne l'image donné selon la taille et la proportion
+    """
     (width, height) = (image.width // taille * proportion,
                        image.height // taille * proportion)
     return image.resize((width, height), resample=Image.NEAREST)
 
-def chute(elem):
+def chute(elem: FallingSheep):
+    """
+    Fait "tombé" l'élément selon sa vitesse, sa taille et la taille de l'écran
+    """
     elem.y += elem.speed
     elem.y = elem.y % (cfg.hauteur_fenetre + elem.height)
 
-def dessiner(liste: List):
+def dessiner(liste: List[FallingSheep]):
+    """
+    Dessine tous les éléments de la liste de FallingSheep
+    """
     for elem in liste:
         fltk.afficher_image(elem.x, elem.y, elem.Sheep, ancrage='s')
         chute(elem)

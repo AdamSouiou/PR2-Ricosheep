@@ -13,7 +13,10 @@ except:
     cfg.son = False
     print("Veuillez installez pygame pour accéder à l'expérience sonore.")
 
-def initialisation():
+def initialisation() -> None:
+    """
+    Initialise tous les effets sonores ainsi que leurs volumes.
+    """
     global liste_son
     if PYGAME_AVAILABLE:
         pygame.init()
@@ -25,7 +28,12 @@ def initialisation():
             pygame.mixer.Sound.set_volume(liste_son[son], 0.7)
         
 
-def sound(type):
+def sound(type: str) -> None:
+    """
+    Fais un bruitage sonore selon le type de son demandé en entrée.
+
+    :param str: Nom du bruitage joué
+    """
     if PYGAME_AVAILABLE and cfg.son:
         if type == "Sheep":
             beeeh = random.randint(1,10)
@@ -37,7 +45,10 @@ def sound(type):
         else:
             liste_son[type].play()
 
-def toggle_sound():
+def toggle_sound() -> None:
+    """
+    Désactive la musique et les sons ou les réactive en changeant l'état de "sound"
+    """
     if PYGAME_AVAILABLE:
         pygame.mixer.music.stop()
         cfg.toggle_sound_anim('sound')
@@ -45,7 +56,12 @@ def toggle_sound():
             song('Wait')
         
 
-def song(name):
+def song(name: str) -> None:
+    """
+    Prends en entrée le nom du fichier mp3 pour le jouer.
+
+    :param str: nom du fichier à jouer.
+    """
     if PYGAME_AVAILABLE and cfg.son:
         pygame.mixer.music.load(os.path.join('media','music', f'{name}.mp3'))
         pygame.mixer.music.play(-1)

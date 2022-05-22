@@ -3,10 +3,10 @@
         "largeur_fenetre": 1000,
         "hauteur_fenetre": 500
     },
-    "son": false,
+    "son": true,
     "animation": true,
     "carte": [
-        "theme",
-        "one_sheep.txt"
+        "big",
+        "big3.txt"
     ]
 }

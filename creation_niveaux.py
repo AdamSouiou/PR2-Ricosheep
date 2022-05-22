@@ -1,3 +1,4 @@
+from typing import List
 import fltk
 import graphiques
 import editeur
@@ -94,7 +95,10 @@ def demande_nom(plateau):
 
         fltk.mise_a_jour()
 
-def enregistrement(plateau, nom):
+def enregistrement(plateau: List[List[str]], nom:str):
+    """
+    Enregistre le plateau donné dans un fichier texte avec le nom donné.
+    """
     file = ""
     with open(os.path.join("maps", "custom", nom+".txt"), 'w') as fichier:
         for ligne in plateau:
@@ -104,10 +108,16 @@ def enregistrement(plateau, nom):
 
         fichier.write(file)
 
-def plateau_vide(lignes, colonnes):
+def plateau_vide(lignes: int, colonnes: int) -> List[List[str]]:
+    """
+    Renvoie une Liste de liste contenant que "_"
+    """
     return [['_' for _ in range(colonnes)] for _ in range(lignes)]
 
 def plateau_to_ll(plateau):
+    """
+    Transforme l'objet plateau en une liste de liste.
+    """
     lst = plateau_vide(plateau.nb_lignes, plateau.nb_colonnes)
     for mouton in plateau.historique[0]:
         lst[mouton.y][mouton.x] = 'S'

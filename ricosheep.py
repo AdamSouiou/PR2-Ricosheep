@@ -40,7 +40,12 @@ def file_defaite(threads_defaite: deque):
                 return True
     return False
 
-def boutons_jeu_init():
+def boutons_jeu_init() -> Boutons:
+    """
+    Initialisation des boutons de jeu
+
+    :return Boutons: Boutons de jeu.
+    """
     boutons = Boutons((20,23), carre=False)
     boutons.cree_bouton_simple(16, 0, 19, 2, "Reset")
     boutons.cree_bouton_simple(16, 4, 19, 6, "Undo")
@@ -160,7 +165,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                     elapsed = time() - start
 
                     if chemin is None:
-                        print("Pas de solutions, chacal!")
+                        print("Pas de solutions... :( ")
                         game_over = True
                     else:
                         chemin = deque(chemin)

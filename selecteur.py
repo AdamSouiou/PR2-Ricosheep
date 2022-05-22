@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Optional
 from bouton import Boutons
 from graphiques import close, background
 import fltk
@@ -70,7 +71,14 @@ def menu():
             exit()
 
 
-def open_plateau(choix, boutons: Boutons):
+def open_plateau(choix: str, boutons: Boutons) -> Plateau:
+    """
+    Créer un plateau selon la carte et la positionne à une zone spécifique de la grille des boutons.
+
+    :param str choix: chemin vers un fichier de carte
+    :param Boutons boutons: Boutons utilisé sur le menu
+    :return Plateau: plateau de jeu fait avec la carte
+    """
     if choix is not None:
         plateau = Plateau(
             os.path.join("maps", choix),
@@ -83,7 +91,16 @@ def open_plateau(choix, boutons: Boutons):
     return plateau
 
 
-def init_boutons(split=0, directory="", choix=None):
+def init_boutons(split: Optional[int]=0, directory: Optional[str]="", choix: Optional[str]=None) -> Boutons:
+    """
+    Initialise des boutons pour le menu selon le dossier, le sous-dossier et à quelle tranche où nous sommes dans le découpage.
+
+    :param int split: Incrémentation dans le découpage par 5 dans la liste des sous-dossiers ou des cartes.
+    :param str directory: Sous-dossier qu'on regarde.
+    :param str choix: Chemin complet faire une carte contenu dans un des sous-dossier.
+    :return Boutons: Boutons utilisé dans le menu.
+    """
+
     dossiers = os.listdir(os.path.join("maps", directory))
     boutons = Boutons((10,10))
 
@@ -114,7 +131,16 @@ def init_boutons(split=0, directory="", choix=None):
     boutons.init()
     return boutons
 
-def modif_json(directory, file):
+def modif_json(directory: str, file: str) -> str:
+    """
+    Modifie le fichier config.json pour changer la variable carte pour contenir le sous-dossier et le fichier du niveau,
+    et renvoie le chemin d'accès au fichier du niveau
+
+    :param str directory: Sous-dossier cotenant le fichier du niveau
+    :param str file: Fichier du niveau.
+    :return str: Chemin d'accès vers le fichier.
+    """
+
     with open("config.json", "r") as jsonFile:
         data = json.load(jsonFile)
 
