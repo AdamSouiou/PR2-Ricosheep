@@ -91,7 +91,7 @@ def open_plateau(choix: str, boutons: Boutons) -> Plateau:
     return plateau
 
 
-def init_boutons(split: Optional[int]=0, directory: Optional[str]="", choix: Optional[str]=None) -> Boutons:
+def init_boutons(split: int = 0, directory: str = "", choix: Optional[str] = None) -> Boutons:
     """
     Initialise des boutons pour le menu selon le dossier, le sous-dossier et à quelle tranche où nous sommes dans le découpage.
 

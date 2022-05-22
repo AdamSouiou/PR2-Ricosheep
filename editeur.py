@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 from bouton import Boutons
 from grille import Grille
 from plateau import Plateau
@@ -16,7 +16,7 @@ import son
 ETAT = ('_', "B", "G", "S")
 
 
-def init_boutons_grille(nb_lignes: int, nb_colonnes:int) -> Tuple[Boutons, List]:
+def init_boutons_grille(nb_lignes: int, nb_colonnes: int) -> Tuple[Boutons, List]:
     """
     Initialise les boutons ainsi qu'une liste des boutons invisibles.
     """
@@ -64,8 +64,8 @@ def draw(plateau: Plateau, grille: Grille) -> None:
                 affiche_env_element(case[colonne], images[plateau[ligne][colonne]])
 
 def test(carte: List[List[str]],
-         editeur: Optional[bool]=True,
-         largeur: Optional[bool]=True) -> Tuple[bool, List[str]]:
+         editeur: bool = True,
+         largeur: bool = True) -> Tuple[bool, List[str]]:
     """
     Transforme la carte en un plateau et cherche une solution.
     Renvoie un tuple avec s'il existe une solution, et la solution.

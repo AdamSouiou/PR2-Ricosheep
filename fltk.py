@@ -2,7 +2,7 @@ import subprocess
 import sys
 import tkinter as tk
 import tkinter.simpledialog
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional, Literal, List
 from tkinter import Entry
 from collections import deque
 from os import system, PathLike
@@ -13,7 +13,16 @@ try:
     from PIL import Image, ImageTk
     print("Bibliothèque PIL chargée.", file=sys.stderr)
     PIL_AVAILABLE = True
-except ImportError as e:
+    resampling_algos = {
+        'plus_proche': Image.Resampling.NEAREST,
+        'lanczos': Image.Resampling.LANCZOS,
+        'bilineaire': Image.Resampling.BILINEAR,
+        'bicubique': Image.Resampling.BICUBIC,
+        'box': Image.Resampling.BOX,
+        'hamming': Image.Resampling.HAMMING
+    }
+
+except ImportError:
     PIL_AVAILABLE = False
 
 __all__ = [
@@ -87,7 +96,7 @@ class CustomCanvas:
         self.root.title(title)
         if icone:
             self.root.iconphoto(True, ImageTk.PhotoImage(file=icone))
-            if self._on_win :
+            if self._on_win:
                 import ctypes
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
                     title
@@ -173,6 +182,10 @@ class FenetreNonCree(Exception):
 class FenetreDejaCree(Exception):
     pass
 
+
+class PILError(Exception):
+    pass
+
 # Vous êtes viré, c'est scandaleux
 
 
@@ -181,7 +194,9 @@ class FenetreDejaCree(Exception):
 #############################################################################
 
 
-def cree_fenetre(largeur, hauteur, titre='tk', frequence=60, icone=None):
+def cree_fenetre(largeur: int, hauteur: int,
+                 titre: str = 'tk', frequence: int = 60,
+                 icone: Optional[PathLike] = None) -> None:
     """
     Crée une fenêtre avec un titre et une icône, de dimensions
     ``largeur`` x ``hauteur`` pixels, et avec une frequence de
@@ -195,7 +210,7 @@ def cree_fenetre(largeur, hauteur, titre='tk', frequence=60, icone=None):
     __canevas = CustomCanvas(largeur, hauteur, titre, frequence, icone=icone)
 
 
-def taille_fenetre():
+def taille_fenetre() -> Tuple[int, int]:
     """
     Retourne la taille actuelle de la fenêtre
     """
@@ -203,7 +218,7 @@ def taille_fenetre():
             __canevas.root.winfo_height())
 
 
-def ferme_fenetre():
+def ferme_fenetre() -> None:
     """
     Détruit la fenêtre.
     """
@@ -215,7 +230,7 @@ def ferme_fenetre():
     __canevas = None
 
 
-def mise_a_jour():
+def mise_a_jour() -> None:
     """
     Met à jour la fenêtre. Les dessins ne sont affichés qu'après
     l'appel à  cette fonction.
@@ -233,7 +248,8 @@ def mise_a_jour():
 
 # Formes géométriques
 
-def ligne(ax, ay, bx, by, couleur='black', epaisseur=1, tag=''):
+def ligne(ax: float, ay: float, bx: float, by: float,
+          couleur: Literal[...] = 'black', epaisseur: float = 1, tag=''):
     """
     Trace un segment reliant le point ``(ax, ay)`` au point ``(bx, by)``.
 
@@ -253,7 +269,8 @@ def ligne(ax, ay, bx, by, couleur='black', epaisseur=1, tag=''):
         tag=tag)
 
 
-def fleche(ax, ay, bx, by, couleur='black', epaisseur=1, tag=''):
+def fleche(ax: float, ay: float, bx: float, by: float,
+           couleur: Literal[...] = 'black', epaisseur: float = 1, tag=''):
     """
     Trace une flèche du point ``(ax, ay)`` au point ``(bx, by)``.
 
@@ -278,8 +295,11 @@ def fleche(ax, ay, bx, by, couleur='black', epaisseur=1, tag=''):
         tag=tag)
 
 
-def polygone(points, couleur='black', remplissage='',
-             remplissage_actif='', epaisseur=1, tag=''):
+def polygone(points: List[Tuple[float, float]],
+             couleur: Literal[...] = 'black',
+             remplissage: Literal[...] = '',
+             remplissage_actif: Literal[...] = '',
+             epaisseur: float = 1, tag=''):
     """
     Trace un polygone dont la liste de points est fournie.
 
@@ -299,9 +319,11 @@ def polygone(points, couleur='black', remplissage='',
         tag=tag)
 
 
-def rectangle(ax, ay, bx, by,
-              couleur='black', remplissage='', remplissage_actif='',
-              epaisseur=1, tag=''):
+def rectangle(ax: float, ay: float, bx: float, by: float,
+              couleur: Literal[...] = 'black',
+              remplissage: Literal[...] = '',
+              remplissage_actif: Literal[...] = '',
+              epaisseur: float = 1, tag=''):
     """
     Trace un rectangle noir ayant les point ``(ax, ay)`` et ``(bx, by)``
     comme coins opposés.
@@ -326,7 +348,10 @@ def rectangle(ax, ay, bx, by,
         tag=tag)
 
 
-def cercle(x, y, r, couleur='black', remplissage='', epaisseur=1, tag=''):
+def cercle(x: float, y: float, r: float,
+           couleur: Literal[...] = 'black',
+           remplissage: Literal[...] = '',
+           epaisseur: float = 1, tag=''):
     """
     Trace un cercle de centre ``(x, y)`` et de rayon ``r`` en noir.
 
@@ -347,8 +372,10 @@ def cercle(x, y, r, couleur='black', remplissage='', epaisseur=1, tag=''):
         tag=tag)
 
 
-def arc(x, y, r, ouverture=90, depart=0, couleur='black', remplissage='',
-        epaisseur=1, tag=''):
+def arc(x: float, y: float, r: float,
+        ouverture: float = 90, depart: float = 0,
+        couleur: Literal[...] = 'black', remplissage: Literal[...] = '',
+        epaisseur: float = 1, tag=''):
     """
     Trace un arc de cercle de centre ``(x, y)``, de rayon ``r`` et
     d'angle d'ouverture ``ouverture`` (défaut : 90 degrés, dans le sens
@@ -377,7 +404,9 @@ def arc(x, y, r, ouverture=90, depart=0, couleur='black', remplissage='',
         tag=tag)
 
 
-def point(x, y, couleur='black', epaisseur=1, tag=''):
+def point(x: float, y: float,
+          couleur: Literal[...] = 'black', epaisseur: float = 1,
+          tag=''):
     """
     Trace un point aux coordonnées ``(x, y)`` en noir.
 
@@ -396,8 +425,9 @@ def point(x, y, couleur='black', epaisseur=1, tag=''):
 
 # Image
 
-def afficher_image(x, y, image: Union[PathLike, Image.Image],
-                   ancrage='center', tag=''):
+def afficher_image(x: float, y: float,
+                   image: Union[PathLike, Image.Image],
+                   ancrage: Literal[...] = 'center', tag='') -> Image:
     """
     Affiche l'image avec ``(x, y)`` comme centre. Les
     valeurs possibles du point d'ancrage sont ``'center'``, ``'nw'``, etc.
@@ -437,21 +467,22 @@ def taille_image(fichier: PathLike) -> Tuple[int, int]:
         with Image.open(fichier) as img:
             return img.size
 
-    PILError()
+    raise PILError("Cette fonction est disponible \
+                   uniquement si PIL est présent")
     return None
 
 
-def redimensionner_image(fichier: PathLike, coeff: float, reechantillonage=None):
+def redimensionner_image(
+        fichier: PathLike,
+        coeff: float,
+        reechantillonage: Optional[Literal[
+            'plus_proche', 'lanczos', 'bilineaire',
+            'bicubique', 'box', 'hamming']
+        ] = None) -> Image:
     """
     Ouvre une image et la redimensionne avec un coefficient multiplicateur,
     il est également possible d'appliquer un filtre de réchantillonage pour
     améliorer le rendu du redimensionnement:
-    Au plus proche: ``0``
-    Lanczoz: ``1``
-    Bilinéaire: ``2``
-    Bicubique: ``3``
-    Box: ``4``
-    Hamming: ``5``
 
     :param fichier: Fichier de l'image à redimensioner
     :param float coeff: Coefficient de redimensionnement
@@ -461,6 +492,8 @@ def redimensionner_image(fichier: PathLike, coeff: float, reechantillonage=None)
     """
 
     if PIL_AVAILABLE:
+        if reechantillonage:
+            reechantillonage = resampling_algos[reechantillonage]
         with Image.open(fichier) as img:
             taille = img.size
             taille_coeff = (int(taille[0]*coeff), int(taille[1]*coeff))
@@ -468,14 +501,17 @@ def redimensionner_image(fichier: PathLike, coeff: float, reechantillonage=None)
                 img.resize(taille_coeff, reechantillonage)
             )
     else:
-        PILError()
-        return None
-
-        
+        raise PILError("Cette fonction est disponible \
+                       uniquement si PIL est présent")
 # Texte
 
-def texte(x, y, chaine, couleur='black', ancrage='nw',
-            police='Helvetica', taille=24, tag=''):
+
+def texte(x: float, y: float, chaine: str,
+          couleur: Literal[...] = 'black',
+          ancrage: Literal[
+              'nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se'
+          ] = 'nw',
+          police: str = 'Helvetica', taille: int = 24, tag=''):
     """
     Affiche la chaîne ``chaine`` avec ``(x, y)`` comme point d'ancrage (par
     défaut le coin supérieur gauche).
@@ -497,7 +533,7 @@ def texte(x, y, chaine, couleur='black', ancrage='nw',
         fill=couleur, anchor=ancrage, state='disabled')
 
 
-def taille_texte(chaine, police='Helvetica', taille='24'):
+def taille_texte(chaine: str, police: str = 'Helvetica', taille: int = 24):
     """
     Donne la largeur et la hauteur en pixel nécessaires pour afficher
     ``chaine`` dans la police et la taille données.
@@ -516,7 +552,7 @@ def taille_texte(chaine, police='Helvetica', taille='24'):
 # Effacer
 #############################################################################
 
-def efface_tout():
+def efface_tout() -> None:
     """
     Efface la fenêtre.
     """
@@ -524,7 +560,7 @@ def efface_tout():
     __canevas.canvas.delete("all")
 
 
-def efface(objet):
+def efface(objet) -> None:
     """
     Efface ``objet`` de la fenêtre.
 
@@ -541,13 +577,13 @@ def efface(objet):
 #############################################################################
 
 
-def attente(temps):
+def attente(temps) -> None:
     start = time()
     while time() - start < temps:
         mise_a_jour()
 
 
-def capture_ecran(file):
+def capture_ecran(file) -> None:
     """
     Fait une capture d'écran sauvegardée dans ``file.png``.
     """
@@ -560,7 +596,7 @@ def capture_ecran(file):
     subprocess.call("rm " + file + ".ps", shell=True)
 
 
-def touche_pressee(keysym):
+def touche_pressee(keysym) -> bool:
     """
     Renvoie `True` si ``keysym`` est actuellement pressée.
     :param keysym: symbole associé à la touche à tester.
@@ -569,27 +605,32 @@ def touche_pressee(keysym):
     return keysym in __canevas.pressed_keys
 
 
-def entree_texte(x, y, width, height, font="Courier", justify="center"):
+def entree_texte(x: float, y: float,
+                 width: float, height: float,
+                 police: str = "Courier",
+                 justify: Literal['left', 'center', 'right'] = "center"
+                 ) -> Entry:
     """
-    Creer un champs de texte avec les coordonnés x, y, et une épaisseur, une largeur,
-    une police d'écriture, et une justification donnée.
+    Crée un champ de texte aux coordonnés x, y, ancrée en ``'nw'``.
+    La taille du texte du champ peut être définie dans la chaîne,
+    exemple: 'Courier 20'
 
-    :param int x: position sur l'axe x
-    :param int y: position sur l'axe y
-    :param int width: largeur du champs de texte
-    :param int height: hauteur du champs de texte
-    :param str font: police d'écriture
-    :param str justify: justification du texte.
-    :return entry: Champs de texte
+    :param int x: Position sur l'axe x
+    :param int y: Position sur l'axe y
+    :param int width: Largeur du champ de texte
+    :param int height: Hauteur du champ de texte
+    :param str font: Police d'écriture
+    :param str justify: Justification du texte.
+    :return entry: Champ de texte
     """
-    entry = Entry(__canevas.canvas, justify=justify, font=font)
-    entry.place(x=x, y=y, width=width, height=height)
-    #__canevas.canvas.focus_set()
+    entry = Entry(__canevas.canvas, justify=justify, font=police)
+    entry.place(x=x, y=y, width=width, height=height, anchor='nw')
     return entry
 
-def detruit_entree_texte(boite):
+
+def detruit_entree_texte(boite: Entry) -> None:
     """
-    Détruit le champ de textes "boite"
+    Détruit le champ de textes "boite".
     """
     boite.destroy()
     __canevas.canvas.focus_set()
@@ -599,8 +640,9 @@ def detruit_entree_texte(boite):
 # Gestions des évènements
 #############################################################################
 
-def donne_ev():
-    """ 
+
+def donne_ev() -> Tuple[str, tkinter.Event]:
+    """
     Renvoie immédiatement l'événement en attente le plus ancien,
     ou ``None`` si aucun événement n'est en attente.
     """
@@ -613,7 +655,7 @@ def donne_ev():
         return __canevas.ev_queue.popleft()
 
 
-def attend_ev():
+def attend_ev() -> Tuple[str, tkinter.Event]:
     """Attend qu'un événement ait lieu et renvoie le premier événement qui
     se produit."""
     while True:
@@ -623,7 +665,7 @@ def attend_ev():
         mise_a_jour()
 
 
-def attend_clic_gauche():
+def attend_clic_gauche() -> Tuple[int, int]:
     """Attend qu'un clic gauche sur la fenêtre ait lieu et renvoie ses
     coordonnées. **Attention**, cette fonction empêche la détection d'autres
     événements ou la fermeture de la fenêtre."""
@@ -634,7 +676,7 @@ def attend_clic_gauche():
         mise_a_jour()
 
 
-def attend_fermeture():
+def attend_fermeture() -> None:
     """Attend la fermeture de la fenêtre. Cette fonction renvoie None.
     **Attention**, cette fonction empêche la détection d'autres événements."""
     while True:
@@ -645,8 +687,8 @@ def attend_fermeture():
         mise_a_jour()
 
 
-def type_ev(ev):
-    """ 
+def type_ev(ev: Tuple[str, tkinter.Event]) -> str:
+    """
     Renvoie une chaîne donnant le type de ``ev``. Les types
     possibles sont 'ClicDroit', 'ClicGauche', 'Touche' et 'Quitte'.
     Renvoie ``None`` si ``evenement`` vaut ``None``.
@@ -654,29 +696,29 @@ def type_ev(ev):
     return ev if ev is None else ev[0]
 
 
-def abscisse(ev):
-    """ 
+def abscisse(ev: Tuple[str, tkinter.Event]) -> int:
+    """
     Renvoie la coordonnée x associé à ``ev`` si elle existe, None sinon.
     """
     return attribut(ev, 'x')
 
 
-def ordonnee(ev):
-    """ 
+def ordonnee(ev: Tuple[str, tkinter.Event]) -> int:
+    """
     Renvoie la coordonnée y associé à ``ev`` si elle existe, None sinon.
     """
     return attribut(ev, 'y')
 
 
-def touche(ev):
-    """ 
+def touche(ev: Tuple[str, tkinter.Event]) -> str:
+    """
     Renvoie une chaîne correspondant à la touche associé à ``ev``,
     si elle existe.
     """
     return attribut(ev, 'keysym')
 
 
-def attribut(ev, nom):
+def attribut(ev: Tuple[str, tkinter.Event], nom: Literal):
     if ev is None:
         raise TypeEvenementNonValide(
             "Accès à l'attribut", nom, 'impossible sur un événement vide')
@@ -689,13 +731,9 @@ def attribut(ev, nom):
             'impossible sur un événement de type', tev)
 
 
-def abscisse_souris():
+def abscisse_souris() -> int:
     return __canevas.canvas.winfo_pointerx() - __canevas.canvas.winfo_rootx()
 
 
-def ordonnee_souris():
+def ordonnee_souris() -> int:
     return __canevas.canvas.winfo_pointery() - __canevas.canvas.winfo_rooty()
-
-
-def PILError():
-    print("PIL n'est pas disponible")

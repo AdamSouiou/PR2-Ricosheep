@@ -53,7 +53,7 @@ def initialisation(number: int):
     liste.sort(key=lambda elem: elem.speed)
     return liste
 
-def resize(image: object, taille: int, proportion: Optional[int]=1):
+def resize(image: Image, taille: int, proportion: int = 1):
     """
     Redimensionne l'image donné selon la taille et la proportion
     """

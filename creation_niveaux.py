@@ -5,6 +5,7 @@ import editeur
 import cfg
 import os
 import son
+from plateau import Plateau
 from bouton import Boutons
 from graphiques import close
 from pprint import pprint
@@ -60,7 +61,7 @@ def menu(plateau):
 
         fltk.mise_a_jour()
 
-def demande_nom(plateau):
+def demande_nom(plateau: Plateau):
     boutons = Boutons((10,10))
     boutons.cree_bouton_texte(1, 2, 8, 2, "Nom de votre plateau", arrondi = 0.75)
     boutons.cree_bouton_simple(1, 8, 8, 8, "Valider", arrondi = 0.75)

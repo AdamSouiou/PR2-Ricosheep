@@ -144,7 +144,7 @@ class Boutons:
                     b.ax, b.ay,
                     b.bx - b.ax,
                     b.by - b.ay,
-                    font=f'{b.police} {b.taille_texte}'
+                    police=f'{b.police} {b.taille_texte}'
                 )
 
         #print(f'Boutons chargés en {time()-self.time_start:.3f}s')

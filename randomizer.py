@@ -11,7 +11,6 @@ import fltk
 import random
 import editeur
 import cfg
-import os
 
 #Crash généré lors d'un random entre 5x5 et 8x8
 
