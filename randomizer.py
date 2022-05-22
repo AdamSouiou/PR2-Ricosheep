@@ -1,6 +1,6 @@
 from plateau import Plateau
 from bouton import Boutons
-from typing import List, Tuple, Set
+from typing import Callable, List, Tuple, Set
 from random import randint
 from pprint import pprint
 from solveur import iteratif
@@ -13,14 +13,20 @@ import editeur
 import cfg
 import os
 
-#ATTENTION! Au dela d'un plateau 7x7, l'application crash sans donner d'erreur.
-#Crash générer lors d'un random entre 5x5 et 8x8
-def generation100():
+#Crash généré lors d'un random entre 5x5 et 8x8
+
+def generation100() -> Plateau:
+    """
+    Créer un plateau dont les dimensions, le nombre de moutons et d'herbes
+    est aléatoire et également resolubles
+
+    :return Plateau: Plateau de jeu généré par la fonction.
+    """
     global plateau
     test = False
     while not test:
-        nb_colonnes = random.randint(4,9)
-        nb_lignes = random.randint(4,9)
+        nb_colonnes = random.randint(4,8)
+        nb_lignes = random.randint(4,8)
 
         plateau = []
         for _ in range(nb_lignes):
@@ -36,7 +42,7 @@ def generation100():
                 elif case == 12:
                     ligne.append(editeur.ETAT[3])
             plateau.append(ligne)
-        test, chemin = editeur.test(plateau, False)
+        test, chemin = editeur.test(plateau, False, False)
         #print(len(chemin), chemin)
         if len(chemin) <= 3:
             test = False
@@ -44,14 +50,24 @@ def generation100():
     cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
 
-def map_dict(d, func):
+def map_dict(d: dict, func: Callable) -> None:
+    """
+    Applique une fonction à toutes les valeurs du dictionnaire.
+
+    :param dict d: Dicionnaire à utiliser
+    :param Callable func: Fonction à appliquer sur les valeurs du dictionnaire.
+    """
     for cle, valeur in d.items():
         d[cle] = func(valeur)
 
-def in_sets(elem, sets: List[Set[Tuple]]):
+def in_sets(elem: Tuple, sets: List[Set[Tuple]]) -> bool:
     """
     Renvoie vrai si ``elem`` est présent dans au
     moins un des itérables de la liste d'entrée.
+
+    :param Tuple elem: Element a traiter
+    :param List[Set[Tuple]] sets: Liste de sets à vérifier
+    :return bool: Si l'élément est dans la liste.
     """
     for i_set in sets:
         if elem in i_set:
@@ -59,11 +75,17 @@ def in_sets(elem, sets: List[Set[Tuple]]):
     return False
 
 
-def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]]):
+def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]]) -> set:
     """
     Renvoie un set aléatoire de tuple de positions, en s'assurant
     qu'aucune de ces nouvelles positions ne soient présente dans
     les itérables de la liste ``sets``.
+
+    :param int nb_tuple: Nombre de tuples à générer
+    :param int max_y: Position max sur la hauteur
+    :param int max_x: Position max sur la longueur
+    :param List[Set[Tuple]] sets: Liste de set à comparé
+    :return set: Nouveau set généré par la fonction
     """
     new_set = set()
     while len(new_set) < nb_tuple:
@@ -75,8 +97,10 @@ def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]])
     return new_set
 
 
-def aleatoirecontrole(params: dict, percent_buisson: Tuple[float, float]):
+def aleatoirecontrole(params: dict, percent_buisson: Tuple[float, float]) -> Plateau:
     """
+    :param dict params: Dictionnaire des paramètres pour réaliser
+    la génération
     :param tuple percent_buisson: Tuple de nombre représentant
     le pourcentage min et max du nombre de buissons par rapport
     à l'espace vide restant après placement des herbes et moutons

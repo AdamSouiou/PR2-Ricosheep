@@ -1,6 +1,7 @@
 import json
 from os import path
 from json.decoder import JSONDecodeError
+from typing import List, Tuple
 from ricosheep import boutons_jeu_init
 import selecteur
 import cfg
@@ -19,7 +20,12 @@ class SaveEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def check_in():
+def check_in() -> None:
+    """
+    Essaye de lire le fichier savefile.json et l'enregistre dans la variable 
+    global "save" pour pouvoir encoder la sauvegarde.
+    En cas d'echec, réinitialise le fichier de sauvegarde.
+    """
     global save
     try:
         with open('savefile.json') as file:
@@ -27,16 +33,20 @@ def check_in():
                 save = json.load(file)
             except JSONDecodeError:
                 print("La sauvegarde lue est incorrecte, réinitialisation du fichier")
-                clear_save()
+                save_write([],[],[])
     except FileNotFoundError:
         print("La sauvegarde n'existe plus !, réinitialisation du fichier")
-        clear_save()
-
-def clear_save():
-    save_write([], [], [])
+        save_write([],[],[])
 
 
-def save_write(carte, historique, troupeau):
+def save_write(carte: List[str], historique: List[Tuple[Mouton]], troupeau: List[Mouton]) -> None:
+    """
+    Écris savefile.json avec les paramètres donné.
+
+    :param List[str] carte: Liste du sous-dossier et niveau pour la carte
+    :param List[Tuple[Mouton]] historique: Liste de l'historique des moutons pendant toute la partie.
+    :param List[Mouton] troupeau: Liste des objets moutons du jeu.
+    """
     global save
     with open("savefile.json", "w+") as jsonFile:
         save['carte'] = carte
@@ -45,7 +55,13 @@ def save_write(carte, historique, troupeau):
         jsonFile.write(json.dumps(save, cls=SaveEncoder))
 
 
-def save_read():
+def save_read() -> Tuple[Plateau, Boutons]: 
+    """
+    Lit le fichier savefile.json pour récupérer les informations de la sauvegarde effectué précédemment.
+
+    :return Plateau: Plateau de jeu
+    :return Boutons: Boutons de jeu
+    """
     check_in()
     selecteur.modif_json(save['carte'][0], save['carte'][1])
     cfg.maj()
@@ -58,11 +74,15 @@ def save_read():
     return plateau, boutons_jeu
 
 
-def est_valide():
+def est_valide() -> bool:
+    """
+    Vérifie si la sauvegarde est valide, puis si chaque élément
+    présent dans la sauvegarde est égal à la liste vide.
+    """
     check_in()
             
     if save['carte'] and not path.exists(path.join('maps', *save['carte'])):
-        clear_save()
+        save_write([],[],[])
         raise FileNotFoundError
 
     return bool(save['carte'] and save['historique'] and save['position'])
@@ -98,7 +118,7 @@ def menu():
                         return save_read()
 
                     elif click == "Ecraser la sauvegarde":
-                        clear_save()
+                        save_write([],[],[])
                         check_in()
                         return None, None
 

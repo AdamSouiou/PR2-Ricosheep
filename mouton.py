@@ -49,14 +49,20 @@ class Mouton:
         self.en_deplacement = False
 
     def repositionnement(self, cases):
-            case = cases[self.y][self.x]
-            self.centre_x = case.centre_x
-            self.centre_y = case.centre_y
-            self.vitesse.x = 0
-            self.vitesse.y = 0
-            self.en_deplacement = False
+        """
+        Repositionne le mouton sur le centre de la case.
+        """
+        case = cases[self.y][self.x]
+        self.centre_x = case.centre_x
+        self.centre_y = case.centre_y
+        self.vitesse.x = 0
+        self.vitesse.y = 0
+        self.en_deplacement = False
 
     def deplace(self, direction: str, plateau):
+        """
+        Déplace le mouton jusqu'a ce qu'il rencontre un obstacle
+        """
         pos_initiale = (self.y, self.x)
         if direction == "Up":
             while plateau.isPositionValid(self.x, self.y-1):
@@ -94,6 +100,9 @@ class Mouton:
             )
 
     def outOfBound(self, direction, cases, dt):
+        """
+        Vérifie si le mouton n'a pas dépassé sa case d'arrivée.
+        """
         if direction in self.outOfBound.LEFT_UP:
             comparateur = operator.le
         elif direction in self.outOfBound.RIGHT_DOWN:

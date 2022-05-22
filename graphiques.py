@@ -1,5 +1,6 @@
 import fltk
 import cfg
+import son
 from bouton import Boutons
 from grille import Grille
 from collections import namedtuple as nt
@@ -46,7 +47,10 @@ def image_grille(ax: int, ay: int, bx: int, by: int,
         centre_y=case_a.ay + (hauteur // 2))
 
 
-def game_over_init(text, hexcode, grille):
+def game_over_init(text: str, hexcode: str, grille: Grille) -> Boutons:
+    """
+    Initialise les boutons de fin de jeu selon le texte, la couleur et la grille.
+    """
     boutons = Boutons((20,20), grille_base=grille)
     boutons.cree_bouton_texte(3, 6, 12, 13, text, arrondi=0.5, couleur_texte=hexcode)
     boutons.init()
@@ -80,8 +84,10 @@ def demande_affichage(grille_jeu: Grille):
         ev = fltk.attend_ev()
         click = invite.nom_clic(ev)
         if click == 'Oui':
+            son.sound('MenuAccept')
             return True
         elif click == 'Non':
+            son.sound('MenuBleep')
             return False
 
 
@@ -111,6 +117,9 @@ affiche_env_element = lambda case, img: fltk.afficher_image(
 
 
 def affiche_case(x, y, grille, img):
+    """
+    Affiche le contenu de la case donné avec l'image donné.
+    """
     case = grille.cases[y][x]
     affiche_env_element(case, img)
 
@@ -161,6 +170,9 @@ def box_image(fichier, box, marge=0):
         )
     )
 
-def close():
+def close() -> None:
+    """
+    Ferme la fenêtre fltk et quitte l'exécution de python
+    """
     fltk.ferme_fenetre()
     exit()

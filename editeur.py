@@ -1,4 +1,6 @@
+from typing import List, Optional, Tuple
 from bouton import Boutons
+from grille import Grille
 from plateau import Plateau
 from graphiques import box_image, affiche_env_element, close
 from pprint import pprint
@@ -11,10 +13,13 @@ import creation_niveaux
 import son
 
 
-ETAT = ['_', "B", "G", "S"]
+ETAT = ('_', "B", "G", "S")
 
 
-def init_boutons_grille(nb_lignes, nb_colonnes):
+def init_boutons_grille(nb_lignes: int, nb_colonnes:int) -> Tuple[Boutons, List]:
+    """
+    Initialise les boutons ainsi qu'une liste des boutons invisibles.
+    """
     liste = []
     boutons = Boutons((nb_lignes, nb_colonnes))
     for colonne in range(nb_colonnes):
@@ -26,11 +31,17 @@ def init_boutons_grille(nb_lignes, nb_colonnes):
         liste.append(temp)
     return boutons, liste
 
-def change_case(plateau, coord):
+def change_case(plateau: Plateau, coord: Tuple[int, int]) -> None:
+    """
+    Change l'état de la case du plateau aux coordonnés.
+    """
     num = (ETAT.index(plateau[coord[0]][coord[1]]) + 1 ) % 4
     plateau[coord[0]][coord[1]] = ETAT[num]
 
-def initplateau(grille):
+def initplateau(grille: Grille):
+    """
+    Initialise les images du plateau à partir d'une grille fournie.
+    """
     global images
     taille_image = grille.largeur_case * 0.8
     images = {
@@ -40,9 +51,11 @@ def initplateau(grille):
         }
 
 
-def draw(plateau, grille):
+def draw(plateau: Plateau, grille: Grille) -> None:
+    """
+    Dessine le plateau et la grille dans la fenêtre fltk.
+    """
     grille.draw()
-    # pprint(plateau)
 
     for ligne in range(len(plateau)):
         case = grille.cases[ligne]
@@ -50,13 +63,19 @@ def draw(plateau, grille):
             if plateau[ligne][colonne] != '_':
                 affiche_env_element(case[colonne], images[plateau[ligne][colonne]])
 
-def test(carte, editeur=True):
+def test(carte: List[List[str]],
+         editeur: Optional[bool]=True,
+         largeur: Optional[bool]=True) -> Tuple[bool, List[str]]:
+    """
+    Transforme la carte en un plateau et cherche une solution.
+    Renvoie un tuple avec s'il existe une solution, et la solution.
+    """
     plateau = Plateau(carte)
-    chemin, _ = solveur.iteratif(deepcopy(plateau), largeur=True)
+    chemin, _ = solveur.iteratif(deepcopy(plateau), largeur=largeur)
 
     if chemin is None:
         if editeur == True:
-            print("Pas de solutions, chacal!, recommence ton niveau")
+            print("Ton niveau n'a pas de solutions ! Recommence !")
             return False
         return False, []
     else:
@@ -144,7 +163,7 @@ def main(lignes, colonnes):
                 return
 
         if tev == "ClicGauche":
-            if click not in {None}:
+            if click is not None:
                 son.sound('Sheep')
                 coord = click.split()
                 coord[0], coord[1] = int(coord[0]), int(coord[1])

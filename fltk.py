@@ -569,13 +569,28 @@ def touche_pressee(keysym):
     return keysym in __canevas.pressed_keys
 
 
-def entree_texte(x, y, width, height, font="Courier", justify="left"):
+def entree_texte(x, y, width, height, font="Courier", justify="center"):
+    """
+    Creer un champs de texte avec les coordonnés x, y, et une épaisseur, une largeur,
+    une police d'écriture, et une justification donnée.
+
+    :param int x: position sur l'axe x
+    :param int y: position sur l'axe y
+    :param int width: largeur du champs de texte
+    :param int height: hauteur du champs de texte
+    :param str font: police d'écriture
+    :param str justify: justification du texte.
+    :return entry: Champs de texte
+    """
     entry = Entry(__canevas.canvas, justify=justify, font=font)
     entry.place(x=x, y=y, width=width, height=height)
     #__canevas.canvas.focus_set()
     return entry
 
 def detruit_entree_texte(boite):
+    """
+    Détruit le champ de textes "boite"
+    """
     boite.destroy()
     __canevas.canvas.focus_set()
 

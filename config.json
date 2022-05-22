@@ -6,7 +6,7 @@
     "son": false,
     "animation": true,
     "carte": [
-        "theme",
-        "one_sheep.txt"
+        "big",
+        "big3.txt"
     ]
 }

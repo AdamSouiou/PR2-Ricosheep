@@ -125,9 +125,15 @@ class Grille:
                     callback(case, x, y)
     
     def getAbsoluteCoordsTL(self, x_case: int, y_case: int):
+        """
+        Récupère les coordonnées pixels du coin supérieur gauche de la case.
+        """
         return (self.cases[y_case][x_case].ax,
                 self.cases[y_case][x_case].ay)
 
     def getAbsoluteCoordsBR(self, x_case: int, y_case: int):
+        """
+        Récupère les coordonnées pixels du coin inférieur droit de la case.
+        """
         return (self.cases[y_case][x_case].bx,
                 self.cases[y_case][x_case].by)

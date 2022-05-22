@@ -63,6 +63,9 @@ class Plateau:
                    duree_anime=0,
                    grille_base=None,
                    grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre)):
+        """
+        Génère une grille qui sera utilisé pour le plateau
+        """
         self.anime = bool(duree_anime)
         self.grille = Grille(self.nb_colonnes, self.nb_lignes,
                              grille_base=grille_base,
@@ -84,6 +87,9 @@ class Plateau:
                     buissons: Iterable[tuple],
                     herbes: Iterable[tuple],
                     lignes: int, colonnes: int):
+        """
+        Permet d'éviter de recopier les sets fournis par le générateur
+        """
         self.env = {'buissons': buissons, 'touffes': herbes}
         self.troupeau = [Mouton(m[0], m[1]) for m in troupeau]
         self.nb_lignes = lignes
@@ -91,6 +97,9 @@ class Plateau:
         self.historique = [tuple(deepcopy(self.troupeau))]
 
     def grid_parse(self, data: Union[List[List[str]], PathLike]):
+        """
+        Remplie une grille grâce aux données fournis par un fichier texte ou une liste de liste.
+        """
         it = open(data, 'r') if type(data) is str else data
         self.troupeau = []
         self.env = {'buissons': set(), 'touffes': set()}
@@ -129,6 +138,9 @@ class Plateau:
         if type(data) is str: it.close()
 
     def draw(self, start_time=0, dt=0):
+        """
+        Dessine les éléments présents dans chaque case de la grille.
+        """
         self.grille.draw()
         for name, elements in self.env.items():
             for y, x in elements:
@@ -146,14 +158,23 @@ class Plateau:
     )
 
     def reposition_moutons(self):
+        """
+        Repositionne les moutons sur les cases de la grille
+        """
         for mouton in self.troupeau:
             mouton.repositionnement(self.grille.cases)
 
     def draw_moutons_simple(self):
+        """
+        Dessine les moutons
+        """
         for m in self.troupeau:
             self.affiche_mouton(m)
 
     def draw_moutons_anime(self, start_time=0, dt=0):
+        """
+        Anime les déplacements du moutons sur une durée prédéfinie.
+        """
         fini = 0
         for mouton in self.troupeau:
             if not mouton.en_deplacement:
@@ -179,6 +200,9 @@ class Plateau:
 
 
     def isNotPosMouton(self, x, y):
+        """
+        Vérifie si la position de la case donnée contient un mouton 
+        """
         for mouton in self.troupeau:
             if mouton.x == x and mouton.y == y:
                 return False
@@ -234,6 +258,9 @@ class Plateau:
     tri_moutons.UP_LEFT = {"Up", "Left"}
 
     def clear_historique(self):
+        """
+        Efface l'historique de déplacements des moutons
+        """
         del self.historique[1:]
 
     def reset(self):
@@ -254,6 +281,9 @@ class Plateau:
         self.reposition_moutons()
 
     def isGagne(self):
+        """
+        Vérifie si toutes les cases de touffes d'herbes contiennent également un mouton
+        """
         occupe = 0
         for mouton in self.troupeau:
             if mouton in self.env['touffes']:
@@ -263,12 +293,18 @@ class Plateau:
         return False
 
     def troupeau_savewrite(self, position_save):
+        """
+        Place les moutons sur chaque emplacement donné par la sauvegarde
+        """
         for mouton in self.troupeau:
             pos = position_save.pop()
             mouton.y = pos[0]
             mouton.x = pos[1]
 
     def historique_savewrite(self, historique_save):
+        """
+        Réécris l'historique pour correspondre à celui de la sauvegarde
+        """
         for temps in historique_save:
             for i in range(len(self.troupeau)):
                 self.troupeau[i].x = temps[i][1]

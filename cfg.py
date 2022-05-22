@@ -2,7 +2,10 @@ import json
 import os
 
 
-def maj():
+def maj() -> None:
+    """
+    Créer des variables globales contenant les données de config.json
+    """
     global largeur_fenetre, hauteur_fenetre, son, animation, carte, carte_lst
     file = json.load(open('config.json'))
 
@@ -13,7 +16,10 @@ def maj():
     carte = os.path.join("maps", file['carte'][0], file['carte'][1])
     carte_lst = file['carte']
 
-def toggle_sound_anim(option):
+def toggle_sound_anim(option: str) -> None:
+    """
+    Change la variable de son ou de l'animation se l'option donné.
+    """
     with open("config.json", "r") as jsonFile:
         data = json.load(jsonFile)
 
