@@ -1,5 +1,6 @@
 import fltk
 import cfg
+import son
 from bouton import Boutons
 from grille import Grille
 from collections import namedtuple as nt
@@ -72,8 +73,10 @@ def demande_affichage(grille_jeu: Grille):
         ev = fltk.attend_ev()
         click = demande.nom_clic(ev)
         if click == 'Oui':
+            son.sound('MenuAccept')
             return True
         elif click == 'Non':
+            son.sound('MenuBleep')
             return False
     
     
