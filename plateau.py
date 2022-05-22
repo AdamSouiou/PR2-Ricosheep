@@ -1,7 +1,6 @@
-from typing import List, Tuple, Dict, Set, Union, Iterable, Sequence, NamedTuple
+from typing import (List, Tuple, Dict, Set,
+                    Union, Iterable, Sequence, NamedTuple)
 from os import PathLike
-from time import time
-from pprint import pprint
 from mouton import Mouton
 from graphiques import affiche_case, box_image
 from grille import Grille
@@ -22,7 +21,7 @@ class Plateau:
     nb_colonnes:        int
     nb_lignes:          int
     troupeau:           List[Mouton]
-    env:                Dict[str, Set[Tuple[int, int]]]  # Contient les positions des buissons et des touffes
+    env:                Dict[str, Set[Tuple[int, int]]]
     images:             Dict[str, object]
     taille_image:       float
     historique:         List[Tuple[Mouton]]
@@ -39,14 +38,14 @@ class Plateau:
         return sorted(self.troupeau) == sorted(other.troupeau)
 
     def __init__(self,
-                 gridfile: Union[Sequence[Sequence[str]], PathLike, NamedTuple],
+                 gridfile: Union[
+                     Sequence[Sequence[str]], PathLike, NamedTuple
+                 ],
                  duree_anime=0.15,
                  grille_base=None,
                  grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre),
                  parsed_data=[],
                  test_mode=False):
-
-        #print('Jeu reçu par l instance Plateau', gridfile)
         if parsed_data:
             self.parse_tuple(*parsed_data)
         else:
@@ -62,7 +61,8 @@ class Plateau:
     def gen_grille(self,
                    duree_anime=0,
                    grille_base=None,
-                   grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre)):
+                   grille_pos=(0, 0, cfg.largeur_fenetre, cfg.hauteur_fenetre)
+                   ):
         """
         Génère une grille qui sera utilisé pour le plateau
         """
@@ -76,10 +76,14 @@ class Plateau:
 
         global images
         images = {
-            "buissons": box_image('media/images/bush.png', (self.taille_image,)),
-            "touffes": box_image('media/images/grass.png', (self.taille_image,)),
-            "mouton": box_image('media/images/sheep.png', (self.taille_image,)),
-            "heureux": box_image('media/images/sheep_grass.png', (self.taille_image,))
+            "buissons": box_image('media/images/bush.png',
+                                  (self.taille_image,)),
+            "touffes": box_image('media/images/grass.png',
+                                 (self.taille_image,)),
+            "mouton": box_image('media/images/sheep.png',
+                                (self.taille_image,)),
+            "heureux": box_image('media/images/sheep_grass.png',
+                                 (self.taille_image,))
         }
 
     def parse_tuple(self,
@@ -98,7 +102,8 @@ class Plateau:
 
     def grid_parse(self, data: Union[List[List[str]], PathLike]):
         """
-        Remplie une grille grâce aux données fournis par un fichier texte ou une liste de liste.
+        Remplie une grille grâce aux données fournis par un
+        fichier texte ou une liste de liste.
         """
         it = open(data, 'r') if type(data) is str else data
         self.troupeau = []
@@ -121,8 +126,10 @@ class Plateau:
                     continue
                 else:
                     raise FichierInvalide(
-                        f"Le fichier contient un caractère non reconnu: {char}",
-                        f"à la ligne {self.nb_lignes}, colonne {self.nb_colonnes}")
+                        f"Le fichier contient un caractère \
+                        non reconnu: {char}",
+                        f"à la ligne {self.nb_lignes}, \
+                        colonne {self.nb_colonnes}")
                 self.nb_colonnes += 1
             if i == 0:
                 len_first_line = self.nb_colonnes
@@ -135,7 +142,8 @@ class Plateau:
         if self.nb_lignes == 0:
             raise FichierInvalide("Le fichier est vide !")
         self.historique = [tuple(deepcopy(self.troupeau))]
-        if type(data) is str: it.close()
+        if type(data) is str:
+            it.close()
 
     def draw(self, start_time=0, dt=0):
         """
@@ -150,12 +158,14 @@ class Plateau:
         else:
             self.draw_moutons_simple()
 
-    isHeureux = lambda self, mouton: ('heureux' if mouton in self.env['touffes']
-                                      else 'mouton')
+    def isHeureux(self, mouton: Mouton):
+        return ('heureux' if mouton in self.env['touffes']
+                else 'mouton')
 
-    affiche_mouton = lambda self, m: affiche_case(
-        m.x, m.y, self.grille, images[self.isHeureux(m)]
-    )
+    def affiche_mouton(self, m: Mouton):
+        affiche_case(
+            m.x, m.y, self.grille, images[self.isHeureux(m)]
+        )
 
     def reposition_moutons(self):
         """
@@ -182,13 +192,14 @@ class Plateau:
                 fini += 1
                 continue
             if self.last_direction is not None:
-                if not mouton.outOfBound(self.last_direction, self.grille.cases, dt):
+                if not mouton.outOfBound(
+                   self.last_direction, self.grille.cases, dt):
                     mouton.centre_x += mouton.vitesse.x * dt
                     mouton.centre_y += mouton.vitesse.y * dt
                 else:
                     mouton.en_deplacement = False
                     fini += 1
-                
+
                 fltk.afficher_image(
                     mouton.centre_x, mouton.centre_y,
                     image=images['mouton'], ancrage='center'
@@ -196,12 +207,11 @@ class Plateau:
         if fini == len(self.troupeau) and self.last_direction is not None:
             self.last_direction = None
             self.reposition_moutons()
-            #print(f'Temps du déplacement: {(time() - start_time - dt):.3f}s')
-
+            # print(f'Temps du déplacement: {(time() - start_time - dt):.3f}s')
 
     def isNotPosMouton(self, x, y):
         """
-        Vérifie si la position de la case donnée contient un mouton 
+        Vérifie si la position de la case donnée contient un mouton
         """
         for mouton in self.troupeau:
             if mouton.x == x and mouton.y == y:
@@ -234,16 +244,17 @@ class Plateau:
 
         self.tri_moutons(direction)
         for mouton in self.troupeau:
-            if self.anime: mouton_initial = copy(mouton)
+            if self.anime:
+                mouton_initial = copy(mouton)
             mouton.deplace(direction, self)
             if self.anime:
                 mouton.deplace_vitesse(mouton_initial, self, direction)
-            if mouton.en_deplacement: deplacement = True
-        
-        return deplacement
-                
+            if mouton.en_deplacement:
+                deplacement = True
 
-    def tri_moutons(self, direction):
+        return deplacement
+
+    def tri_moutons(self, direction: str):
         """
         Trie les moutons de sorte que le mouton le plus près
         du mur de la direction demandée soit le premier à être déplacé.
@@ -282,7 +293,8 @@ class Plateau:
 
     def isGagne(self):
         """
-        Vérifie si toutes les cases de touffes d'herbes contiennent également un mouton
+        Vérifie si toutes les cases de touffes d'herbes contiennent
+        également un mouton
         """
         occupe = 0
         for mouton in self.troupeau:

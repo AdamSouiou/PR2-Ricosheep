@@ -2,18 +2,17 @@ from plateau import Plateau
 from bouton import Boutons
 from typing import Callable, List, Tuple, Set
 from random import randint
-from pprint import pprint
 from solveur import iteratif
 from math import ceil
 import son
-import graphiques 
+import graphiques
 import fltk
 import random
 import editeur
 import cfg
 
-#Crash généré lors d'un random entre 5x5 et 8x8
 
+# Crash généré lors d'un random entre 5x5 et 8x8
 def generation100() -> Plateau:
     """
     Créer un plateau dont les dimensions, le nombre de moutons et d'herbes
@@ -24,14 +23,14 @@ def generation100() -> Plateau:
     global plateau
     test = False
     while not test:
-        nb_colonnes = random.randint(4,8)
-        nb_lignes = random.randint(4,8)
+        nb_colonnes = random.randint(4, 8)
+        nb_lignes = random.randint(4, 8)
 
         plateau = []
         for _ in range(nb_lignes):
             ligne = []
             for _ in range(nb_colonnes):
-                case = random.randint(1,12)
+                case = random.randint(1, 12)
                 if case <= 5:
                     ligne.append(editeur.ETAT[0])
                 elif case <= 10:
@@ -47,6 +46,7 @@ def generation100() -> Plateau:
     cfg.carte_lst = ['custom', 'Random.txt']
     return plateau
 
+
 def map_dict(d: dict, func: Callable) -> None:
     """
     Applique une fonction à toutes les valeurs du dictionnaire.
@@ -56,6 +56,7 @@ def map_dict(d: dict, func: Callable) -> None:
     """
     for cle, valeur in d.items():
         d[cle] = func(valeur)
+
 
 def in_sets(elem: Tuple, sets: List[Set[Tuple]]) -> bool:
     """
@@ -72,7 +73,9 @@ def in_sets(elem: Tuple, sets: List[Set[Tuple]]) -> bool:
     return False
 
 
-def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]]) -> set:
+def set_aleatoire(nb_tuple: int,
+                  max_y: int, max_x: int,
+                  sets: List[Set[Tuple]]) -> set:
     """
     Renvoie un set aléatoire de tuple de positions, en s'assurant
     qu'aucune de ces nouvelles positions ne soient présente dans
@@ -88,26 +91,26 @@ def set_aleatoire(nb_tuple: int, max_y: int, max_x: int, sets: List[Set[Tuple]])
     while len(new_set) < nb_tuple:
         tup = (randint(0, max_y-1), randint(0, max_x-1))
         if (tup not in new_set
-            and not in_sets(tup, sets)):
+           and not in_sets(tup, sets)):
             new_set.add(tup)
 
     return new_set
 
 
-def aleatoirecontrole(params: dict,
+def aleatoirecontrole(param: dict,
                       percent_buisson: Tuple[float, float]) -> Plateau:
     """
     Génère une map aléatoirement, respectent les conditions du dictionnaire
     params (nb_moutons, nb_herbes, nb_lignes, nb_colonnes, difficulte)
-    
-    :param dict params: Dictionnaire des paramètres pour réaliser la génération
+
+    :param dict param: Dictionnaire des paramètres pour réaliser la génération
     :param tuple percent_buisson: Tuple de nombre représentant
     le pourcentage min et max du nombre de buissons par rapport
     à l'espace vide restant après placement des herbes et moutons.
     :return Plateau: Plateau valide prêt à l'emploi
     """
     lignes, colonnes, nb_moutons, nb_herbes =\
-        params['lignes'], params['colonnes'], params['moutons'], params['herbes']
+        param['lignes'], param['colonnes'], param['moutons'], param['herbes']
 
     max_nb_buissons = lignes * colonnes - nb_herbes - nb_herbes
     buissons_min = int(max_nb_buissons * (percent_buisson[0] / 100))
@@ -121,17 +124,19 @@ def aleatoirecontrole(params: dict,
             lignes, colonnes, [troupeau, herbes]
         )
 
-        plateau = Plateau('', test_mode=True,
-                          parsed_data=[troupeau, buissons, herbes, lignes, colonnes])
+        plateau = Plateau(
+            '', test_mode=True,
+            parsed_data=[troupeau, buissons, herbes, lignes, colonnes]
+        )
         chemin, _ = iteratif(plateau, largeur=True)
 
-        if chemin is not None and len(chemin) >= params['difficulte']:
+        if chemin is not None and len(chemin) >= param['difficulte']:
             cfg.carte_lst = ['custom', 'Random.txt']
             return plateau
 
 
 def menu_control():
-    boutons = Boutons((10,10))
+    boutons = Boutons((10, 10))
     boutons.cree_bouton_texte(1, 2, 5, 2, "Nombre de lignes :", arrondi=0.75)
     boutons.entree_texte(7, 2, 8, 2, "lignes")
 
@@ -147,19 +152,21 @@ def menu_control():
     boutons.cree_bouton_texte(1, 6, 5, 6, "Nombre de coups :", arrondi=0.75)
     boutons.entree_texte(7, 6, 8, 6, "difficulte")
 
-    boutons.cree_bouton_simple(2, 8, 7, 8, "Valider", arrondi = 1)
-    
+    boutons.cree_bouton_simple(2, 8, 7, 8, "Valider", arrondi=1)
+
     entiers_positifs = "Veuillez insérer que des entiers positifs !"
     boutons.cree_bouton_texte(1, 9, 8, 9, entiers_positifs,
                               invisible=True, couleur_texte='red')
 
     règle_de_jeuM = "Il vous faut au moins autant de moutons que d'herbes !"
     boutons.cree_bouton_texte(1, 9, 8, 9, règle_de_jeuM,
-                              invisible=True, couleur_texte='red', unifier_texte=False)
-    
+                              invisible=True, couleur_texte='red',
+                              unifier_texte=False)
+
     règle_de_jeuT = "Le plateau doit pouvoir contenir tous les éléments!"
     boutons.cree_bouton_texte(1, 9, 8, 9, règle_de_jeuT,
-                              invisible=True, couleur_texte='red', unifier_texte=False)
+                              invisible=True, couleur_texte='red',
+                              unifier_texte=False)
 
     boutons.init()
     ev = None
@@ -168,7 +175,7 @@ def menu_control():
         fltk.efface_tout()
         graphiques.background("#3f3e47")
         boutons.dessiner_boutons(ev)
-        
+
         ev = fltk.attend_ev()
         tev = fltk.type_ev(ev)
         click = boutons.nom_clic(ev)
@@ -184,7 +191,8 @@ def menu_control():
         if tev == "ClicGauche" and click is not None:
             son.sound('MenuAccept')
 
-            params = {nom: entree.get() for nom, entree in boutons.entrees_texte.items()}
+            params = {nom: entree.get()
+                      for nom, entree in boutons.entrees_texte.items()}
             if all(n.isdecimal() for n in params.values()):
                 map_dict(params, int)
                 changement = True
@@ -192,7 +200,6 @@ def menu_control():
                 changement = False
 
             if changement:
-                
                 if all(n > 0 for n in params.values()):
                     boutons.boutons[entiers_positifs].invisible = True
 
@@ -200,14 +207,14 @@ def menu_control():
                         boutons.boutons[règle_de_jeuM].invisible = False
                         boutons.boutons[règle_de_jeuT].invisible = True
 
-                    elif ((params['lignes'] * params['colonnes'])\
+                    elif ((params['lignes'] * params['colonnes'])
                           <= (params['moutons'] + params['herbes'])):
                         boutons.boutons[règle_de_jeuT].invisible = False
                         boutons.boutons[règle_de_jeuM].invisible = True
 
                     else:
                         boutons.destroy_entree_textes()
-                        return aleatoirecontrole(params, (20,70))
+                        return aleatoirecontrole(params, (20, 70))
 
                 else:
                     boutons.boutons[entiers_positifs].invisible = False

@@ -11,7 +11,9 @@ from bouton import Boutons
 from plateau import Plateau
 from mouton import Mouton
 
+
 save = {}
+
 
 class SaveEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -22,8 +24,8 @@ class SaveEncoder(json.JSONEncoder):
 
 def check_in() -> None:
     """
-    Essaye de lire le fichier savefile.json et l'enregistre dans la variable 
-    global "save" pour pouvoir encoder la sauvegarde.
+    Essaye de lire le fichier savefile.json et l'enregistre
+    dans la variable global "save" pour pouvoir encoder la sauvegarde.
     En cas d'echec, réinitialise le fichier de sauvegarde.
     """
     global save
@@ -32,19 +34,24 @@ def check_in() -> None:
             try:
                 save = json.load(file)
             except JSONDecodeError:
-                print("La sauvegarde lue est incorrecte, réinitialisation du fichier")
-                save_write([],[],[])
+                print("La sauvegarde lue est incorrecte,\
+                      réinitialisation du fichier")
+                save_write([], [], [])
     except FileNotFoundError:
         print("La sauvegarde n'existe plus !, réinitialisation du fichier")
-        save_write([],[],[])
+        save_write([], [], [])
 
 
-def save_write(carte: List[str], historique: List[Tuple[Mouton]], troupeau: List[Mouton]) -> None:
+def save_write(carte: List[str],
+               historique: List[Tuple[Mouton]],
+               troupeau: List[Mouton]) -> None:
     """
     Écris savefile.json avec les paramètres donné.
 
-    :param List[str] carte: Liste du sous-dossier et niveau pour la carte
-    :param List[Tuple[Mouton]] historique: Liste de l'historique des moutons pendant toute la partie.
+    :param List[str] carte: Liste du sous-dossier
+    et niveau pour la carte
+    :param List[Tuple[Mouton]] historique: Liste de
+    l'historique des moutons pendant toute la partie.
     :param List[Mouton] troupeau: Liste des objets moutons du jeu.
     """
     global save
@@ -57,7 +64,8 @@ def save_write(carte: List[str], historique: List[Tuple[Mouton]], troupeau: List
 
 def save_read() -> Tuple[Plateau, Boutons]: 
     """
-    Lit le fichier savefile.json pour récupérer les informations de la sauvegarde effectué précédemment.
+    Lit le fichier savefile.json pour récupérer les
+    informations de la sauvegarde effectué précédemment.
 
     :return Plateau: Plateau de jeu
     :return Boutons: Boutons de jeu
@@ -66,7 +74,11 @@ def save_read() -> Tuple[Plateau, Boutons]:
     selecteur.modif_json(save['carte'][0], save['carte'][1])
     cfg.maj()
     boutons_jeu = boutons_jeu_init()
-    plateau = Plateau(cfg.carte, grille_base = boutons_jeu.grille, grille_pos=(0,0,15,22))
+    plateau = Plateau(
+        cfg.carte,
+        grille_base=boutons_jeu.grille,
+        grille_pos=(0,0,15,22)
+    )
     plateau.historique_savewrite(save['historique'])
     plateau.troupeau_savewrite(save['position'])
     plateau.reposition_moutons()

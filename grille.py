@@ -16,16 +16,16 @@ class Case:
 
 class Grille:
 
-    view_ax:       float ; view_ay: float 
-    view_bx:       float ; view_by: float
-    marge_largeur: float ; marge_hauteur: float
-    nb_colonne:    int   ; nb_ligne: int
-    largeur_case:  float ; hauteur_case: float
+    view_ax:       float; view_ay: float 
+    view_bx:       float; view_by: float
+    marge_largeur: float; marge_hauteur: float
+    nb_colonne:    int  ; nb_ligne: int
+    largeur_case:  float; hauteur_case: float
     carre:         bool
     cases:         List[List[Case]]
 
     __slots__ = tuple(__annotations__)
-    
+
     def __init__(self, nb_colonne: int, nb_ligne: int,
                  marge_largeur=0.95, marge_hauteur=0.95,
                  grille_base=None,
@@ -38,11 +38,12 @@ class Grille:
         :param float marge_hauteur: Proportion en hauteur de la grille
         dans la box définie par ``grille_pos``
         :param Grille grille_base: Si une grille est reçue,
-        elle sera utilisée pour définir la position absolue de la nouvelle grille
-        par rapport à celle-ci et les coordonnées données par ``grille_pos``
-        :param tuple grille_pos: Position absolue (par rapport à la fenêtre) si
-        ``grille_base`` vaut ``None``, sinon position par rapport aux coordonnées
-        des cases de ``grille_base``.
+        elle sera utilisée pour définir la position absolue de la nouvelle
+        grille par rapport à celle-ci et les coordonnées données
+        par ``grille_pos``..
+        :param tuple grille_pos: Position absolue (par rapport à la fenêtre)
+        si ``grille_base`` vaut ``None``, sinon position par rapport
+        aux coordonnées des cases de ``grille_base``.
         :param bool carre: Si ``True`` adapte la taille de la grille,
         de sorte que les cases restent carrées.
         """
@@ -57,14 +58,14 @@ class Grille:
         else:
             self.view_ax, self.view_ay = grille_pos[0], grille_pos[1]
             self.view_bx, self.view_by = grille_pos[2], grille_pos[3]
-        
+
         self.marge_largeur = marge_largeur
         self.marge_hauteur = marge_hauteur
         self.nb_colonne = nb_colonne
         self.nb_ligne = nb_ligne
         self.carre = carre
         self.genererCases()
-        
+
     def genererCases(self):
         """
         Initialise une liste d'objets ``Cases``, dont les coordonnées
@@ -75,27 +76,29 @@ class Grille:
         """
         largeur_interieur = (self.view_bx - self.view_ax)*self.marge_largeur
         hauteur_interieur = (self.view_by - self.view_ay)*self.marge_hauteur
-        
+
         self.cases = []
 
         self.largeur_case, self.hauteur_case = (
             largeur_interieur/self.nb_colonne,
             hauteur_interieur/self.nb_ligne
         )
-        
+
         if self.carre:
             m = min(self.largeur_case, self.hauteur_case)
             self.largeur_case, self.hauteur_case = m, m
 
-        self.view_ax += ((self.view_bx - self.view_ax) - self.largeur_case*self.nb_colonne) / 2
-        self.view_ay += ((self.view_by - self.view_ay) - self.hauteur_case*self.nb_ligne) / 2
-        
+        self.view_ax += ((self.view_bx - self.view_ax)
+                         - self.largeur_case*self.nb_colonne) / 2
+        self.view_ay += ((self.view_by - self.view_ay)
+                         - self.hauteur_case*self.nb_ligne) / 2
+
         for j in range(self.nb_ligne):
             ligne = []
             for i in range(self.nb_colonne):
                 ax = self.view_ax + (i * self.largeur_case)
                 ay = self.view_ay + (j * self.hauteur_case)
-                
+
                 ligne.append(
                     Case(
                         ax=ax,
@@ -106,24 +109,23 @@ class Grille:
                         centre_y=ay + self.hauteur_case / 2,
                     )
                 )
-    
+
             self.cases.append(ligne)
 
     def draw(self, callback=None):
         """
         Dessine les cases
         """
-        
         for y, ligne in enumerate(self.cases):
             for x, case in enumerate(ligne):
                 fltk.rectangle(
-                    case.ax,case.ay,
-                    case.bx,case.by,
+                    case.ax, case.ay,
+                    case.bx, case.by,
                     'white'
                 )
                 if callback is not None:
                     callback(case, x, y)
-    
+
     def getAbsoluteCoordsTL(self, x_case: int, y_case: int):
         """
         Récupère les coordonnées pixels du coin supérieur gauche de la case.

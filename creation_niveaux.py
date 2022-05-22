@@ -8,11 +8,10 @@ import son
 from plateau import Plateau
 from bouton import Boutons
 from graphiques import close
-from pprint import pprint
 
 
 def menu(plateau):
-    boutons = Boutons((10,10))
+    boutons = Boutons((10, 10))
     boutons.cree_bouton_texte(1, 2, 8, 2, "Voulez-vous enregistrer")
     boutons.cree_bouton_texte(1, 3, 8, 3, "votre niveau ?")
 
@@ -41,16 +40,22 @@ def menu(plateau):
                     son.sound('MenuAccept')
                     demande_nom(plateau)
                     return
-                    
 
                 elif click == "Annuler":
                     son.sound('MenuBleep')
-                    boutons = Boutons((10,10))
-                    boutons.cree_bouton_texte(1, 2, 8, 2, "Revenir au menu", arrondi = 0.75)
-                    boutons.cree_bouton_texte(1, 3, 8, 3, "principal ?", arrondi = 0.75)
-
-                    boutons.cree_bouton_simple(1, 6, 4, 6, 'Menu', arrondi=0.75)
-                    boutons.cree_bouton_simple(5, 6, 8, 6, 'Editeur', arrondi=0.75)
+                    boutons = Boutons((10, 10))
+                    boutons.cree_bouton_texte(
+                        1, 2, 8, 2, "Revenir au menu", arrondi=0.75
+                    )
+                    boutons.cree_bouton_texte(
+                        1, 3, 8, 3, "principal ?", arrondi=0.75
+                    )
+                    boutons.cree_bouton_simple(
+                        1, 6, 4, 6, 'Menu', arrondi=0.75
+                    )
+                    boutons.cree_bouton_simple(
+                        5, 6, 8, 6, 'Editeur', arrondi=0.75
+                    )
                     boutons.init()
                 elif click == "Menu":
                     son.sound('MenuAccept')
@@ -61,20 +66,24 @@ def menu(plateau):
 
         fltk.mise_a_jour()
 
+
 def demande_nom(plateau: Plateau):
-    boutons = Boutons((10,10))
-    boutons.cree_bouton_texte(1, 2, 8, 2, "Nom de votre plateau", arrondi = 0.75)
-    boutons.cree_bouton_simple(1, 8, 8, 8, "Valider", arrondi = 0.75)
+    boutons = Boutons((10, 10))
+    boutons.cree_bouton_texte(
+        1, 2, 8, 2, "Nom de votre plateau", arrondi=0.75
+    )
+    boutons.cree_bouton_simple(
+        1, 8, 8, 8, "Valider", arrondi=0.75
+    )
     boutons.entree_texte(1, 4, 8, 4, 'filename')
-
     boutons.init()
-
     ev = None
+
     while True:
         fltk.efface_tout()
         graphiques.background("#3f3e47")
         boutons.dessiner_boutons(ev)
-        
+
         ev = fltk.attend_ev()
         tev = fltk.type_ev(ev)
         click = boutons.nom_clic(ev)
@@ -96,7 +105,8 @@ def demande_nom(plateau: Plateau):
 
         fltk.mise_a_jour()
 
-def enregistrement(plateau: List[List[str]], nom:str):
+
+def enregistrement(plateau: List[List[str]], nom: str):
     """
     Enregistre le plateau donné dans un fichier texte avec le nom donné.
     """
@@ -109,11 +119,13 @@ def enregistrement(plateau: List[List[str]], nom:str):
 
         fichier.write(file)
 
+
 def plateau_vide(lignes: int, colonnes: int) -> List[List[str]]:
     """
     Renvoie une Liste de liste contenant que "_"
     """
     return [['_' for _ in range(colonnes)] for _ in range(lignes)]
+
 
 def plateau_to_ll(plateau):
     """
@@ -126,5 +138,4 @@ def plateau_to_ll(plateau):
         lst[g[0]][g[1]] = 'G'
     for g in plateau.env['buissons']:
         lst[g[0]][g[1]] = 'B'
-    pprint(lst)
     return lst

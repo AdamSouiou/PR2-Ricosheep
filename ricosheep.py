@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import verification
-import graphiques
 import cfg
 import fltk
 import solveur
@@ -8,11 +7,12 @@ import sauvegarde
 import son
 import creation_niveaux
 import selecteur
+from graphiques import (background, game_over_init,
+                        demande_affichage, demande_profondeur)
 from functools import partial
 from sys import setrecursionlimit
 from time import time
 from copy import deepcopy
-from pprint import pprint
 from plateau import Plateau
 from bouton import Boutons
 from collections import deque
@@ -40,18 +40,21 @@ def file_defaite(threads_defaite: deque):
                 return True
     return False
 
+
 def boutons_jeu_init() -> Boutons:
     """
     Initialisation des boutons de jeu
 
     :return Boutons: Boutons de jeu.
     """
-    boutons = Boutons((20,23), carre=False)
+    boutons = Boutons((20, 23), carre=False)
     boutons.cree_bouton_simple(16, 0, 19, 2, "Reset")
     boutons.cree_bouton_simple(16, 4, 19, 6, "Undo")
     boutons.cree_bouton_simple(16, 8, 19, 10, "Sauvegarde")
-    boutons.cree_bouton_simple(16, 12, 19, 14, "Sol. profondeur", unifier_texte=False)
-    boutons.cree_bouton_simple(16, 16, 19, 18, "Sol. largeur", unifier_texte=False)
+    boutons.cree_bouton_simple(16, 12, 19, 14, "Sol. profondeur",
+                               unifier_texte=False)
+    boutons.cree_bouton_simple(16, 16, 19, 18, "Sol. largeur",
+                               unifier_texte=False)
     boutons.cree_bouton_simple(16, 20, 19, 22, "Quitter")
     boutons.init()
     return boutons
@@ -59,19 +62,19 @@ def boutons_jeu_init() -> Boutons:
 
 def jeu(plateau: Plateau, boutons_jeu):
     son.song("Otherside")
-    victory_buttons = graphiques.game_over_init(
+    victory_buttons = game_over_init(
         "C'est gagné !!", "#008141", boutons_jeu.grille)
-    defeat_buttons = graphiques.game_over_init(
+    defeat_buttons = game_over_init(
         "C'est perdu :'(", "#A90813", boutons_jeu.grille)
-    
+
     game_over = False
     gagne = False
     threads_defaite = deque()
     process_pool = Pool(processes=2)
-    
+
     chemin = []
     afficher = False
-    
+
     start_deplacement = 0
     dt = 0
 
@@ -79,7 +82,7 @@ def jeu(plateau: Plateau, boutons_jeu):
         try:
             dt_start = time()
             fltk.efface_tout()
-            graphiques.background("#3f3e47")
+            background("#3f3e47")
             plateau.draw(start_deplacement, dt)
             boutons_jeu.dessiner_boutons()
 
@@ -100,7 +103,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                 exit()
 
             elif (touche == "Escape"
-                 or (tev == "ClicGauche" and click == "Quitter")):
+                  or (tev == "ClicGauche" and click == "Quitter")):
                 threads_defaite.clear()
                 process_pool.terminate()
                 process_pool.join()
@@ -109,7 +112,7 @@ def jeu(plateau: Plateau, boutons_jeu):
 
             # Vérifie si un déplacement n'est pas déjà en cours :
             elif (plateau.last_direction is None
-                and (touche in DIRECTIONS or chemin)): # Si le chemin n'est pas vide
+                  and (touche in DIRECTIONS or chemin)):
                 start_deplacement = time()
                 son.sound("Sheep")
                 if chemin:
@@ -119,7 +122,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                 gagne = False
                 if plateau.isGagne():
                     gagne = True
-                
+
                 elif deplacement and not chemin and not game_over:
                     threads_defaite.append(
                         process_pool.apply_async(
@@ -162,7 +165,7 @@ def jeu(plateau: Plateau, boutons_jeu):
 
                 elif click in {"Sol. profondeur", "Sol. largeur"}:
                     if click == "Sol. profondeur":
-                        solver = graphiques.demande_profondeur(boutons_jeu.grille)
+                        solver = demande_profondeur(boutons_jeu.grille)
                     else:
                         solver = partial(solveur.iteratif, largeur=True)
                     start = time()
@@ -173,13 +176,14 @@ def jeu(plateau: Plateau, boutons_jeu):
                         print("Pas de solutions... :( ")
                         game_over = True
                     else:
-                        afficher = graphiques.demande_affichage(boutons_jeu.grille)
+                        afficher = demande_affichage(boutons_jeu.grille)
                         if afficher:
                             chemin = deque(chemin)
                         print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)}.")
                         print(f"Il a fallu {elapsed:.3f}s pour le déterminer.")
-                        if not afficher: chemin = []
+                        if not afficher:
+                            chemin = []
 
             fltk.mise_a_jour()
             dt = time() - dt_start
@@ -189,9 +193,11 @@ def jeu(plateau: Plateau, boutons_jeu):
 
 
 if __name__ == "__main__":
-    fltk.cree_fenetre(cfg.largeur_fenetre, cfg.hauteur_fenetre,
-                    "Ricosheep", icone=path.join("media", "images", "icone.ico"))
+    fltk.cree_fenetre(
+        cfg.largeur_fenetre, cfg.hauteur_fenetre,
+        "Ricosheep", icone=path.join("media", "images", "icone.ico")
+    )
     son.initialisation()
-    from accueil import menu # Evite l'import infini
+    from accueil import menu  # Evite l'import infini
     menu()
     fltk.ferme_fenetre()

@@ -4,7 +4,8 @@ import cfg
 from dataclasses import dataclass
 from PIL import Image, ImageTk
 from os import path
-from typing import List, Optional
+from typing import List
+
 
 @dataclass
 class FallingSheep:
@@ -15,29 +16,31 @@ class FallingSheep:
     speed: float
     height: float
 
-def initialisation(number: int):
+
+def initialisation(number: int) -> List[FallingSheep]:
     """
-    Initialise les images et les objets FallingSheep contenant les moutons pour 
-    l'animation du menu d'accueil selon le nombre "number, et renvoie
-    la liste contenant tous les objets FallingSheep 
+    Initialise les images et les objets FallingSheep contenant
+    les moutons pour l'animation du menu d'accueil selon le
+    nombre ``number``, et renvoie une liste contenant tous les
+    objets FallingSheep.
     """
     liste = []
-    
+
     img1 = Image.open(path.join('media', 'images', 'chute1.png'))
     img2 = Image.open(path.join('media', 'images', 'chute2.png'))
-    
+
     for _ in range(number+1):
 
         proportion = random.randint(1, 7)
         imagechute = (img1.copy()
                       if bool(random.getrandbits(1)) else
                       img2.copy())
-        
+
         imagechute = resize(imagechute, 24, proportion)
 
         liste.append(
             FallingSheep(
-                x= random.randint(0, cfg.largeur_fenetre),
+                x=random.randint(0, cfg.largeur_fenetre),
                 y=random.randint(int(-cfg.hauteur_fenetre*2), 0),
                 Sheep=imagechute,
                 speed=proportion,
@@ -53,6 +56,7 @@ def initialisation(number: int):
     liste.sort(key=lambda elem: elem.speed)
     return liste
 
+
 def resize(image: Image, taille: int, proportion: int = 1):
     """
     Redimensionne l'image donné selon la taille et la proportion
@@ -61,12 +65,14 @@ def resize(image: Image, taille: int, proportion: int = 1):
                        image.height // taille * proportion)
     return image.resize((width, height), resample=Image.NEAREST)
 
+
 def chute(elem: FallingSheep):
     """
     Fait "tombé" l'élément selon sa vitesse, sa taille et la taille de l'écran
     """
     elem.y += elem.speed
     elem.y = elem.y % (cfg.hauteur_fenetre + elem.height)
+
 
 def dessiner(liste: List[FallingSheep]):
     """
