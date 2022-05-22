@@ -4,6 +4,7 @@ from bouton import Boutons
 from grille import Grille
 from collections import namedtuple as nt
 from os import PathLike
+from pprint import pprint
 
 namedtuple = lambda nom, **kwargs : nt(nom, kwargs)(*kwargs.values())
 
@@ -49,6 +50,30 @@ def game_over_init(text, hexcode, grille):
     boutons.init()
     return boutons
 
+def demande_affichage(grille_jeu: Grille):
+    """
+    Crée une invite au-dessus du plateau demandant à l'utilisateur
+    si il souhaite afficher graphiquement la solution
+    :param grille_jeu: Grille des boutons du jeu, selon
+    laquelle sera placé l'invite.
+    """
+    demande = Boutons((0,), grille_base=grille_jeu) # (20,23)
+    demande.cree_bouton_texte(2, 6, 13, 9, 'Afficher la solution')
+    demande.cree_bouton_simple(2, 10, 7, 11, 'Oui')
+    demande.cree_bouton_simple(8, 10, 13, 11, 'Non')
+    demande.init()
+    demande.dessiner_boutons()
+    #demande.grille.draw()
+    fltk.mise_a_jour()
+    while True:
+        ev = fltk.attend_ev()
+        click = demande.nom_clic(ev)
+        if click == 'Oui':
+            return True
+        elif click == 'Non':
+            return False
+    
+    
 
 affiche_env_element = lambda case, img: fltk.afficher_image(
         case.centre_x,

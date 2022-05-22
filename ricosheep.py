@@ -65,6 +65,7 @@ def jeu(plateau: Plateau, boutons_jeu):
     process_pool = Pool(processes=2)
     
     chemin = []
+    afficher = False
     
     start_deplacement = 0
     dt = 0
@@ -84,7 +85,7 @@ def jeu(plateau: Plateau, boutons_jeu):
             if file_defaite(threads_defaite) or game_over:
                 game_over = True
                 defeat_buttons.dessiner_boutons(ev)
-            elif gagne:
+            elif gagne and not afficher:
                 victory_buttons.dessiner_boutons()
 
             touche = fltk.touche(ev) if tev == 'Touche' else None
@@ -127,6 +128,7 @@ def jeu(plateau: Plateau, boutons_jeu):
                 if click == "Reset":
                     game_over = False
                     gagne = False
+                    afficher = False
                     plateau.reset()
 
                 elif click == "Undo":
@@ -162,10 +164,13 @@ def jeu(plateau: Plateau, boutons_jeu):
                         print("Pas de solutions, chacal!")
                         game_over = True
                     else:
-                        chemin = deque(chemin)
+                        afficher = graphiques.demande_affichage(boutons_jeu.grille)
+                        if afficher:
+                            chemin = deque(chemin)
                         print(chemin)
                         print(f"La longueur du chemin est de {len(chemin)},")
                         print(f"Il a fallu {elapsed:.3f}s pour le déterminer.")
+                        if not afficher: chemin = []
 
             fltk.mise_a_jour()
             dt = time() - dt_start

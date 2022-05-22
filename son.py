@@ -2,6 +2,7 @@ import random
 import os 
 import cfg
 import verification
+from pprint import pprint
 
 try:
     import pygame
@@ -11,7 +12,7 @@ try:
 except:
     PYGAME_AVAILABLE = False
     cfg.son = False
-    print("Veuillez installez pygame pour accéder à l'expérience sonore.")
+    print("Veuillez installer pygame pour accéder à l'expérience sonore.")
 
 def initialisation():
     global liste_son

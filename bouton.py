@@ -6,16 +6,12 @@ Amal Abdallah, Nicolas Seban, Adam Souiou
 PROJET 2
 Amal Abdallah, Nicolas Seban, Adam Souiou
 """
-# Sobre bibliothèque pour créer, gérer, et afficher des boutons,
-# selon une grille
+# Sobre bibliothèque pour créer, gérer, et afficher
+# des boutons ou entrées de textes, selon une grille.
 # Permet la création de boutons cliquables simples et de boutons
 # booléens qui peuvent enregistrer leur état et l'afficher
-# par leur couleur, et de boutons invisibles.
-# Gère les entrées de textes
+# par leur couleur, ainsi que de boutons invisibles.
 
-# A faire:
-# - Bouton avec icône: Utiliser une police avec symboles?
-# - Utiliser la propriété texte héritée par BoutonBooleen pour éviter les recalculs de max
 
 from time import time
 from pprint import pprint
@@ -47,6 +43,7 @@ class BoutonTexte(Bouton):
     unifier_texte = True
     marge_texte = 0.9
     police = 'Courier'
+    police_icone = 'Noto Emoji'
     couleur_texte = 'black'
     couleur_fond = 'white'
     centre_x = 0
@@ -396,6 +393,9 @@ class Boutons:
                 bouton.unifier_texte = value
             elif arg == 'police':
                 bouton.police = value
+            elif arg == 'icone':
+                if value == True :
+                    bouton.police = bouton.police_icone
             elif arg == 'invisible':
                 bouton.invisible = value
             elif arg == 'factice':
