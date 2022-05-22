@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 import verification
 import cfg
 import fltk

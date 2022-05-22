@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 import json
 from os import path
 from json.decoder import JSONDecodeError

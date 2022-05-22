@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 from bouton import Boutons
 from plateau import Plateau, FichierInvalide
 from ricosheep import boutons_jeu_init, jeu

@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 from plateau import Plateau
 from bouton import Boutons
 from typing import Callable, List, Tuple, Set

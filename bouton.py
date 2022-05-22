@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 from time import time
 from math import pi as PI, sin, cos
 from numpy import linspace

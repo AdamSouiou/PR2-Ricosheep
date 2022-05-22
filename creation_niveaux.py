@@ -1,10 +1,18 @@
-from typing import List
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 import fltk
 import graphiques
 import editeur
 import cfg
 import os
 import son
+from typing import List
 from plateau import Plateau
 from bouton import Boutons
 from graphiques import close

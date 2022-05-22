@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 from typing import List, Tuple
 from bouton import Boutons
 from grille import Grille

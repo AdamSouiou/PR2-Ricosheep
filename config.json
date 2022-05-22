@@ -6,7 +6,7 @@
     "son": true,
     "animation": true,
     "carte": [
-        "big",
-        "big3.txt"
+        "square",
+        "map2.txt"
     ]
 }

@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 from typing import List, Tuple, Set, Optional
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

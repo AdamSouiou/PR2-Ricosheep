@@ -1,3 +1,11 @@
+"""
+Projet 2 : Ricosheep
+
+Amal ABDALLAH
+Nicolas SEBAN
+Adam SOUIOU
+"""
+
 from typing import (List, Tuple, Dict, Set,
                     Union, Iterable, Sequence, NamedTuple)
 from os import PathLike
