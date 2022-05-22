@@ -13,14 +13,6 @@ try:
     from PIL import Image, ImageTk
     print("Bibliothèque PIL chargée.", file=sys.stderr)
     PIL_AVAILABLE = True
-    resampling_algos = {
-        'plus_proche': Image.Resampling.NEAREST,
-        'lanczos': Image.Resampling.LANCZOS,
-        'bilineaire': Image.Resampling.BILINEAR,
-        'bicubique': Image.Resampling.BICUBIC,
-        'box': Image.Resampling.BOX,
-        'hamming': Image.Resampling.HAMMING
-    }
 
 except ImportError:
     PIL_AVAILABLE = False
@@ -472,18 +464,17 @@ def taille_image(fichier: PathLike) -> Tuple[int, int]:
     return None
 
 
-def redimensionner_image(
-        fichier: PathLike,
-        coeff: float,
-        reechantillonage: Optional[Literal[
-            'plus_proche', 'lanczos', 'bilineaire',
-            'bicubique', 'box', 'hamming']
-        ] = None) -> Image:
+def redimensionner_image(fichier: PathLike, coeff: float, reechantillonage=None):
     """
     Ouvre une image et la redimensionne avec un coefficient multiplicateur,
     il est également possible d'appliquer un filtre de réchantillonage pour
     améliorer le rendu du redimensionnement:
-
+    Au plus proche: ``0``
+    Lanczoz: ``1``
+    Bilinéaire: ``2``
+    Bicubique: ``3``
+    Box: ``4``
+    Hamming: ``5``
     :param fichier: Fichier de l'image à redimensioner
     :param float coeff: Coefficient de redimensionnement
     :param int reechantillonage: {0, 1, 2, 3, 4, 5} Algorithme à utiliser pour
@@ -492,8 +483,6 @@ def redimensionner_image(
     """
 
     if PIL_AVAILABLE:
-        if reechantillonage:
-            reechantillonage = resampling_algos[reechantillonage]
         with Image.open(fichier) as img:
             taille = img.size
             taille_coeff = (int(taille[0]*coeff), int(taille[1]*coeff))
@@ -501,9 +490,8 @@ def redimensionner_image(
                 img.resize(taille_coeff, reechantillonage)
             )
     else:
-        raise PILError("Cette fonction est disponible \
-                       uniquement si PIL est présent")
-# Texte
+        PILError()
+        return None
 
 
 def texte(x: float, y: float, chaine: str,
