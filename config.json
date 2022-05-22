@@ -6,7 +6,7 @@
     "son": false,
     "animation": true,
     "carte": [
-        "custom",
-        "Random.txt"
+        "theme",
+        "one_sheep.txt"
     ]
 }

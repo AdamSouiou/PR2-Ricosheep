@@ -131,6 +131,7 @@ def jeu(plateau: Plateau, boutons_jeu):
 
                 elif click == "Undo":
                     game_over = False
+                    gagne = False
                     plateau.undo()
 
                 elif click == "Sauvegarde":
