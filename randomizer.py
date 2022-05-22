@@ -130,7 +130,7 @@ def aleatoirecontrole(param: dict,
         )
         chemin, _ = iteratif(plateau, largeur=True)
 
-        if chemin is not None and len(chemin) >= param['difficulte']:
+        if chemin is not None and len(chemin) == param['difficulte']:
             cfg.carte_lst = ['custom', 'Random.txt']
             return plateau
 
