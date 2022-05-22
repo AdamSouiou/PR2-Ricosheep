@@ -5,6 +5,8 @@ from grille import Grille
 from collections import namedtuple as nt
 from os import PathLike
 from pprint import pprint
+from functools import partial
+import solveur
 
 namedtuple = lambda nom, **kwargs : nt(nom, kwargs)(*kwargs.values())
 
@@ -50,6 +52,20 @@ def game_over_init(text, hexcode, grille):
     boutons.init()
     return boutons
 
+
+def gen_invite(demande: str, cas1: str, cas2: str, grille_base):
+    """
+    Génère une invite à deux choix, et retourne une instance
+    de boutons.
+    """
+    invite = Boutons((20,23), grille_base=grille_base)
+    invite.cree_bouton_texte(2, 6, 13, 9, demande)
+    invite.cree_bouton_simple(2, 10, 7, 11, cas1)
+    invite.cree_bouton_simple(8, 10, 13, 11, cas2)
+    invite.init()
+    return invite
+
+
 def demande_affichage(grille_jeu: Grille):
     """
     Crée une invite au-dessus du plateau demandant à l'utilisateur
@@ -57,23 +73,36 @@ def demande_affichage(grille_jeu: Grille):
     :param grille_jeu: Grille des boutons du jeu, selon
     laquelle sera placé l'invite.
     """
-    demande = Boutons((0,), grille_base=grille_jeu) # (20,23)
-    demande.cree_bouton_texte(2, 6, 13, 9, 'Afficher la solution')
-    demande.cree_bouton_simple(2, 10, 7, 11, 'Oui')
-    demande.cree_bouton_simple(8, 10, 13, 11, 'Non')
-    demande.init()
-    demande.dessiner_boutons()
-    #demande.grille.draw()
+    invite = gen_invite("Afficher la solution", "Oui", "Non", grille_jeu)
+    invite.dessiner_boutons()
     fltk.mise_a_jour()
     while True:
         ev = fltk.attend_ev()
-        click = demande.nom_clic(ev)
+        click = invite.nom_clic(ev)
         if click == 'Oui':
             return True
         elif click == 'Non':
             return False
-    
-    
+
+
+def demande_profondeur(grille_jeu: Grille):
+    """
+    Invite demandant à l'utilisateur quel solveur en
+    profondeur il souhaite (itératif ou récursif)
+    :param grille_jeu: Grille des boutons du jeu, selon
+    laquelle sera placé l'invite.
+    """
+    invite = gen_invite("Choix algorithme :", "Récursif", "Itératif", grille_jeu)
+    invite.dessiner_boutons()
+    fltk.mise_a_jour()
+    while True:
+        ev = fltk.attend_ev()
+        click = invite.nom_clic(ev)
+        if click == "Récursif":
+            return solveur.profondeur
+        elif click == "Itératif":
+            return partial(solveur.iteratif, largeur=False)
+
 
 affiche_env_element = lambda case, img: fltk.afficher_image(
         case.centre_x,
@@ -97,7 +126,6 @@ def calcul_taille_image(taille_image: tuple, taille_box: tuple, marge=0):
     :param tuple taille_box: Tuple représentant la largeur et
     la hauteur de la box qui contiendra l'image
     :param float marge: Marge à appliquer au minimum sur les bords
-    
     """
 
     largeur_image, hauteur_image = taille_image

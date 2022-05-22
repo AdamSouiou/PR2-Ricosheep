@@ -98,7 +98,7 @@ def aleatoirecontrole(params: dict, percent_buisson: Tuple[float, float]):
 
         plateau = Plateau('', test_mode=True,
                           parsed_data=[troupeau, buissons, herbes, lignes, colonnes])
-        chemin = iteratif(plateau, largeur=True)
+        chemin, _ = iteratif(plateau, largeur=True)
 
         if chemin is not None and len(chemin) >= params['difficulte']:
             cfg.carte_lst = ['custom', 'Random.txt']

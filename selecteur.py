@@ -85,6 +85,7 @@ def open_plateau(choix, boutons: Boutons):
 
 def init_boutons(split=0, directory="", choix=None):
     dossiers = os.listdir(os.path.join("maps", directory))
+    dossiers.sort()
     boutons = Boutons((10,10))
 
     if directory != "":

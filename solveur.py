@@ -1,14 +1,15 @@
 from typing import List, Tuple, Set
-from plateau import Plateau
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from plateau import Plateau
 from collections import deque
 from functools import partial
-import collections
 
 DIRECTIONS = ("Up", "Right", "Down", "Left")
 DIRECTIONS_UP_DOWN = ('Up', 'Down')
 DIRECTIONS_LEFT_RIGHT = ('Left', 'Right')
 
-def profondeur(plateau,
+def profondeur(plateau: "Plateau",
                direction = None,
                visite = None,
                chemin = None) -> Tuple[List[str], Set]:
@@ -46,7 +47,7 @@ def profondeur(plateau,
     return None, visite
 
 
-def iteratif(plateau, largeur=False) -> List[str]:
+def iteratif(plateau: "Plateau", largeur=False) -> List[str]:
 
     directions = DIRECTIONS
     visite = set()
@@ -60,7 +61,7 @@ def iteratif(plateau, largeur=False) -> List[str]:
         restore(plateau.troupeau, positions)
 
         if plateau.isGagne():
-            return chemin
+            return chemin, visite
 
         if positions in visite:
             continue
@@ -76,7 +77,7 @@ def iteratif(plateau, largeur=False) -> List[str]:
             parcours.append((tri_copy(plateau.troupeau), chemin + [direction]))
             restore(plateau.troupeau, positions)
 
-    return None
+    return None, visite
 
 
 def tri_copy(troupeau):
@@ -91,7 +92,7 @@ def restore(troupeau, positions_initiales):
         troupeau[i].y = positions_initiales[i][0]
 
 
-def test(chemin: List[str], plateau: Plateau, unittest=False):
+def test(chemin: List[str], plateau: "Plateau", unittest=False):
     for mouv in chemin:
         plateau.deplace_moutons(mouv, solveur=True)
 
