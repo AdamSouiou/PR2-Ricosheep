@@ -23,17 +23,17 @@ def menu():
     boutons.cree_bouton_simple(3, 9, 16, 10, 'Niveaux', arrondi=0.75)
     boutons.cree_bouton_simple(3, 12, 16, 13, "Editeur de niveaux", arrondi=0.75)
     boutons.cree_bouton_simple(3, 15, 9, 16, "100% Aléatoire", arrondi=0.75)
-    boutons.cree_bouton_simple(10, 15, 16, 16, 'Aléatoire Contrôlé', arrondi=0.75)
+    boutons.cree_bouton_simple(10, 15, 16, 16, 'Aléatoire contrôlé', arrondi=0.75)
 
     boutons.cree_bouton_booleen(
         18, 18, 19, 19,
         'son', cfg,
-        '🔊', '🔇', arrondi=1, marge_texte=0.8
+        '🔊', '🔇', arrondi=1, marge_texte=0.8, icone=True
     )
     boutons.cree_bouton_booleen(
         15, 18, 16, 19,
         'animation', cfg,
-        '🐑', '🚫', arrondi=1, marge_texte=0.8
+        '🐑', '🚫', arrondi=1, marge_texte=0.8, icone=True
     )
     
     boutons.init()
@@ -59,7 +59,7 @@ def menu():
 
             elif tev == "ClicGauche":
                 # On propose au joueur de reprendre
-                if click in {'Jouer', 'Niveaux', "100% Aléatoire", "Aléatoire Contrôlé"}:
+                if click in {'Jouer', 'Niveaux', "100% Aléatoire", "Aléatoire contrôlé"}:
                     plateau = None
                     try:
                         if sauvegarde.est_valide():
@@ -110,7 +110,7 @@ def menu():
                                       grille_pos=(0,0,15,22))
                     jeu(plateau, boutons_jeu)
                 
-                elif click == "Aléatoire Contrôlé":
+                elif click == "Aléatoire contrôlé":
                     son.sound('MenuAccept')
                     plateau = randomizer.menu_control()
                     if plateau is None: continue
