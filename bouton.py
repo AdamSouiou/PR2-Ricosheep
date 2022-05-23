@@ -124,6 +124,7 @@ class Boutons:
         """Supprime tous les champs de textes précédents"""
         for entree in Boutons.entrees_texte.values():
             fltk.detruit_entree_texte(entree)
+        Boutons.entrees_texte = {}
 
     def init(self, unifier='format'):
         """
